@@ -1,0 +1,157 @@
+// ============================================
+// Typography
+// ============================================
+
+// Font Family
+$fontinter: 'Inter', sans-serif;
+$font-noto-sans-jp: 'Noto Sans JP', sans-serif;
+
+// Font Size
+$font-size-base: 18px;
+$font-size-sm: 14px;
+$font-size-xs: 12px;
+
+// font weight & Size
+// Inter
+$inter-700_bold: 700 #{$font-size-base} / 1.5 $font-inter; 
+$inter-600_semi-bold: 600 #{$font-size-base} / 1.5 $font-inter;
+$inter-500_medium: 500 #{$font-size-base} / 1.5 $font-inter;
+$inter-400_regular: 400 #{$font-size-base} / 1.5 $font-inter;
+$inter-300_light: 300 #{$font-size-base} / 1.5 $font-inter;
+$inter-500_medium_sm: 500 #{$font-size-sm} / 1.5 $font-inter;  
+$inter-400_regular_sm: 400 #{$font-size-sm} / 1.5 $font-inter;
+$inter-400_regular_xs: 400 #{$font-size-xs} / 1.5 $font-inter;
+$inter-300_light_xs: 300 #{$font-size-xs} / 1.5 $font-inter;
+
+// Noto Sans JP
+$noto-sans-jp-700_bold: 700 #{$font-size-base} / 1.7 $font-noto-sans-jp;
+$noto-sans-jp-600_semi-bold: 600 #{$font-size-base} / 1.7 $font-noto-sans-jp;
+$noto-sans-jp-500_medium: 500 #{$font-size-base} / 1.7 $font-noto-sans-jp;
+$noto-sans-jp-400_regular: 400 #{$font-size-base} / 1.7 $font-noto-sans-jp;
+$noto-sans-jp-300_light: 300 #{$font-size-base} / 1.7 $font-noto-sans-jp;
+$noto-sans-jp-500_medium_sm: 500 #{$font-size-sm} / 1.7 $font-noto-sans-jp;  
+$noto-sans-jp-400_regular_sm: 400 #{$font-size-sm} / 1.7 $font-noto-sans-jp;
+$noto-sans-jp-400_regular_xs: 400 #{$font-size-xs} / 1.7 $font-noto-sans-jp;
+$noto-sans-jp-300_light_xs: 300 #{$font-size-xs} / 1.7 $font-noto-sans-jp;
+
+// ============================================
+// Color
+// ============================================
+
+// Key Color
+$key-color--700: #0F3135;
+$key-color--600: #144147;
+$key-color--500: #1F666F;
+$key-color--400: #27818D;
+$key-color--300: #309BAA;
+$key-color--200: #38B6C7;
+$key-color--100: #40D1E4;
+
+// Neutral Color
+$neutral-color--700: #3F3D40;
+$neutral-color--600: #5B585D;
+$neutral-color--500: #78747A;
+$neutral-color--400: #8A858C;
+$neutral-color--300: #B2ABB4;
+$neutral-color--200: #CEC7D1;
+$neutral-color--100: #EBE3EF;
+
+// Accent Color
+$accent-color--700: #2D2547;
+$accent-color--600: #403564;
+$accent-color--500: #524481;
+$accent-color--400: #65549E;
+$accent-color--300: #7863BB;
+$accent-color--200: #8A73D8;
+$accent-color--100: #967CEB;
+
+// Rose Color
+$rose-color--700: #3E1E28;
+$rose-color--600: #5B2C3B;
+$rose-color--500: #6E3547;
+$rose-color--400: #964861;
+$rose-color--300: #B35673;
+$rose-color--200: #D06486;
+$rose-color--100: #ED7299;
+
+// Antique Color
+$antique-color--700: #3C3123;
+$antique-color--600: #594835;
+$antique-color--500: #766046;
+$antique-color--400: #947757;
+$antique-color--300: #A78762;
+$antique-color--200: #CEA679;
+$antique-color--100: #EBBE8B;
+
+// Semantic
+$color-success--500: #00B609;
+$color-success--400: #5BB65F;
+$color-success--300: #8ECC92;
+
+$color-warning--500: #FF0000;
+$color-warning--400: #FF6640;
+$color-warning--300: #FFA380;
+
+$color-error--500: #FFC800;
+$color-error--400: #FFD640;
+$color-error--300: #FFE380;
+
+// Fond Color
+$fond-color--500: #B8022F;
+$fond-color--400: #DB0238;
+$fond-color--300: #DC3A5C;
+$fond-color--200: #E55C80;
+$fond-color--100: #D68C9A;
+
+// Bias Color
+$bias-color-red: #FF3333;
+$bias-color-orange: #FF7733;
+$bias-color-light-orange: #FFBB33;
+$bias-color-yellow: #FFFF33;
+$bias-color-yellow-green: #33FF33;
+$bias-color-green: #00CC44;
+$bias-color-turquoise: #29CCCC;
+$bias-color-sky-blue: #66CCFF;
+$bias-color-blue: #3333FF;
+$bias-color-navy: #000080;
+$bias-color-purple: #9933FF;
+$bias-color-lavender: #E6B3FF;
+$bias-color-amethyst: #DD33FF;
+$bias-color-pink: #FF3377;
+$bias-color-baby-pink: #FF80D5;
+$bias-color-silver: #CCCCCC;
+$bias-color-black: #050505;
+$bias-color-gold: #CCAA66;
+$bias-color-brown : #99705C;
+$bias-color-white: #F2F2F2;
+
+// ============================================
+// Spacing
+// ============================================
+
+$spacing-xxs: 2px;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 40px;
+
+// ============================================
+// icon-size
+// ============================================
+
+$user-icon-size: 48px;
+
+$icon-lg: 32px;
+$icon-md: 24px;
+$icon-sm: 16px;
+
+// ============================================
+// Border Radius
+// ============================================
+
+$radius-sm: 8px;
+$radius-md: 16px;
+$radius-lg: 32px;
+$radius-full: 9999px;
