@@ -11,7 +11,7 @@ type Props = {
     className?: string;
 }
 
-export const EditIcon = ({ size = 'md', className = '' }: Props) => {
+export const FondLineIcon = ({ size = 'md', className = '' }: Props) => {
     const px = sizeMap[size];
     return (
         <svg

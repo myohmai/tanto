@@ -11,7 +11,7 @@ type Props = {
     className?: string;
 }
 
-export const QuotationIcon = ({ size = 'md', className = '' }: Props) => {
+export const LockIcon = ({ size = 'md', className = '' }: Props) => {
     const px = sizeMap[size];
     return (
         <svg
