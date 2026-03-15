@@ -3,8 +3,7 @@
 // ============================================
 
 // Font Family
-$fontinter: 'Inter', sans-serif;
-$font-noto-sans-jp: 'Noto Sans JP', sans-serif;
+$font-normal: 'Inter', 'Noto Sans JP', sans-serif;
 
 // Font Size
 $font-size-base: 18px;
@@ -13,26 +12,16 @@ $font-size-xs: 12px;
 
 // font weight & Size
 // Inter
-$inter-700_bold: 700 #{$font-size-base} / 1.5 $font-inter; 
-$inter-600_semi-bold: 600 #{$font-size-base} / 1.5 $font-inter;
-$inter-500_medium: 500 #{$font-size-base} / 1.5 $font-inter;
-$inter-400_regular: 400 #{$font-size-base} / 1.5 $font-inter;
-$inter-300_light: 300 #{$font-size-base} / 1.5 $font-inter;
-$inter-500_medium_sm: 500 #{$font-size-sm} / 1.5 $font-inter;  
-$inter-400_regular_sm: 400 #{$font-size-sm} / 1.5 $font-inter;
-$inter-400_regular_xs: 400 #{$font-size-xs} / 1.5 $font-inter;
-$inter-300_light_xs: 300 #{$font-size-xs} / 1.5 $font-inter;
+$inter-700_bold: 700 #{$font-size-base} / 1.5 $font-normal; 
+$inter-600_semi-bold: 600 #{$font-size-base} / 1.5 $font-normal;
+$inter-500_medium: 500 #{$font-size-base} / 1.5 $font-normal;
+$inter-400_regular: 400 #{$font-size-base} / 1.5 $font-normal;
+$inter-300_light: 300 #{$font-size-base} / 1.5 $font-normal;
+$inter-500_medium_sm: 500 #{$font-size-sm} / 1.5 $font-normal;  
+$inter-400_regular_sm: 400 #{$font-size-sm} / 1.5 $font-normal;
+$inter-400_regular_xs: 400 #{$font-size-xs} / 1.5 $font-normal;
+$inter-300_light_xs: 300 #{$font-size-xs} / 1.5 $font-normal;
 
-// Noto Sans JP
-$noto-sans-jp-700_bold: 700 #{$font-size-base} / 1.7 $font-noto-sans-jp;
-$noto-sans-jp-600_semi-bold: 600 #{$font-size-base} / 1.7 $font-noto-sans-jp;
-$noto-sans-jp-500_medium: 500 #{$font-size-base} / 1.7 $font-noto-sans-jp;
-$noto-sans-jp-400_regular: 400 #{$font-size-base} / 1.7 $font-noto-sans-jp;
-$noto-sans-jp-300_light: 300 #{$font-size-base} / 1.7 $font-noto-sans-jp;
-$noto-sans-jp-500_medium_sm: 500 #{$font-size-sm} / 1.7 $font-noto-sans-jp;  
-$noto-sans-jp-400_regular_sm: 400 #{$font-size-sm} / 1.7 $font-noto-sans-jp;
-$noto-sans-jp-400_regular_xs: 400 #{$font-size-xs} / 1.7 $font-noto-sans-jp;
-$noto-sans-jp-300_light_xs: 300 #{$font-size-xs} / 1.7 $font-noto-sans-jp;
 
 // ============================================
 // Color

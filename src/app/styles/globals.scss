@@ -7,3 +7,77 @@
     margin: 0;
     padding: 0;
 }
+
+// spacing
+.padding-sm {
+    padding: $spacing-sm;
+}
+.padding-md {
+    padding: $spacing-md;
+}
+.padding-lg {
+    padding: $spacing-lg;
+}
+.padding-md-lg {
+    padding: $spacing-md $spacing-lg;
+}
+.padding-sm-lg {
+    padding: $spacing-sm $spacing-lg;
+}
+.padding-sm-md {
+    padding: $spacing-sm $spacing-md;
+}
+.padding-md-sm {
+    padding: $spacing-md $spacing-sm;
+}
+.padding-md-xxl {
+    padding: $spacing-md $spacing-xxl;
+}
+.padding-lg-sm {
+    padding: $spacing-lg $spacing-sm;
+}
+.padding-lg-md {    
+    padding: $spacing-lg $spacing-md;
+}
+
+.stack-xs {
+    &:not(:last-child) {
+        margin-bottom: $spacing-xs;
+    }
+}
+.stack-sm {
+    &:not(:last-child) {
+        margin-bottom: $spacing-sm;
+    }
+}
+.stack-md {
+    &:not(:last-child) {
+        margin-bottom: $spacing-md;
+    }
+}
+.stack-lg {
+    &:not(:last-child) {
+        margin-bottom: $spacing-lg;
+    }
+}
+
+.inline-xs {
+    &:not(:last-child) {
+        margin-right: $spacing-xs;
+    }
+}
+.inline-sm {
+    &:not(:last-child) {
+        margin-right: $spacing-sm;
+    }
+}
+.inline-md {
+    &:not(:last-child) {
+        margin-right: $spacing-md;
+    }
+}
+.inline-lg {
+    &:not(:last-child) {
+        margin-right: $spacing-lg;
+    }
+}

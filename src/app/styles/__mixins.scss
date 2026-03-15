@@ -1,0 +1,25 @@
+// mixins
+
+@mixin container-size {
+	width: 100%;
+	min-width: 360px;
+	max-width: 460px;
+}
+
+@mixin flex-center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+@mixin flex-x {
+	display: flex;
+	flex-direction: row;
+}
+@mixin flex-y {
+	display: flex;
+	flex-direction: column;
+}
+@mixin flex-between {
+	display: flex;
+	justify-content: space-between;
+}
