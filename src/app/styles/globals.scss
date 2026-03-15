@@ -1,0 +1,9 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// リセット
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
