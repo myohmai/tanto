@@ -8,6 +8,39 @@
     padding: 0;
 }
 
+:root {
+    --neutral-color-700: #{$neutral-color--700};
+    --neutral-color-600: #{$neutral-color--600};
+    --neutral-color-500: #{$neutral-color--500};
+    --neutral-color-400: #{$neutral-color--400};
+    --neutral-color-300: #{$neutral-color--300};
+    --neutral-color-200: #{$neutral-color--200};
+    --neutral-color-100: #{$neutral-color--100};
+
+    --accent-color-700: #{$accent-color--700};
+    --accent-color-600: #{$accent-color--600};
+    --accent-color-500: #{$accent-color--500};
+    --accent-color-400: #{$accent-color--400};
+    --accent-color-300: #{$accent-color--300};
+    --accent-color-200: #{$accent-color--200};
+    --accent-color-100: #{$accent-color--100};
+}
+
+// base
+body {
+    font-family: $font-normal;
+    background-color: #FFF;
+    color: var(--neutral-color-700);
+    a {
+        text-decoration: underline;
+        color: var(--accent-color-100);
+    }
+    .night & {
+        background-color: var(--neutral-color-700);
+        color: var(--neutral-color-100);
+    }
+}
+
 // spacing
 .padding-sm {
     padding: $spacing-sm;
@@ -80,4 +113,98 @@
     &:not(:last-child) {
         margin-right: $spacing-lg;
     }
+}
+
+//  color
+.bg-color-primary {
+    background-color: #FFF;
+    .night & {
+        background-color: var(--neutral-color-700);
+    }
+}
+
+.bg-color-secondary {
+    background-color: var(--neutral-color-100);
+    .night & {
+        background-color: var(--neutral-color-400);
+    }
+}
+
+.text-color-primary {
+    color: var(--neutral-color-700);
+    .night & {
+        color: var(--neutral-color-100);
+    }
+}
+
+.text-color-secondary {
+    color: var(--neutral-color-500);
+    .night & {
+        color: var(--neutral-color-200);
+    }
+}
+
+.text-color-accent {
+    color: var(--accent-color-100);
+}
+
+.button-primary {
+    background-color: var(--accent-color-400);
+    color: #FFF;
+    border-radius: $radius-full;
+    &:hover {
+        background-color: var(--accent-color-300);
+    }
+    &:active {
+        background-color: var(--neutral-color-400);
+    }
+    .night & {
+        background-color: var(--accent-color-300);
+        color: #FFF;
+        &:hover {
+            background-color: var(--accent-color-200);
+        }
+        &:active {
+            background-color: var(--neutral-color-400);
+        }
+    }
+}
+
+.button-secondary {
+    background-color: var(--neutral-color-400);
+    color: #FFF;
+    border-radius: $radius-sm;
+    &:hover {
+        background-color: var(--neutral-color-300);
+    }
+    &:active {
+        background-color: var(--neutral-color-500);
+    }
+    .night & {
+        background-color: var(--neutral-color-300);
+        color: #FFF;
+        &:hover {
+            background-color: var(--neutral-color-200);
+        }
+        :active {
+            background-color: var(--neutral-color-500);
+        }
+    }
+}
+
+.separate-line {
+    border-top: 1px solid var(--neutral-color-200);
+    width: 100%;
+    height: 1px;
+    .night & {
+        border-top: 1px solid var(--neutral-color-400);
+    }
+}
+
+.content-radius {
+    border-radius: $radius-md;
+}
+
+.media-radius {
+    border-radius: $radius-sm;
 }
