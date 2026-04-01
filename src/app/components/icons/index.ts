@@ -16,6 +16,10 @@ export { ReplyIcon } from './action/ReplyIcon';
 export { EditIcon } from './action/EditIcon';
 export { FondIcon } from './action/FondIcon';
 export { FondLineIcon } from './action/FondLineIcon';
+export { BellIcon } from './action/BellIcon';
+export { CheckBoxIcon } from './action/CheckBoxIcon';
+export { EyeIcon } from './action/EyeIcon';
+export { RadioButtonIcon } from './action/RadioButtonIcon';
 
 
 // utility
@@ -39,6 +43,15 @@ export { BoxIcon } from './utility/BoxIcon';
 export { CancelIcon } from './utility/CancelIcon';
 export { CheckIcon } from './utility/CheckIcon';
 export { PlusIcon } from './utility/PlusIcon';
+export { AccountIcon } from './utility/AccountIcon';
+export { CrownIcon } from './utility/CrownIcon';
+export { HamburgerIcon } from './utility/HamburgerIcon';
+export { LogInIcon } from './utility/LogInIcon';
+export { LogOutIcon } from './utility/LogOutIcon';
+export { DarkIcon } from './utility/DarkIcon';
+export { LightIcon } from './utility/LightIcon';
+export { ProhibitedIcon } from './utility/ProhibitedIcon';
+export { KeyIcon } from './utility/KeyIcon';
 
 // Media
 export { AddPictureIcon } from './media/AddPictureIcon';
@@ -48,6 +61,10 @@ export { MuteIcon } from './media/MuteIcon';
 export { SpeakerIcon } from './media/SpeakerIcon';
 export { PauseIcon } from './media/PauseIcon';
 export { PlayIcon } from './media/PlayIcon';
+export { CameraIcon } from './media/CameraIcon';
+export { LinkIcon } from './media/LinkIcon';
+export { MediaIcon } from './media/MediaIcon';
+
 
 // Status
 export { RoomVerifiedIcon } from './status/RoomVerifiedIcon';
