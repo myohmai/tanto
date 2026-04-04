@@ -1,0 +1,21 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.tag-input-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xxs $spacing-sm;
+    border-radius: $radius-sm;
+    &__label {
+        font: $font-400_regular;
+    }
+    &__remove-button {
+        width: $font-size-base;
+        height: $font-size-base;
+    }
+    &__remove-icon {
+        width: $font-size-base;
+        height: $font-size-base;
+    }
+}

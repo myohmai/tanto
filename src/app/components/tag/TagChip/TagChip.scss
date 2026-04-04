@@ -1,0 +1,17 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    border-radius: $radius-full;
+    color: var(--accent-color-400);
+    font: $font-300_light_xs;
+    border: 0.5px solid var(--accent-color-400);
+    .night & {
+        color: var(--accent-color-100);
+        border: 0.5px solid var(--accent-color-100);
+    }
+}

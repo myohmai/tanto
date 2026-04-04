@@ -6,7 +6,7 @@
     flex-direction: column;
     width: 100%;
     &__message {
-        font-size: $font-size-sm;
+        font: $font-400_regular_sm;
         width: 100%;
         display: flex;
         align-items: center;
@@ -22,7 +22,7 @@
         @include flex-center;
         color: var(--neutral-color-700);
         background-color: var(--neutral-color-300);
-        font-size: $font-size-sm;
+        font: $font-400_regular_sm;
         &:hover {
             background-color: var(--neutral-color-200);
         }
@@ -46,7 +46,7 @@
         @include flex-center;
         color: var(--neutral-color-700);
         background-color: var(--neutral-color-200);
-        font-size: $font-size-sm;
+        font: $font-400_regular_sm;
         &:hover {
             background-color: var(--neutral-color-100);
         }

@@ -1,10 +1,10 @@
 'use client';
 
 import Image from "next/image";
-import { Revaluation } from "@/app/components/evaluation/Revaluation";
+import { TagInputChip } from "@/app/components/tag/TagInputChip";
 
 export default function Home() {
   return (
-    <Revaluation lang="en" onYes={() => {}} onNo={() => {}} />
+    <TagInputChip label="Example Tag" onRemove={() => console.log('remove')} />
   );
 }
