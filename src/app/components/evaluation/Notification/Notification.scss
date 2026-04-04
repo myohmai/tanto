@@ -1,0 +1,17 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.notification {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    &__icon {
+        flex-shrink: 0;
+    }
+    &__message {
+        font-size: $font-size-sm;
+        flex: 1;
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+}

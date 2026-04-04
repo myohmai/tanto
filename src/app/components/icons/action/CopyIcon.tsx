@@ -1,4 +1,3 @@
-type IconSize = 'lg' | 'md' | 'sm';
 
 const sizeMap: Record<IconSize, number> = {
     lg: 32,

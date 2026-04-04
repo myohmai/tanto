@@ -1,0 +1,67 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.revaluation {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    &__message {
+        font-size: $font-size-sm;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+    &__buttons {
+        display: flex;
+        width: 100%;
+    }
+    &__buttons--yes{
+        position: relative;
+        flex: 1;
+        border-radius: $radius-sm;
+        @include flex-center;
+        color: var(--neutral-color-700);
+        background-color: var(--neutral-color-300);
+        font-size: $font-size-sm;
+        &:hover {
+            background-color: var(--neutral-color-200);
+        }
+        &:active {
+            background-color: var(--neutral-color-400);
+        }
+    }
+    &__buttons--yes-icon {
+        width: $font-size-base;
+        height: $font-size-base;
+        fill: var(--neutral-color-700);
+        position: absolute;
+        top: 50%;
+        left: $spacing-lg;
+        transform: translateY(-50%);
+    }
+    &__buttons--no{
+        position: relative;
+        flex: 1;
+        border-radius: $radius-sm;
+        @include flex-center;
+        color: var(--neutral-color-700);
+        background-color: var(--neutral-color-200);
+        font-size: $font-size-sm;
+        &:hover {
+            background-color: var(--neutral-color-100);
+        }
+        &:active {
+            background-color: var(--neutral-color-300);
+        }
+
+    }
+    &__buttons--no-icon {
+        width: $font-size-base;
+        height: $font-size-base;
+        fill: var(--neutral-color-700);
+        position: absolute;
+        top: 50%;
+        left: $spacing-lg;
+        transform: translateY(-50%);
+    }
+}

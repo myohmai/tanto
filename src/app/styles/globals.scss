@@ -1,5 +1,5 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+@use './variables' as *;
+@use './mixins' as *;
 
 // リセット
 *, *::before, *::after {
@@ -72,48 +72,43 @@ body {
 .padding-lg-md {    
     padding: $spacing-lg $spacing-md;
 }
+.padding-xs-lg {
+    padding: $spacing-xs $spacing-lg;
+}
 
-.stack-xs {
-    &:not(:last-child) {
+.stack-xs > *:not(:last-child) {
         margin-bottom: $spacing-xs;
     }
-}
-.stack-sm {
-    &:not(:last-child) {
+
+.stack-sm > *:not(:last-child) {
         margin-bottom: $spacing-sm;
     }
-}
-.stack-md {
-    &:not(:last-child) {
+
+.stack-md > *:not(:last-child) {
         margin-bottom: $spacing-md;
     }
-}
-.stack-lg {
-    &:not(:last-child) {
+
+.stack-lg > *:not(:last-child) {
         margin-bottom: $spacing-lg;
     }
-}
 
-.inline-xs {
-    &:not(:last-child) {
+
+.inline-xs > *:not(:last-child) {
         margin-right: $spacing-xs;
     }
-}
-.inline-sm {
-    &:not(:last-child) {
+
+.inline-sm > *:not(:last-child) {
         margin-right: $spacing-sm;
     }
-}
-.inline-md {
-    &:not(:last-child) {
+
+.inline-md > *:not(:last-child) {
         margin-right: $spacing-md;
     }
-}
-.inline-lg {
-    &:not(:last-child) {
+
+.inline-lg > *:not(:last-child) {
         margin-right: $spacing-lg;
     }
-}
+
 
 //  color
 .bg-color-primary {
@@ -141,6 +136,20 @@ body {
     color: var(--neutral-color-500);
     .night & {
         color: var(--neutral-color-200);
+    }
+}
+
+.icon-color-primary {
+    fill: var(--neutral-color-700);
+    .night & {
+        fill: var(--neutral-color-100);
+    }
+}
+
+.icon-color-secondary {
+    fill: var(--neutral-color-500);
+    .night & {
+        fill: var(--neutral-color-200);
     }
 }
 
@@ -207,4 +216,29 @@ body {
 
 .media-radius {
     border-radius: $radius-sm;
+}
+
+.custom-icon {
+    width: $user-icon-size;
+    height: $user-icon-size;
+    border-radius: $radius-full;
+    border: 2px solid #FFF;
+    .night & {
+        border: 2px solid var(--neutral-color-700);
+    }
+    img {
+        width: 100%;
+        height: 100%;
+        border-radius: $radius-full;
+    }
+    &__wrapper {
+        position: relative;
+        width: $user-icon-size;
+        height: $user-icon-size;
+    }
+    &__sub-icon {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+    }
 }

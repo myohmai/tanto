@@ -1,5 +1,4 @@
 import { useId } from 'react';
-type IconSize = 'lg' | 'md' | 'sm'; 
 
 const sizeMap: Record<IconSize, number> = {
     lg: 32,
@@ -7,15 +6,52 @@ const sizeMap: Record<IconSize, number> = {
     sm: 16,
 };
 
+const levelMap: Record<FondLevel, string> = {
+    '100': '#D68C9A',
+    '200': '#E55C80',
+    '300': '#DC3A5C',
+    '400': '#DB0238',
+    '500': '#B8022F',
+};
+
+const colorMap: Record<BiasColor, string> = {
+    'red': '#FF3333',
+    'orange': '#FF7733',
+    'light-orange': '#FFBB33',
+    'yellow': '#FFFF33',
+    'yellow-green': '#33FF33',
+    'green': '#00CC44',
+    'turquoise': '#29CCCC',
+    'sky-blue': '#66CCFF',
+    'blue': '#3333FF',
+    'navy': '#000080',
+    'purple': '#9933FF',
+    'lavender': '#E6B3FF',
+    'amethyst': '#DD33FF',
+    'pink': '#FF3377',
+    'baby-pink': '#FF80D5',
+    'silver': '#CCCCCC',
+    'black': '#050505',
+    'gold': '#CCAA66',
+    'brown': '#99705C',
+    'white': '#F2F2F2',
+};
+
 type Props = {
     size?: IconSize;
-    color?: string;
+    level?: FondLevel;
+    bias?: BiasColor;
     className?: string;
 };
 
-export const FondIcon = ({ size = 'md', color = '#d68c9a', className }: Props) => {
+export const FondIcon = ({ size = 'md', level, bias, className }: Props) => {
     const iconSize = sizeMap[size];
     const id = useId();
+    const resolveColor = 
+        bias ? colorMap[bias] :
+        level ? levelMap[level] :
+        levelMap['300'];
+    const color = resolveColor;
     return (
         <svg xmlns="http://www.w3.org/2000/svg"
             width={iconSize}

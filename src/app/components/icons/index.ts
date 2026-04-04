@@ -72,3 +72,8 @@ export { RoomMuteIcon } from './status/RoomMuteIcon';
 export { UserBlockIcon } from './status/UserBlockIcon';
 export { HostIcon } from './status/HostIcon';
 export { PersonIcon } from './status/PersonIcon';
+
+// Type
+export type { IconSize } from './types';
+export type { FondLevel } from './types';
+export type { BiasColor } from './types';
