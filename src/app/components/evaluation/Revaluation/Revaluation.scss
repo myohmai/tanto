@@ -25,6 +25,7 @@
         font: $font-400_regular_sm;
         &:hover {
             background-color: var(--neutral-color-200);
+            transition: background-color 0.15s ease;
         }
         &:active {
             background-color: var(--neutral-color-400);
@@ -49,6 +50,7 @@
         font: $font-400_regular_sm;
         &:hover {
             background-color: var(--neutral-color-100);
+            transition: background-color 0.15s ease;
         }
         &:active {
             background-color: var(--neutral-color-300);

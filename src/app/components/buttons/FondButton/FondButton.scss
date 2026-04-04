@@ -1,0 +1,28 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.fond-button {
+    width: $icon-md;
+    height: $icon-md;
+    background: none;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    &__icon-wrapper {
+        position: relative;
+        width: $icon-md;
+        height: $icon-md;
+    }
+    &__icon--not-pressed-line {
+        position: absolute;
+        top:0;
+        left: 0;
+    }
+    &__icon--not-pressed {
+        opacity: 0.5;
+        filter: blur(1px);
+        position: absolute;
+        top:0;
+        left: 0;
+    }
+}

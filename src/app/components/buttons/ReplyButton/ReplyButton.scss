@@ -1,0 +1,16 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.reply-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    background: none;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    &__count {
+        font: $font-400_regular_sm;
+    }
+}
