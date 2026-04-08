@@ -1,0 +1,27 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.gloss-cancel-button {
+    width: fit-content;
+    background: none;
+    border: none;
+    flex-shrink: 0;
+    font: $font-400_regular_sm;
+    border-radius: $radius-full;
+    &:hover {
+        background-color: var(--neutral-color-100);
+        transition: background-color 0.15s ease;
+    }
+    &:active {
+        background-color: var(--neutral-color-200);
+    }
+    .night & {
+        &:hover {
+            background-color: var(--neutral-color-600);
+            transition: background-color 0.15s ease;
+        }
+        &:active {
+            background-color: var(--neutral-color-500); 
+        }
+    }
+}

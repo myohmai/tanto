@@ -1,0 +1,31 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.reply-bar {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &__icon-wrapper {
+        position: relative;
+        width: $icon-lg;
+        height: $icon-lg;
+        flex-shrink: 0;
+    }
+    &__icon {
+        position: absolute;
+        width: $icon-lg;
+        height: $icon-lg;
+        transform-origin: top left;
+        transform: scale(0.666);
+    }
+    &__text {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-full;
+        font: $font-400_regular;
+    }
+}

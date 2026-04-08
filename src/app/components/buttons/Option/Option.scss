@@ -1,0 +1,30 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.option {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    border-radius: $radius-sm;
+    font: $font-400_regular;
+    border: 1px solid var(--neutral-color-400);
+    cursor: pointer;
+    &:hover {
+        border-color: var(--neutral-color-300);
+    }
+    &.selected {
+        border: 1px solid var(--accent-color-200);
+    }
+    &__icon {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            fill: var(--accent-color-200);
+            display: none;
+            .selected & {
+                display: block;
+            }
+        }
+}

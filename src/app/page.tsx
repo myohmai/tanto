@@ -1,10 +1,12 @@
 'use client';
 
 import Image from "next/image";
-import { CameraButton } from "@/app/components/buttons/CameraButton";
+import { ReplyBar } from "@/app/components/buttons/ReplyBar";
 
 export default function Home() {
   return (
-    <CameraButton onSelectFile={(file) => console.log('File selected:', file)} />
+    <div className="night">
+      <ReplyBar userIconUrl="/images/avatar/default-user.png" onClick={() => {}} />
+    </div>
   );
 }

@@ -78,6 +78,9 @@ body {
 .padding-xxs-sm {
     padding: $spacing-xxs $spacing-sm;
 }
+.padding-xs-sm {
+    padding: $spacing-xs $spacing-sm;
+}
 
 .stack-xs > *:not(:last-child) {
         margin-bottom: $spacing-xs;
