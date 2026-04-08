@@ -1,0 +1,28 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.quote-button {
+    width: $icon-md;
+    height: $icon-md;
+    background: none;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    border-radius: $radius-full;
+    &:hover {
+        background-color: var(--neutral-color-100);
+        transition: background-color 0.15s ease;
+    }
+    &:active {
+        background-color: var(--neutral-color-200);
+    }
+    .night & {
+        &:hover {
+            background-color: var(--neutral-color-600);
+            transition: background-color 0.15s ease;
+        }
+        &:active {
+            background-color: var(--neutral-color-500); 
+        }
+    }
+}

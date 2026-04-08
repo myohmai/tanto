@@ -1,0 +1,33 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.topic-view-button {
+    @include flex-center;
+    width: fit-content;
+    background-color: var(--accent-color-400);
+    color: #FFF;
+    border: none;
+    cursor: pointer;
+    border-radius: $radius-full;
+    font: $font-600_semi-bold;
+    transition: background-color 0.15s ease;
+    &:hover {
+        filter: brightness(1.2);
+    }
+    &:active {
+        filter: brightness(0.8);
+    }
+    .night & {
+        background-color: var(--accent-color-300);
+    }
+    &.disabled {
+        background-color: var(--neutral-color-400);
+        cursor: not-allowed;
+        &:hover {
+            filter: none;
+        }
+        &:active {
+            filter: none;
+        }
+    }
+} 

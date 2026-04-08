@@ -1,12 +1,10 @@
 'use client';
 
 import Image from "next/image";
-import { ReplyBar } from "@/app/components/buttons/ReplyBar";
+import { RoomMenuButton } from "@/app/components/buttons/RoomMenuButton";
 
 export default function Home() {
   return (
-    <div className="night">
-      <ReplyBar userIconUrl="/images/avatar/default-user.png" onClick={() => {}} />
-    </div>
+    <RoomMenuButton onClick={() => console.log("Room menu button clicked")} />
   );
 }
