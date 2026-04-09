@@ -1,0 +1,52 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.room-enter-button {
+    @include flex-center;
+    cursor: pointer;
+    width: 140px;
+    height: fit-content;
+    padding: $spacing-sm;
+    border-radius: $radius-full;
+    font: $font-700_bold;
+    color: #FFF;
+    background-color: var(--accent-color-400);
+    &:hover {
+        filter: brightness(1.2);
+        transition: filter 0.15s ease;
+    }
+    &:active {
+        filter: brightness(0.8);
+    }
+    .night & {
+        background-color: var(--accent-color-300);
+    }
+    &.entered {
+        background-color: var(--neutral-color-500);
+    }
+    &__entered {
+        @include flex-center;
+        width: 100%;
+    }
+    &__check {
+        width: $font-size-base;
+        height: $font-size-base;
+        fill: #FFF;
+        margin-left: $spacing-sm;
+    }
+    &.in-salon {
+        width: $icon-md;
+        height: $icon-md;
+        background: none;
+        padding: 0;
+    }
+    &__check--in-salon {
+        fill: var(--neutral-color-500);
+    }
+    &__plus {
+        fill: var(--accent-color-400);
+        .night & {
+            fill: var(--accent-color-300);
+            }
+    }
+}

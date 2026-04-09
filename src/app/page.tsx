@@ -1,10 +1,12 @@
 'use client';
 
 import Image from "next/image";
-import { RoomMenuButton } from "@/app/components/buttons/RoomMenuButton";
+import { TabButton } from "@/app/components/buttons/TabButton";
 
 export default function Home() {
   return (
-    <RoomMenuButton onClick={() => console.log("Room menu button clicked")} />
+    <div >
+      <TabButton label="label" isSelected={false}/>
+    </div>
   );
 }
