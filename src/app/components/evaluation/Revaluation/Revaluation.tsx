@@ -33,11 +33,11 @@ export const Revaluation = ({ lang, onYes, onNo }: Props) => {
                 <span>{message.message}</span>
             </div>
             <div className='revaluation__buttons inline-md'>
-                <button onClick={onYes} className='revaluation__buttons--yes padding-xs-lg'>
+                <button type="button" onClick={onYes} className='revaluation__buttons--yes padding-xs-lg'>
                     <CheckIcon className='revaluation__buttons--yes-icon' />
                     <span>{message.yes}</span>
                 </button>
-                <button onClick={onNo} className='revaluation__buttons--no padding-xs-lg'>
+                <button type="button" onClick={onNo} className='revaluation__buttons--no padding-xs-lg'>
                     <CancelIcon className='revaluation__buttons--no-icon' />
                     <span>{message.no}</span>
                 </button>

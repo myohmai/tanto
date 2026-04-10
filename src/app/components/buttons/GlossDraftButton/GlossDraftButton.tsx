@@ -6,7 +6,7 @@ type Props = {
 
 export const GlossDraftButton = ({ onClick }: Props) => {
     return (
-        <button className="gloss-draft-button padding-xs-sm" onClick={onClick}>
+        <button type="button" className="gloss-draft-button padding-xs-sm" onClick={onClick}>
                 Draft
         </button>
     );

@@ -6,7 +6,7 @@ type Props = {
 
 export const TopicViewButton = ({ onClick }: Props) => {
     return (
-        <button className="topic-view-button padding-xs-md" onClick={onClick}>
+        <button type="button" className="topic-view-button padding-xs-md" onClick={onClick}>
             View
         </button>
     );

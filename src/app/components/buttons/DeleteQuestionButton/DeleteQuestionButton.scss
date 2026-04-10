@@ -1,0 +1,22 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.delete-question-button {
+    width: $icon-lg;
+    height: $icon-lg;
+    background: none;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    &__icon {
+        fill: var(--neutral-color-300);
+    }
+    &:hover .delete-question-button__icon{
+        filter: brightness(1.2);
+        transition: filter 0.15s ease;
+    }
+    &:active .delete-question-button__icon {
+        filter: brightness(0.8);
+    }
+}

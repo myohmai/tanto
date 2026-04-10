@@ -10,7 +10,7 @@ type Props = {
 
 export const ReplyBar = ({ userIconUrl, userSubIcon, onClick }: Props) => {
     return (
-        <button className="reply-bar padding-sm-md inline-md bg-color-primary" onClick={onClick}>
+        <button type="button" className="reply-bar padding-sm-md inline-md bg-color-primary" onClick={onClick}>
             <div className="reply-bar__icon-wrapper">
                 <UserCustomIcon iconUrl={userIconUrl} subIcon={userSubIcon} className="reply-bar__icon" />
             </div>

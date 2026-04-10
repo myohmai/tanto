@@ -1,0 +1,1 @@
+export { TurnTableAcceptation } from './TurnTableAcceptation'

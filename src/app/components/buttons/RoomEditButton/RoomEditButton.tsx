@@ -7,7 +7,7 @@ type Props = {
 
 export const RoomEditButton = ({ onClick }: Props) => {
     return (
-        <button className="room-edit-button" onClick={onClick}>
+        <button type="button" className="room-edit-button" onClick={onClick}>
             <div className="room-edit-button__bg" />
             <EditIcon size="md" className="room-edit-button__icon" />
         </button>

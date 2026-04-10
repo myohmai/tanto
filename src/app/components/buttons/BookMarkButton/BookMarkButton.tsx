@@ -8,7 +8,7 @@ type Props = {
 
 export const BookMarkButton = ({ onToggle, isBookmarked }: Props) => {
     return (
-        <button onClick={onToggle} className="bookmark-button">
+        <button type="button" onClick={onToggle} className="bookmark-button">
             {isBookmarked ? <BookMarkIcon size="md" variant="fill" className="icon-color-primary" /> : <BookMarkIcon size="md" variant="line" className="icon-color-primary" />}
         </button>
     );

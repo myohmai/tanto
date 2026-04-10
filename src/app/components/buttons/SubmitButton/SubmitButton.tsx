@@ -8,7 +8,7 @@ type Props = {
 
 export const SubmitButton = ({ label, onClick, disabled = false }: Props) => {
     return (
-        <button className={`submit-button padding-sm-lg ${disabled ? 'disabled' : ''}`} onClick={onClick} disabled={disabled}>
+        <button type="button" className={`submit-button padding-sm-lg ${disabled ? 'disabled' : ''}`} onClick={onClick} disabled={disabled}>
             {label}
         </button>
     );

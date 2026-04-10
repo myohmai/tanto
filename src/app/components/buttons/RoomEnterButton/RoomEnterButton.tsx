@@ -13,7 +13,7 @@ export const RoomEnterButton = ({ isInSalon, isEntered, onClick }: Props) => {
     const buttonClass = `room-enter-button ${isInSalon ? "in-salon" : ""} ${isEntered ? "entered" : ""}`;
 
     return (
-        <button className={buttonClass} onClick={onClick}>
+        <button type="button" className={buttonClass} onClick={onClick}>
             {isInSalon ? buttonIcon : buttonText}
         </button>
     );

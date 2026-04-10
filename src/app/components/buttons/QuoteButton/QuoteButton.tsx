@@ -7,7 +7,7 @@ type Props = {
 
 export const QuoteButton = ({ onClick }: Props) => {
     return (
-        <button onClick={onClick} className="quote-button">
+        <button type="button" onClick={onClick} className="quote-button">
             <QuoteIcon size="md" className="icon-color-primary" />
         </button>
     );

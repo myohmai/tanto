@@ -27,7 +27,7 @@ export const PictureButton = ({ onSelectFile }: Props) => {
             hidden
             />
 
-            <button onClick={() => inputRef.current?.click()} className="picture-button">
+            <button type="button" onClick={() => inputRef.current?.click()} className="picture-button">
             <PictureIcon size="lg" className="icon-color-secondary" />
             </button>
         </>

@@ -1,0 +1,22 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.add-quiz-option-button {
+    width: $icon-lg;
+    height: $icon-lg;
+    background: none;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    &__icon {
+        fill: var(--accent-color-100);
+    }
+    &:hover .add-quiz-option-button__icon {
+        filter: brightness(1.2);
+        transition: filter 0.15s ease;
+    }
+    &:active .add-quiz-option-button__icon {
+        filter: brightness(0.8);
+    }
+}

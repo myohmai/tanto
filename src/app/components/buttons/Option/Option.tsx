@@ -9,7 +9,7 @@ type Props = {
 
 export const Option = ({ label, isSelected, onSelect }: Props) => {
     return (
-        <button className={`option padding-sm text-color-primary ${isSelected ? 'selected' : ''}`} onClick={() => onSelect(label)}>
+        <button type="button" className={`option padding-sm text-color-primary ${isSelected ? 'selected' : ''}`} onClick={() => onSelect(label)}>
             <span>{label}</span>
             {isSelected && <CheckIcon size="md" className="option__icon" />}
         </button>

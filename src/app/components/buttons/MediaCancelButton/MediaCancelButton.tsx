@@ -7,7 +7,7 @@ type Props = {
 
 export const MediaCancelButton = ({ onClick }: Props) => {
     return (
-        <button className="media-cancel-button" onClick={onClick}>
+        <button type="button" className="media-cancel-button" onClick={onClick}>
             <CancelIcon size="lg" className="media-cancel-button__icon" />
         </button>
     );

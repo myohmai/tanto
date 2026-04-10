@@ -1,0 +1,22 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.add-question-button {
+    width: $icon-lg;
+    height: $icon-lg;
+    background: none;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    &__icon {
+        fill: var(--accent-color-200);
+    }
+    &:hover .add-question-button__icon {
+        filter: brightness(1.2);
+        transition: filter 0.15s ease;
+    }
+    &:active .add-question-button__icon {
+        filter: brightness(0.8);
+    }
+}

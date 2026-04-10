@@ -1,19 +1,18 @@
-import { CameraIcon } from "@/app/components/icons"
-import './CameraButton.scss';
+import { AddPictureIcon } from "@/app/components/icons";
+import './AddBannerPictureButton.scss'
 import { useRef } from "react";
 
 type Props = {
     onSelectFile: (file: File) => void;
 }
 
-// TODO: support multiple file selection (max 4 files)
-
-export const CameraButton = ({ onSelectFile }: Props) => {
+export const AddBannerPictureButton = ({ onSelectFile }: Props) => {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
             onSelectFile(file);
         }
+        event.target.value = "";
     };
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -22,14 +21,14 @@ export const CameraButton = ({ onSelectFile }: Props) => {
             <input
             type="file"
             accept="image/*"
-            capture="environment"
             ref={inputRef}
             onChange={handleFileChange}
             hidden
             />
 
-            <button  type="button" onClick={() => inputRef.current?.click()} className="camera-button">
-            <CameraIcon size="lg" className="icon-color-secondary" />
+            <button type="button" onClick={() => inputRef.current?.click()} className="add-banner-picture-button padding-xs-sm inline-xs" aria-label="Select banner image">
+                <div className="add-banner-picture-button__bg"></div>
+                <AddPictureIcon size="md" className="add-banner-picture-button__icon" />
             </button>
         </>
     );

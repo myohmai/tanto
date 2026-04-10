@@ -1,0 +1,1 @@
+export { DeleteQuizOptionButton } from './DeleteQuizOptionButton';

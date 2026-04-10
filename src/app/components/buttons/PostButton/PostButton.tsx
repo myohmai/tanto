@@ -7,7 +7,7 @@ type Props = {
 
 export const PostButton = ({ onClick, disabled }: Props) => {
     return (
-        <button className="post-button padding-sm-md" onClick={onClick} disabled={disabled}>
+        <button type="button" className="post-button padding-sm-md" onClick={onClick} disabled={disabled}>
         Post
         </button>
     );

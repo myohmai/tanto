@@ -1,0 +1,52 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.turn-table-acceptation {
+    @include flex-center;
+    width: 100%;
+    height: fit-content;
+    padding: 0;
+    font: $font-400_regular_sm;
+    &__accept {
+        width: 124px;
+        height: fit-content;
+        background-color: none;
+        cursor: pointer;
+        color: $color-success--500;
+        border-radius: $radius-full;
+        border: 1px solid $color-success--500;
+        &:hover {
+            border: 1.5px solid $color-success--500;
+            transition: border 0.15s ease;
+        }
+        &:active {
+            border: 1.5px solid $color-success--500;
+        }
+    }
+    &__accept-icon {
+        width: $font-size-base;
+        height: $font-size-base;
+        fill: $color-success--500;
+    }
+    &__reject {
+        width: 124px;
+        height: fit-content;
+        background-color: none;
+        cursor: pointer;
+        color: $color-warning--500;
+        border-radius: $radius-full;
+        border: 1px solid $color-warning--500;
+        &:hover {
+            border: 1.5px solid $color-warning--500;
+            transition: border 0.15s ease;
+        }
+        &:active {
+            border: 1.5px solid $color-warning--500;
+        }
+    }
+    &__reject-icon {
+        width: $font-size-base;
+        height: $font-size-base;
+        fill: $color-warning--500;
+    }
+}

@@ -1,7 +1,7 @@
 @use '@/app/styles/variables' as *;
 @use '@/app/styles/mixins' as *;
 
-.media-sound {
+.pull-down-arrow {
     width: $icon-md;
     height: $icon-md;
     background: none;
@@ -9,7 +9,4 @@
     padding: 0;
     flex-shrink: 0;
     cursor: pointer;
-    &__icon {
-        fill: var(--neutral-color-600);
-    }
 }

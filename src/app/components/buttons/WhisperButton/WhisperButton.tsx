@@ -6,7 +6,7 @@ type Props = {
 
 export const WhisperButton = ({ onClick }: Props) => {
     return (
-        <button className="whisper-button padding-xs-md" onClick={onClick}>
+        <button type="button" className="whisper-button padding-xs-md" onClick={onClick}>
             Whisper
         </button>
     );

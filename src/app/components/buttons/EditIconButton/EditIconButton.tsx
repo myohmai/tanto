@@ -1,19 +1,18 @@
-import { CameraIcon } from "@/app/components/icons"
-import './CameraButton.scss';
+import { AddPictureIcon } from "@/app/components/icons";
+import './EditIconButton.scss';
 import { useRef } from "react";
 
 type Props = {
     onSelectFile: (file: File) => void;
 }
 
-// TODO: support multiple file selection (max 4 files)
-
-export const CameraButton = ({ onSelectFile }: Props) => {
+export const EditIconButton = ({ onSelectFile }: Props) => {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
             onSelectFile(file);
         }
+        event.target.value = "";
     };
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -21,15 +20,15 @@ export const CameraButton = ({ onSelectFile }: Props) => {
         <>
             <input
             type="file"
-            accept="image/*"
-            capture="environment"
+            accept="image/png, image/jpeg"
             ref={inputRef}
             onChange={handleFileChange}
             hidden
             />
 
-            <button  type="button" onClick={() => inputRef.current?.click()} className="camera-button">
-            <CameraIcon size="lg" className="icon-color-secondary" />
+            <button type="button" onClick={() => inputRef.current?.click()} className="edit-icon-button padding-xs-sm inline-xs" aria-label="Select Image">
+                <AddPictureIcon size="sm" className="edit-icon-button__icon" />
+                <span className="edit-icon-button__label">Edit Sub Icon</span>
             </button>
         </>
     );

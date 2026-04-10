@@ -1,0 +1,27 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.edit-icon-button {
+    width: fit-content;
+    height: fit-content;
+    display: inline-flex;
+    background: none;
+    flex-wrap: 0;
+    cursor: pointer;
+    border-radius: $radius-full;
+    border: 1px solid var(--neutral-color-200);
+    &:hover {
+        border: 2px solid var(--neutral-color-200);
+        transition: border 0.15s ease;
+    }
+    &:active {
+        border: 2px solid var(--neutral-color-300);
+    }
+    &__icon {
+        fill: var(--accent-color-100);
+    }
+    &__label {
+        color: var(--accent-color-100);
+        font: $font-500_medium_sm;
+    }
+}
