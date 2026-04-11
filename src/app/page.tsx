@@ -1,12 +1,12 @@
 'use client';
 
 import Image from "next/image";
-import { TurnTableAcceptation } from "@/app/components/buttons/TurnTableAcceptation";
+import { RoomUtilityContainer } from "@/app/components/container/RoomUtilityContainer";
 
 export default function Home() {
   return (
-    <div >
-      <TurnTableAcceptation/>
+    <div>
+      <RoomUtilityContainer/>
     </div>
   );
 }

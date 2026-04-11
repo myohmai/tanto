@@ -1,0 +1,25 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.log-out-button {
+    @include flex-center;
+    width: 100%;
+    height: fit-content;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: $radius-sm;
+    background: none;
+    --border-color: var(--neutral-color-500);
+    border: 1px solid var(--border-color);
+    font: $font-400_regular_sm;
+    &:hover {
+        border-width: 2px;
+        transition: border 0.15s ease;
+    }
+    &:active {
+        border-width: 2px;
+    }
+    .night & {
+        --border-color: var(--neutral-color-200);
+    }
+}

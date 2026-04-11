@@ -1,9 +1,9 @@
 @use '@/app/styles/variables' as *;
 @use '@/app/styles/mixins' as *;
 
-.bookmark-button {
-    width: $icon-md;
-    height: $icon-md;
+.media-play-button {
+    width: $icon-lg;
+    height: $icon-lg;
     background: none;
     border: none;
     cursor: pointer;

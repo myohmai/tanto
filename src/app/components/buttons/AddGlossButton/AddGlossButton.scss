@@ -1,0 +1,24 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.add-gloss-button {
+    @include flex-center;
+    width: 48px;
+    height: 48px;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    border-radius: $radius-full;
+    cursor: pointer;
+    background-color: var(--accent-color-100);
+    &:hover {
+        filter: brightness(1.2);
+        transition: filter 0.15s ease;
+    }
+    &:active {
+        filter: brightness(0.8);
+    }
+    &__icon {
+        fill: #FFF;
+    }
+}

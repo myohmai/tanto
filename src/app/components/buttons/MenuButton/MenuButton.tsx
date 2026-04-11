@@ -7,7 +7,7 @@ type Props = {
 
 export const MenuButton = ({ onClick }: Props) => {
     return (
-        <button type="button" onClick={onClick} className="menu-button">
+        <button type="button" onClick={onClick} className="menu-button" aria-label="Menu">
             <MenuIcon size="md" className="icon-color-primary" />
         </button>
     );

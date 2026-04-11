@@ -1,0 +1,34 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.toggle-button {
+    display: flex;
+    align-items: center;
+    width: 48px;
+    height: 24px;
+    border: none;
+    border-radius: $radius-full;
+    cursor: pointer;
+    padding: 3px $spacing-xs;
+    &.on {
+        justify-content: flex-end;
+        background-color: var(--accent-color-100);
+    }
+    &.off {
+        justify-content: flex-start;
+        background-color: var(--neutral-color-400);
+    }
+    &:hover {
+        filter: brightness(1.2);
+        transition: filter 0.15s ease;
+    }
+    &:active {
+        filter: brightness(0.8);
+    }
+    &__knob {
+        width: 18px;
+        height: 18px;
+        border-radius: $radius-full;
+        background-color: var(--neutral-color-100);
+    }
+}
