@@ -1,0 +1,18 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.see-also {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    border: none;
+    background: none;
+    flex-shrink: 0;
+    cursor: pointer;
+    font: $font-400_regular_sm;
+    &__icon {
+        width: $font-size-base;
+        height: $font-size-base;
+    }
+}

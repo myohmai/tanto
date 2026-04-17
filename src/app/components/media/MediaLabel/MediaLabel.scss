@@ -1,0 +1,25 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.media-label {
+    width: fit-content;
+    height: fit-content;
+    border-radius: $radius-full;
+    color: var(--neutral-color-700);
+    font: $font-400_regular_sm;
+    &.fanArt {
+        background-color: $rose-color--100;
+    }
+    &.official {
+        background-color: $key-color--100;
+    }
+    &.original {
+        background-color: $accent-color--100;
+    }
+    &.quote {
+        background-color: $antique-color--100;
+    }
+    &.ai {
+        background-color: $neutral-color--200;
+    }
+}

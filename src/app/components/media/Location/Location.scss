@@ -1,0 +1,51 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.location {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    font: $font-400_regular_sm;
+    cursor: default;
+    padding: 0;
+    a {
+        text-decoration: none;
+    }
+    &__pulldown {
+        display: none;
+        width: fit-content;
+        height: fit-content;
+        flex-direction: column;
+        &.open {
+            display: flex;
+            padding: $spacing-xs $spacing-sm;
+        }
+        &--wrapper {
+            display: flex;
+            width: fit-content;
+            height: fit-content;
+            align-items: flex-start;
+            justify-content: flex-start;
+            border-radius: $radius-sm;
+            &.open {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+        }
+        &--list {
+            width: 100%;
+            height: fit-content;
+            white-space: nowrap;
+            &:hover {
+                background-color: rgba(0,0,0,0.1);
+                transition: all 0.15 ease;
+            }
+        }
+        &__link {
+            text-decoration: none;
+        }
+    }
+}
