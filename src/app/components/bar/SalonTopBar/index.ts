@@ -1,0 +1,1 @@
+export { SalonTopBar } from './SalonTopBar'

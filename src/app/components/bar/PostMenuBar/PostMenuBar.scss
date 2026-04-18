@@ -1,0 +1,9 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.post-menu-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font: $font-600_semi-bold;
+}

@@ -1,0 +1,36 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.turn-table-media-tab {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    &__button {
+        width: fit-content;
+        height: fit-content;
+        font: $font-600_semi-bold;
+        color: var(--neutral-color-500);
+        border: 2px solid var(--neutral-color-500);
+        border-radius: $radius-full;
+        .night & {
+            color: var(--neutral-color-200);
+            border: 2px solid var(--neutral-color-200);
+        }
+        &.is-selected {
+            color: var(--accent-color-100);
+            border: 2px solid var(--accent-color-100);
+            .night {
+                color: var(--neutral-color-200);
+                border: 2px solid var(--neutral-color-200);
+            }
+        }
+        &:hover {
+            filter: brightness(1.2);
+            transform: filter 0.15s ease;
+        }
+        &:active {
+            filter: brightness(0.8);
+        }
+    }
+}

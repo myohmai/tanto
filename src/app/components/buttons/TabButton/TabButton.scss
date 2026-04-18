@@ -16,7 +16,7 @@
         border-bottom: 2px solid var(--neutral-color-200);
         font: $font-700_bold;
     }
-    &.selected {
+    &.is-selected {
         font: $font-700_bold;
     }
     &__label {
@@ -33,7 +33,7 @@
             border-bottom: 2px solid var(--neutral-color-400);
         }
     }
-    &.selected {
+    &.is-selected {
         border-bottom: 2px solid var(--accent-color-100);
     }
 

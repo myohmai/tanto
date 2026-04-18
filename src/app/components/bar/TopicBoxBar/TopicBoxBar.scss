@@ -1,0 +1,17 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.topic-box-bar {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font: $font-700_bold;
+    &__container {
+        width: fit-content;
+        height: fit-content;
+        display: flex;
+        align-items: center;
+    }
+}

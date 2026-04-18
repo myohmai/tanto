@@ -1,0 +1,25 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.where-you-are {
+    display: flex;
+    align-items: baseline;
+    width: fit-content;
+    height: fit-content;
+    &__room {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font: $font-700_bold;
+    }
+    &__salon {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font: $font-600_semi-bold;
+    }
+    &__arrow {
+        width: $font-size-base;
+        height: $font-size-base;
+    }
+}

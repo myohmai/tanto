@@ -1,0 +1,9 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.certification-bar {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+}

@@ -1,0 +1,1 @@
+export { MediaLabelDescription } from './MediaLabelDescription'

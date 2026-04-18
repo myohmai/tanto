@@ -1,0 +1,9 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.room-tab-bar {
+    width: 100%;
+    height: fit-content;
+    padding: 0;
+    display: flex;
+}

@@ -1,0 +1,1 @@
+export { RoomTabBar } from './RoomTabBar'

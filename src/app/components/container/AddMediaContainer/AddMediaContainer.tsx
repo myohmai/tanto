@@ -5,7 +5,7 @@ import { MediaButton } from '@/app/components/buttons/MediaButton';
 import './AddMediaContainer.scss'
 
 type Props = {
-    onSelectFile: (file: File) => void;
+    onSelectFile: (file: File[]) => void;
     onClick: () => void;
 }
 
