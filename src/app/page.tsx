@@ -1,17 +1,22 @@
 'use client';
 
 import Image from "next/image";
-import { TurnTableMediaTab } from '@/app/components/bar/TurnTableMediaTab'
+import { SearchTabBar } from '@/app/components/bar/SearchTabBar'
 import React, { useState } from 'react';
 
-type TurnTableMediaType = 'Video' | 'Music';
+
+type SearchTabType = 'Gloss' | 'Salon' | 'Media';
+
+
+
 
 
 export default function Home() {
-  const [selectedTab, setSelectedTab] = useState<TurnTableMediaType>('Video');
+  const [selectedTab, setSelectedTab] = useState< SearchTabType>('Gloss');
+
   return (
     <div>
-      <TurnTableMediaTab selectedTab={selectedTab} onChange={setSelectedTab}/>
+            <SearchTabBar selectedTab={selectedTab} onChange={setSelectedTab} />
     </div>
   );
 }

@@ -1,0 +1,11 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.logo-icon {
+    width: $icon-lg;
+    height: $icon-lg;
+    fill: $key-color--600;
+    .night & {
+        fill: $key-color--400;
+    }
+}

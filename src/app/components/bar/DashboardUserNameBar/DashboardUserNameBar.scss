@@ -1,0 +1,83 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.dash-board-user-name-bar {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &__current {
+        position: relative;
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        &--icon {
+            flex: 0 0 auto;
+        }
+        &--name{
+            font: $font-700_bold;
+            width: fit-content;
+            flex: 0 0 auto;
+        }
+        &--room {
+            font: $font-400_regular_sm;
+            width: auto;
+            overflow: hidden;
+            flex: 1 1 auto;
+        }
+    }
+    &__list {
+        width: 100%;
+        height: fit-content;
+        display: none;
+        flex-direction: column;
+        &.open {
+            display: flex;
+        }
+    }
+    &__list-item {
+        width: 100%;
+        height: fit-content;
+    }
+    &__button{
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        cursor: pointer;
+        &--icon {
+            flex: 0 0 auto;
+        }
+        &--name{
+            font: $font-700_bold;
+            width: fit-content;
+            flex: 0 0 auto;
+        }
+        &--room {
+            font: $font-400_regular_sm;
+            width: auto;
+            overflow: hidden;
+            flex: 1 1 auto;
+        }
+        &:hover {
+            background-color: var(--neutral-color-100);
+            transition: background-color 0.15s ease;
+        }
+        &:active {
+            background-color: var(--neutral-color-200);
+        }
+        .night & {
+            &:hover {
+                background-color: var(--neutral-color-600);
+                transition: background-color 0.15s ease;
+            }
+            &:active {
+                background-color: var(--neutral-color-500); 
+            }
+        }
+    }
+}

@@ -1,0 +1,54 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.search-bar {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+    &__back {
+        width: fit-content;
+        height: fit-content;
+        flex: 0 0 auto;
+    }
+    &__container {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        border-radius: $radius-sm;
+        border: 2px solid transparent;
+        flex: 1 1 auto;
+        &:focus-within {
+            border-color: var(--accent-color-100);
+        }
+    }
+    &__input {
+        width: 100%;
+        height: fit-content;
+        font: $font-400_regular;
+        border: none;
+        flex: 1 1 auto;
+        cursor: text;
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        &::placeholder {
+            font: $font-400_regular;
+            color: var(--neutral-color-500);
+        }
+        .night & {
+            &::placeholder {
+                color: var(--neutral-color-200)
+            }
+        }
+    }
+    &__button {
+        width: fit-content;
+        height: fit-content;
+        flex: 0 0 auto;
+    }
+}

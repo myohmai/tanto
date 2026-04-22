@@ -1,0 +1,26 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.bottom-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: fit-content;
+    padding: 12px $spacing-lg;
+    &__user-icon-button {
+        position: relative;
+        width: $icon-lg;
+        height: $icon-lg;
+        flex-shrink: 0;
+    }
+    &__user-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: $icon-lg;
+        height: $icon-lg;
+        transform-origin: top left;
+        transform: scale(0.666);
+    }
+}
