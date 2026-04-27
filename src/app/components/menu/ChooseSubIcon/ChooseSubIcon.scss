@@ -1,0 +1,43 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.choose-sub-icon {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    &__title {
+        font: $font-500_medium_sm;
+        color: var(--accent-color-100);
+    }
+    &__icons {
+        width: 100%;
+        height: auto;
+        @include flex-center;
+        gap: $spacing-md;
+        flex-wrap: wrap;
+    }
+    &__icons--button {
+        @include flex-center;
+        width: $icon-lg;
+        height: $icon-lg;
+        border-radius: $radius-full;
+        &:hover {
+            background-color: var(--neutral-color-100);
+        }
+        &:active {
+            background-color: var(--neutral-color-200);
+        }
+        .night & {
+            :hover {
+                background-color: var(--neutral-color-600);
+            }
+            :active {
+                background-color: var(--neutral-color-500);
+            }
+        }
+        &.is-selected {
+            outline: 2px solid var(--accent-color-100);
+        }
+    }
+}

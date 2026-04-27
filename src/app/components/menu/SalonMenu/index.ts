@@ -1,0 +1,1 @@
+export { SalonMenu } from './SalonMenu'

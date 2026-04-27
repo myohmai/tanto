@@ -1,0 +1,11 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.select-media-label{
+    width: 100%;
+    &__title {
+        width: 100%;
+        @include flex-center;
+        font:$font-500_medium;
+    }
+}

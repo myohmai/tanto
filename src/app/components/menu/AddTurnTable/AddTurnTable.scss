@@ -1,0 +1,49 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.add-turn-table {
+    width: 100%;
+    @include flex-center;
+    flex-direction: column;
+    &__title {
+        font: $font-500_medium;
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    &__container {
+        width: 100%;
+    }
+    &__sub-title {
+        width: 100%;
+        @include flex-center;
+        font: $font-400_regular_sm;
+        &--icon {
+            width: $font-size-base;
+            height: $font-size-base;
+        }
+    }
+    &__text-area {
+        width: 100%;
+        height: auto;
+        font: $font-400_regular;
+        border: 1px solid var(--neutral-color-300);
+        border-radius: $radius-sm;
+        cursor: text;
+        &:focus {
+            outline: 1px solid var(--accent-color-100);
+            box-shadow: none;
+            border: 1px solid var(--accent-color-100);
+        }
+        &::placeholder {
+            font: $font-400_regular;
+            color: var(--neutral-color-500);
+        }
+        .night & {
+            &::placeholder {
+                color: var(--neutral-color-200)
+            }
+        }
+    }
+}

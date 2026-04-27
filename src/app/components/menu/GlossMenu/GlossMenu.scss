@@ -1,0 +1,11 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.gloss-menu {
+    width: 100%;
+    display: block;
+    &__container {
+        width: 100%;
+        display: block;
+    }
+}

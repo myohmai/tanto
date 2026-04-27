@@ -1,0 +1,35 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.bottom-menu-button {
+    width: 100%;
+    height: auto;
+    border: none;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+    &:hover{
+        filter: brightness(1.2);
+        transition: filter 0.15s ease;
+    }
+    &:active {
+        filter: brightness(0.8);
+    }
+    &__icon {
+        width: $icon-md;
+        width: $icon-md;
+        flex: 0 0 auto;
+        margin-right: $spacing-md;
+        > * {
+            fill: var(--neutral-color-700);
+            .night & {
+                fill: var(--neutral-color-100);
+            }
+        }
+    }
+    &__label {
+        font: $font-500_medium;
+        flex: 1 1 auto;
+    }
+}

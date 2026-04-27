@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { SearchTabBar } from '@/app/components/bar/SearchTabBar'
+import { SalonMenu } from '@/app/components/menu/SalonMenu'
 import React, { useState } from 'react';
 
 
@@ -15,8 +15,8 @@ export default function Home() {
   const [selectedTab, setSelectedTab] = useState< SearchTabType>('Gloss');
 
   return (
-    <div>
-            <SearchTabBar selectedTab={selectedTab} onChange={setSelectedTab} />
-    </div>
+    <div className="night">
+      <SalonMenu isHost={true} />
+      </div>
   );
 }

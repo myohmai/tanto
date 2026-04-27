@@ -1,0 +1,15 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.report-menu {
+    width: 100%;
+    display: block;
+    &__title {
+        display: inline-flex;
+        font: $font-500_medium;
+    }
+    &__container {
+        width: 100%;
+        display: block;
+    }
+}

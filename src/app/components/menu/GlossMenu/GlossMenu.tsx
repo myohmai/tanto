@@ -1,0 +1,29 @@
+import { BottomSheet } from "@/app/components/menu/BottomSheet";
+import { BottomMenuButton } from "@/app/components/menu/BottomMenuButton";
+import { ShareIcon, MessageIcon, UserBlockIcon,ExclamationIcon, IdIcon } from '@/app/components/icons'
+
+import './GlossMenu.scss'
+
+type Props = {
+    onShare: () => void;
+    onMessage: () => void;
+    onBlock: () => void;
+    onReport: () => void;
+    onId: () => void;
+}
+
+export const GlossMenu = ({ onShare, onMessage, onBlock, onReport, onId } : Props) => {
+    return(
+        <BottomSheet contentClassName="gloss-menu stack-md">
+            <div className="gloss-menu__container stack-sm">
+                <BottomMenuButton icon={<ShareIcon/>} label="Share this Gloss" onClick={onShare} />
+                <BottomMenuButton icon={<MessageIcon variant="line"/>} label="Accept Message from this user" onClick={onMessage}/>
+            </div>
+            <div className="gloss-menu__container stack-sm">
+                <BottomMenuButton icon={<UserBlockIcon />} label="Block this user" onClick={onBlock} />
+                <BottomMenuButton icon={<ExclamationIcon />} label="Report this Gloss" onClick={onReport} />
+                <BottomMenuButton icon={<IdIcon />} label="Show Gloss ID" onClick={onId} />
+            </div>
+        </BottomSheet>
+    )
+}

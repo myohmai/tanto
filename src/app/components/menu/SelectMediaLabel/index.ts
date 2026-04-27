@@ -1,0 +1,1 @@
+export { SelectMediaLabel } from './SelectMediaLabel'
