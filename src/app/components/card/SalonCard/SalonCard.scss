@@ -1,0 +1,83 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.salon-card {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+    border-bottom: 1px solid var(--neutral-color-200);
+    .night & {
+        border-bottom: 1px solid var(--neutral-color-400);
+    }
+    &__salon-info {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        overflow: hidden;
+    }
+    &__emoji {
+        flex: 0 0 auto;
+        width: $icon-lg;
+        height: $icon-lg;
+        font-size: $icon-lg;
+    }
+    &__fond {
+        flex: 0 0 auto;
+    }
+    &__salon-info-container {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+    }
+    &__name-wrapper {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+    &__salon-name {
+        font: $font-600_semi-bold;
+    }
+    &__pin {
+        width: $font-size-base;
+        height: $font-size-base;
+    }
+    &__count {
+        font: $font-500_medium_sm;
+    }
+    &__posted_at {
+        font: $font-400_regular_xs;
+    }
+    &__arrow-wrapper {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    &__image-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: $radius-sm;
+            outline: 2px solid #FFF;
+            margin-left: -20px;
+            .night & {
+                outline: 2px solid var(--neutral-color-700);
+            }
+        }
+        > *:first-child{
+            z-index: +2;
+        }
+        > *:nth-child(2) {
+            z-index: +1;
+        }
+    }
+    &__arrow {
+        margin-left: $spacing-lg;
+    }
+}

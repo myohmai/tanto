@@ -1,13 +1,13 @@
 import { InfoIcon } from "@/app/components/icons";
 import "./Notification.scss";
 
-type NotificationType =
+export type NotificationType =
     | 'specific'
     | 'uncomfortable'
     | 'divided'
     | 'unreliable';
 
-type NotificationMessage = {
+export type NotificationMessage = {
     id: NotificationType;
     message: {
         en: string;
@@ -15,7 +15,7 @@ type NotificationMessage = {
     };
 };
 
-const notification: NotificationMessage[] = [
+export const notification: NotificationMessage[] = [
     {
         id: 'specific',
         message: {

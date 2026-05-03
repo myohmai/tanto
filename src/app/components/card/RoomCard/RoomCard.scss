@@ -1,0 +1,109 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.room-card {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    border-bottom: 1px solid var(--neutral-color-200);
+    .night & {
+        border-bottom: 1px solid var(--neutral-color-400);
+    }
+    &__room-wrapper {
+        width: 100%;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+    }
+    &__room-info {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        overflow: hidden;
+    }
+    &__room-icon {
+        flex: 0 0 auto;
+    }
+    &__room-info-container {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+    }
+    &__room-name {
+        font: $font-600_semi-bold;
+    }
+    &__count {
+        font: $font-500_medium_sm;
+    }
+    &__posted_at {
+        font: $font-400_regular_xs;
+    }
+    &__arrow-wrapper {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    &__image-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: $radius-sm;
+            outline: 2px solid #FFF;
+            margin-left: -20px;
+            .night & {
+                outline: 2px solid var(--neutral-color-700);
+            }
+        }
+        > *:first-child{
+            z-index: +2;
+        }
+        > *:nth-child(2) {
+            z-index: +1;
+        }
+    }
+    &__arrow {
+        margin-left: $spacing-lg;
+    }
+    &__user-wrapper {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        border-radius: $radius-md;
+    }
+    &__icon {
+        flex: 0 0 auto;
+    }
+    &__user {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        overflow: hidden;
+    }
+    &__user-icon-wrapper {
+        position: relative;
+        width: $icon-lg;
+        height: $icon-lg;
+        flex: 0 0 auto;
+    }
+    &__user-icon {
+        position: absolute;
+        width: $icon-lg;
+        height: $icon-lg;
+        transform-origin: top left;
+        transform: scale(0.666);
+    }
+    &__user-name {
+        flex: 1 1 auto;
+        font: $font-500_medium;
+    }
+}

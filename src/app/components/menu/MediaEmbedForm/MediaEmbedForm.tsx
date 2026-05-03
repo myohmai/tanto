@@ -14,10 +14,24 @@ export const MediaEmbedForm = ({ onSubmit } : Props) => {
     const [value, setValue] = useState('')
     const [error,setError] = useState('')
 
-    const validUrl = (url:string) => {
+    // const validUrl = (url:string) => {
+    //     try {
+    //         new URL(url)
+    //         return true
+    //     } catch {
+    //         return false
+    //     }
+    // }
+    const validUrl = (url: string) => {
         try {
-            new URL(url)
-            return true
+            const hostname = new URL(url).hostname
+            
+            return (
+                hostname.includes('youtube.com') ||
+                hostname === 'youtu.be' ||
+                hostname.includes('spotify.com') ||
+                hostname.includes('music.apple.com')
+            )
         } catch {
             return false
         }
@@ -45,7 +59,8 @@ export const MediaEmbedForm = ({ onSubmit } : Props) => {
                                 return
                             }
                             if (!validUrl(next)) {
-                                setError('Please enter a valid URL')
+                                // setError('Please enter a valid URL')
+                                setError('Only YouTube / Apple Music / Spotify links allowed')
                                 return
                             }
                             setError('')

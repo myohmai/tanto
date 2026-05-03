@@ -1,0 +1,26 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.topic-card {
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid var(--neutral-color-200);
+    .night & {
+        border-bottom: 1px solid var(--neutral-color-400);
+    }
+    &__date {
+        font: $font-400_regular_sm;
+    }
+    &__header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    &__footer {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}

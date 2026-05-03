@@ -10,13 +10,13 @@ export type MediaItem = {
     url: string;
 };
 
-type Props = {
+export type MediaProps = {
     source: MediaItem[];
     type: MediaLabelType;
     lang: Lang;
 }
 
-export const Media = ( { source, type, lang }: Props ) => {
+export const Media = ( { source, type, lang }: MediaProps ) => {
     const items = source.slice(0, 4);
     const [activeIndex, setActiveIndex] = useState< number | null>(null);
     const [startX, setStartX] = useState<number | null>(null);

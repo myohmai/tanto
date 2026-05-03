@@ -1,0 +1,143 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.turn-table-media-card {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--neutral-color-200);
+    .night & {
+        border-bottom: 1px solid var(--neutral-color-400);
+    }
+    &__cover {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        max-height: 300px;
+        margin: auto;
+        border-radius: $radius-sm;
+    }
+    &__info {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        margin: auto;
+    }
+    &__song-name {
+        width: 100%;
+        font: $font-500_medium;
+        overflow-x: hidden;
+    }
+    &__artist-name {
+        width: 100%;
+        font: $font-500_medium;
+        overflow-x: hidden;
+    }
+    &__player {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        @include flex-center;
+        margin: auto;
+    }
+    &__player--button{
+        width: auto;
+        height: auto;
+        @include flex-center;
+        gap: $spacing-md;
+    }
+    &__player--utility {
+        position: absolute;
+        right: 0;
+    }
+    &__player-bar {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+        height: 2px;
+        margin: auto;
+        display: flex;
+        justify-content: flex-start;
+        border-radius: $radius-full;
+    }
+    &__player-bar--duration {
+        position: relative;
+        height: 2px;
+        background-color: var(--accent-color-100);
+    }
+    &__player-bar--knob {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background-color: var(--accent-color-200);
+        border-radius: $radius-full;
+        right: 0;
+        top: 50%;
+        transform: translate(50%, -50%);
+        &:hover {
+            width: 12px;
+            height: 12px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+    }
+    &__footer {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        margin: auto;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+    &__location {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        height: fit-content;
+        font: $font-400_regular_sm;
+        cursor: default;
+        padding: 0;
+    }
+    &__pulldown {
+        display: none;
+        width: fit-content;
+        height: fit-content;
+        flex-direction: column;
+        &.open {
+            display: flex;
+            padding: $spacing-xs $spacing-sm;
+        }
+        &--wrapper {
+            display: flex;
+            width: fit-content;
+            height: fit-content;
+            align-items: flex-start;
+            justify-content: flex-start;
+            border-radius: $radius-sm;
+            &.open {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+        }
+        &--list {
+            width: 100%;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+            button {
+                padding: 0 $spacing-sm;
+            }
+            button:hover {
+                border-radius: $radius-full;
+                background-color: rgba(0,0,0,0.1);
+                transition: all 0.15 ease;
+            }
+        }
+    }
+}

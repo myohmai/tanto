@@ -1,0 +1,62 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.gloss {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: stretch;
+    border-bottom: 1px solid var(--neutral-color-200);
+    .night & {
+        border-bottom: 1px solid var(--neutral-color-400);
+    }
+    &.clear {
+        opacity: 0;
+    }
+    &.dimmed {
+        opacity: 0.4;
+    }
+    &.focus {
+        border-radius: $radius-md;
+        border-bottom: none;
+        box-shadow: 0 0px 12px rgba(0,0,0,0.1);
+    }
+    &__icon-button {
+        flex: 0 0 auto;
+    }
+    &__content-wrapper {
+        display: block;
+        flex: 1 1 auto;
+    }
+    &__name-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+    }
+    &__menu {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    &__name {
+        display: inline-flex;
+        align-items: baseline;
+        font: $font-600_semi-bold;
+    }
+    &__date {
+        font: $font-400_regular_sm;
+    }
+    &__content {
+        font: $font-300_light;
+        white-space: pre-wrap;
+        > a {
+            color: var(--accent-color-100);
+        }
+    }
+    &__action {
+        display: inline-flex;
+    }
+}

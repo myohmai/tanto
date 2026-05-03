@@ -5,7 +5,7 @@ import './MediaEmbed.scss'
 
 type Props = {
     url: string;
-    onClick: () => void;
+    onClick?: () => void;
 }
 
 
@@ -81,7 +81,7 @@ export const MediaEmbed = ({ url, onClick }: Props) => {
             )}
 
             {hasLocation && <Location sources={displaySources} /> }
-            {hasLocation && <div className='media-embed__seealso'><SeeAlso onClick={onClick} /></div>}
+            {hasLocation &&  onClick && <div className='media-embed__seealso'><SeeAlso onClick={onClick} /></div>}
         </div>
     );
 }

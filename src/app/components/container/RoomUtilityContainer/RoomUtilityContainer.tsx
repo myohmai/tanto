@@ -5,15 +5,18 @@ import { RoomMenuButton } from "@/app/components/buttons/RoomMenuButton";
 import './RoomUtilityContainer.scss'
 
 type Props = {
-    onClick: () => void;
+    onSearch: () => void;
+    onEdit: () => void;
+    onMenu: () => void;
+    className?: string;
 }
 
-export const RoomUtilityContainer = ({ onClick }: Props ) => {
+export const RoomUtilityContainer = ({ onSearch, onEdit,onMenu, className }: Props ) => {
     return (
-        <div className="room-utility-container inline-md">
-            <RoomSearchButton onClick={onClick} />
-            <RoomEditButton onClick={onClick} />
-            <RoomMenuButton onClick={onClick} />
+    <div className={`room-utility-container inline-md ${className ?? ""}`}>
+            <RoomSearchButton onClick={onSearch} />
+            <RoomEditButton onClick={onEdit} />
+            <RoomMenuButton onClick={onMenu} />
         </div>
     )
 }

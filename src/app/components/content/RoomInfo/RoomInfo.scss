@@ -1,0 +1,90 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.room-info {
+    width: 100%;
+    height: auto;
+    display: block;
+    &__banner {
+        width: 100%;
+        height: 100px;
+        &--image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+    &__container {
+        position: relative;
+        padding: $spacing-xxl $spacing-md $spacing-md $spacing-md;
+    }
+    &__icon {
+        position: absolute;
+        top: -16px;
+        left: $spacing-md;
+    }
+    &__utility {
+        position: absolute;
+        top: -40px;
+        right: $spacing-md;
+    }
+    &__enter-button {
+        position: absolute;
+        top: 20px;
+        right: $spacing-md;
+    }
+    &__name{
+        display: flex;
+        width: calc(100% - 140px - 32px);
+        align-items: center;
+        justify-content: stretch;
+        font: $font-700_bold;
+        &--name {
+            flex: 1 1 auto;
+            overflow-x: hidden;
+        }
+        &--icon {
+            flex: 0 0 auto;
+        }
+    }
+    &__infomation-wrap {
+        position: relative;
+        width: 100%;
+        padding-left: $spacing-md;
+    }
+    &__infomation {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        overflow: hidden;
+        word-break: break-word;
+        font: $font-300_light;
+        &.is-open {
+            display: block;
+        }
+    }
+    &__infomation--more {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        color: var(--accent-color-100);
+        padding-left: $spacing-md;
+        font: $font-300_light;
+        background: linear-gradient(to right, transparent, #fff 20%);
+        .night & {
+            background: linear-gradient(to right, transparent, var(--neutral-color-700) 20%);
+        }
+    }
+    &__tag {
+        padding-left: $spacing-md;
+    }
+    &__members {
+        padding-left: $spacing-md;
+        font: $font-400_regular_sm;
+        color: $key-color--400;
+        .night & {
+            color: $key-color--100;
+        }
+    }
+}

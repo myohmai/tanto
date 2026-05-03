@@ -5,15 +5,16 @@ type Props = {
     isInRoom: boolean;
     isEntered: boolean;
     onClick: () => void;
+    className?: string;
 }
 
-export const RoomEnterButton = ({ isInRoom, isEntered, onClick }: Props) => {
+export const RoomEnterButton = ({ isInRoom, isEntered, onClick, className }: Props) => {
     const buttonIcon = isEntered ? <CheckIcon size="md" className="room-enter-button__check--in-salon" /> : <PlusIcon size="md" className="room-enter-button__plus"/>;
     const buttonText = isEntered ? <div className="room-enter-button__entered">Entered<CheckIcon className="room-enter-button__check" /></div> : "Enter";
     const buttonClass = `room-enter-button ${isInRoom ? "in-room" : ""} ${isEntered ? "entered" : ""}`;
 
     return (
-        <button type="button" className={buttonClass} onClick={onClick}>
+        <button type="button" className={`${buttonClass} ${className ?? ""}`} onClick={onClick}>
             {isInRoom ? buttonIcon : buttonText}
         </button>
     );
