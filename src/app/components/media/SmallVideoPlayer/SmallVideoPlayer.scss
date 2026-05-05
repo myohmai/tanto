@@ -1,0 +1,64 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.small-video-player {
+    width: 100%;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+    &__frame {
+        flex: 0 0 auto;
+        height: 100%;
+        aspect-ratio: 16 / 9;
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    }
+    &__wrapper {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        padding: 0 $spacing-md;
+    }
+    &__info {
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+    &__video-name {
+        width: 100%;
+        font: $font-500_medium_sm;
+    }
+    &__channel-name {
+        width: 100%;
+        font: $font-500_medium_sm;
+    }
+    &__to-room {
+        width: $icon-md;
+        height: $icon-md;
+        background: none;
+        border: none;
+        padding: 0;
+        flex-shrink: 0;
+        border-radius: $radius-full;
+        &:hover {
+            background-color: var(--neutral-color-100);
+            transition: background-color 0.15s ease;
+        }
+        &:active {
+            background-color: var(--neutral-color-200);
+        }
+        .night & {
+            &:hover {
+                background-color: var(--neutral-color-600);
+                transition: background-color 0.15s ease;
+            }
+            &:active {
+                background-color: var(--neutral-color-500); 
+            }
+        }
+    }
+}

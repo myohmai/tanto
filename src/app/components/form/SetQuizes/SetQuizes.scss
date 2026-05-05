@@ -1,0 +1,8 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.set-quizes {
+    width: 100%;
+    @include flex-center;
+    flex-direction: column;
+}

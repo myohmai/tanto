@@ -5,6 +5,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     padding: $spacing-xxs $spacing-sm;
     border-radius: $radius-sm;
     &__label {

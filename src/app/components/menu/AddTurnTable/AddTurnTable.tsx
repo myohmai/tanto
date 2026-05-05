@@ -1,3 +1,4 @@
+'use client';
 import { LinkIcon,MoodIcon } from '@/app/components/icons'
 import { SubmitButton } from '@/app/components/buttons/SubmitButton'
 import { BottomSheet } from '@/app/components/menu/BottomSheet'
@@ -8,9 +9,11 @@ import './AddTurnTable.scss'
 
 type Props = {
     onSubmit: (value: string) => void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-export const AddTurnTable = ({ onSubmit } : Props ) => {
+export const AddTurnTable = ({ onSubmit, isOpen, onClose } : Props ) => {
     const [value, setValue] = useState('')
     const [error, setError] = useState('')
 
@@ -29,7 +32,7 @@ export const AddTurnTable = ({ onSubmit } : Props ) => {
         }
     }
     return(
-        <BottomSheet contentClassName='add-turn-table stack-lg'>
+        <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName='add-turn-table stack-lg'>
             <div className="add-turn-table__title text-color-primary inline-md">
                 <MoodIcon variant='line' className='icon-color-primary' />
                 <span>Add Turn Table</span>

@@ -3,11 +3,12 @@ import './AddQuizOptionButton.scss'
 
 type Props = {
     onClick: () => void;
+    className?: string;
 }
 
-export const AddQuizOptionButton = ({ onClick }: Props ) => {
+export const AddQuizOptionButton = ({ onClick, className }: Props ) => {
     return (
-        <button type="button" className="add-quiz-option-button" onClick={onClick} aria-label="add">
+        <button type="button" className={`add-quiz-option-button ${className || ""}`} onClick={onClick} aria-label="add">
             <PlusIcon size="lg" className="add-quiz-option-button__icon" />
         </button>
     );

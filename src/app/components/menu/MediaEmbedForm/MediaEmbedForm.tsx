@@ -1,3 +1,4 @@
+'use client';
 import { BottomSheet } from "@/app/components/menu/BottomSheet";
 import { LinkIcon } from "@/app/components/icons";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
@@ -8,9 +9,11 @@ import './MediaEmbedForm.scss'
 
 type Props = {
     onSubmit: (value: string) => void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-export const MediaEmbedForm = ({ onSubmit } : Props) => {
+export const MediaEmbedForm = ({ onSubmit, isOpen, onClose } : Props) => {
     const [value, setValue] = useState('')
     const [error,setError] = useState('')
 
@@ -37,7 +40,7 @@ export const MediaEmbedForm = ({ onSubmit } : Props) => {
         }
     }
     return (
-        <BottomSheet contentClassName="media-embed-form stack-lg" >
+        <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName="media-embed-form stack-lg" >
             <div className="media-embed-form__container stack-md">
                 <div className="media-embed-form__title inline-sm text-color-primary">
                     <LinkIcon className="media-embed-form__icon icon-color-primary" />

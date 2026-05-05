@@ -1,3 +1,4 @@
+'use client';
 import { Option } from '@/app/components/buttons/Option'
 import { SubmitButton } from '@/app/components/buttons/SubmitButton'
 import { MediaLabelType } from '@/app/components/media/MediaLabel'
@@ -11,12 +12,14 @@ import './SelectMediaLabel.scss'
 type Props = {
     value: MediaLabelType;
     onSubmit: (value: MediaLabelType) => void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-export const SelectMediaLabel = ({ value, onSubmit } : Props ) => {
+export const SelectMediaLabel = ({ value, onSubmit, isOpen, onClose } : Props ) => {
     const [selected, setSelected] = useState<MediaLabelType>(value);
     return(
-        <BottomSheet contentClassName='select-media-label stack-md'>
+        <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName='select-media-label stack-md'>
             <div className="select-media-label__title">Select Media Label</div>
             <div className="stack-sm">
                 <Option<MediaLabelType> label="Fan Art" value="fanArt" isSelected={selected === "fanArt"} onSelect={(value) => setSelected(value)}/>

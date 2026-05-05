@@ -1,0 +1,1 @@
+export { SmallMusicPlayer } from './SmallMuscPlayer'

@@ -1,0 +1,17 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.edit-user-profile {
+    width: 100%;
+    &__icons-wrapper {
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+    }
+    &__name {
+        width: 100%;
+    }
+    &__name-info {
+        font: $font-500_medium_sm;
+    }
+}

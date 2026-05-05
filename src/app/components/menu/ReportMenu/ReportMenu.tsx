@@ -1,3 +1,4 @@
+'use client';
 import { BottomSheet } from "@/app/components/menu/BottomSheet";
 import { BottomMenuButton } from "@/app/components/menu/BottomMenuButton";
 import { ExclamationIcon } from "@/app/components/icons";
@@ -10,11 +11,13 @@ type Props = {
     onInappropriate: () => void;
     onIdentifiable: () => void;
     onAdult: () => void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-export const ReportMenu = ({ onOffensive, onUnverified, onInappropriate, onIdentifiable, onAdult }: Props ) => {
+export const ReportMenu = ({ onOffensive, onUnverified, onInappropriate, onIdentifiable, onAdult, isOpen, onClose }: Props ) => {
     return (
-        <BottomSheet contentClassName="report-menu stack-md">
+        <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName="report-menu stack-md">
             <div className="report-menu__title padding-md-lg inline-md text-color-primary">
                 <ExclamationIcon className="icon-color-primary"/>
                 <span>Report this Gloss</span>

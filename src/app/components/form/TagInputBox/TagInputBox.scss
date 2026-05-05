@@ -1,0 +1,30 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.tag-input-box {
+    width: 100%;
+    display: flex;
+    gap: $spacing-sm;
+    justify-content: stretch;
+    flex-wrap: wrap;
+    &__text {
+        flex: 1 1 auto;
+        outline: none;
+        font: $font-400_regular;
+        color: var(--neutral-color-700);
+        &:focus-visible {
+            outline: none;
+            box-shadow: none;
+        }
+        &::placeholder {
+            font: $font-400_regular;
+            color: var(--neutral-color-500);
+        }
+        .night & {
+            color: var(--neutral-color-100);
+            &::placeholder {
+                color: var(--neutral-color-200);
+            }
+        }
+    }
+}

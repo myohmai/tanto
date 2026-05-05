@@ -1,3 +1,4 @@
+'use client';
 import { BottomSheet } from '@/app/components/menu/BottomSheet'
 import { IdIcon, CopyIcon } from '@/app/components/icons'
 
@@ -7,9 +8,11 @@ import './ShowGlossId.scss'
 
 type Props = {
     glossId: string;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-export const ShowGlossId = ({ glossId }: Props) => {
+export const ShowGlossId = ({ glossId, isOpen, onClose }: Props) => {
     const [copied, setCopied] = useState(false)
     const handleCopy = async () => {
         await navigator.clipboard.writeText(glossId)
@@ -21,7 +24,7 @@ export const ShowGlossId = ({ glossId }: Props) => {
         },1500)
     }
     return (
-        <BottomSheet >
+        <BottomSheet isOpen={isOpen} onClose={onClose} >
             <div className="show-gloss-id bg-color-secondary padding-md-lg inline-md text-color-primary">
                 <IdIcon className='icon-color-primary'/>
                 <div className='show-gloss-id__container'>

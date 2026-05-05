@@ -1,0 +1,48 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.score-pulldown {
+    width: 64px;
+    height: fit-content;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: flex-start;
+    border: 1px solid var(--neutral-color-400);
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+    &__scores {
+        
+        display: flex;
+        flex-direction: column;
+        button {
+            position: relative;
+            padding: 0 $spacing-xs;
+            border-radius: $radius-sm;
+            text-align: center;
+            &:hover::before {
+                content: "";
+                width: 24px;
+                height:24px;
+                position: absolute;
+                inset: 0;
+                border-radius: $radius-full;
+                background: var(--neutral-color-300);
+                opacity: 0.5;
+                transform: translate(-10%, -10%);
+            }
+        }
+    }
+    &__label {
+        color: var(--accent-color-100);
+        font: $font-300_light_xs;
+        .night & {
+            color: color-mix(in srgb, var(--accent-color-100) 90%, white);
+        }
+    }
+    &__selected-score {
+        padding: 0 $spacing-xs;
+        text-align: center;
+    }
+}

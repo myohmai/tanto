@@ -1,3 +1,5 @@
+'use client';
+
 import { FondIcon, BiasColor } from '@/app/components/icons'
 import { SubmitButton } from '@/app/components/buttons/SubmitButton'
 import { BottomSheet } from '@/app/components/menu/BottomSheet' 
@@ -9,14 +11,16 @@ import './ChooseSubIcon.scss'
 
 type Props = {
     onSubmit: (icon: UserSubIcon)=> void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-export const ChooseSubIcon = ({ onSubmit }: Props ) => {
+export const ChooseSubIcon = ({ onSubmit, isOpen, onClose }: Props ) => {
     const [selectedSubIcon, setSelectedSubIcon] = useState<UserSubIcon | null>(null)
     const [emojiValue, setEmojiValue] = useState('')
     const [emojiError, setEmojiError] = useState('')
     return(
-        <BottomSheet contentClassName='choose-sub-icon stack-lg' >
+        <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName='choose-sub-icon stack-lg' >
             <div className='choose-sub-icon__title'>Choose a color or emoji for your sub icon</div>
             <div className="choose-sub-icon__icons">
                 <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'red' ? 'is-selected' : '' }`} onClick={() => setSelectedSubIcon({ type: 'fond', value: 'red'})}>

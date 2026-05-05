@@ -11,7 +11,8 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    &__bg {
+    &::before {
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -20,16 +21,17 @@
         background-color: var(--neutral-color-100);
         border-radius: $radius-full;
         mix-blend-mode: multiply;
-        &:hover {
+        opacity: 0.8;
+    }
+    &:hover::before {
             filter:brightness(1.2);
             transition: filter 0.15s ease;
-        }
-        &:active {
-            filter:brightness(0.8);
-        }
+    }
+    &:active::before {
+        filter:brightness(0.8);
     }
     &__icon {
         position: relative;
-        fill: var(--neutral-color-200);
+        fill: var(--accent-color-100);
     }
 }

@@ -1,0 +1,1 @@
+export { PasswordArea } from './PasswordArea'

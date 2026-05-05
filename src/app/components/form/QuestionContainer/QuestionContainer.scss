@@ -1,0 +1,19 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.question-container {
+    width: 100%;
+    border-radius: $radius-sm;
+    border: 1px solid var(--neutral-color-300);
+    &__number {
+        font: $font-500_medium_sm;
+        color: var(--accent-color-100);
+    }
+    &__question{
+        width: 100%;
+        white-space: normal;
+        overflow-wrap: break-word;
+        resize: vertical;
+        font: $font-400_regular;
+    }
+}

@@ -1,0 +1,1 @@
+export { EditRoomBannerPicture } from "./EditRoomBannerPicture";

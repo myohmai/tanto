@@ -28,7 +28,7 @@ export const EditIconButton = ({ onSelectFile }: Props) => {
 
             <button type="button" onClick={() => inputRef.current?.click()} className="edit-icon-button padding-xs-sm inline-xs" aria-label="Select Image">
                 <AddPictureIcon size="sm" className="edit-icon-button__icon" />
-                <span className="edit-icon-button__label">Edit Sub Icon</span>
+                <span className="edit-icon-button__label">Edit Icon</span>
             </button>
         </>
     );

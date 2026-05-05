@@ -1,3 +1,4 @@
+'use client';
 import { BottomSheet } from "@/app/components/menu/BottomSheet";
 import { BottomMenuButton } from "@/app/components/menu/BottomMenuButton";
 import { RoomMuteIcon, ShareIcon, ExclamationIcon } from "@/app/components/icons";
@@ -8,11 +9,13 @@ type Props = {
     onShare: () => void;
     onMute: () => void;
     onReport: () => void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-export const RoomMenu = ({ onShare, onMute, onReport }: Props) => {
+export const RoomMenu = ({ onShare, onMute, onReport, isOpen, onClose }: Props) => {
     return(
-        <BottomSheet contentClassName="room-menu stack-md">
+        <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName="room-menu stack-md">
             <div className="room-menu__container">
                 <BottomMenuButton icon={<ShareIcon/>} label="Share this Room" onClick={onShare} />
             </div>

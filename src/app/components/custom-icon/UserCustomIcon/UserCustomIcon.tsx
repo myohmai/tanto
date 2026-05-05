@@ -5,7 +5,7 @@ export type UserSubIcon =
 
 export type UserCustomIconProps = {
     iconUrl?: string; // URL for the user's custom icon
-    subIcon?: UserSubIcon;
+    subIcon?: UserSubIcon | null;
     className?: string; // Optional additional class name for styling
 };
 

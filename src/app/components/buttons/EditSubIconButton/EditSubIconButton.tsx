@@ -9,7 +9,7 @@ export const EditSubIconButton = ({ onClick }: Props) => {
     return (
         <button type="button" onClick={onClick} className="edit-sub-icon-button padding-xs-sm inline-xs" aria-label="Select Sub Icon">
             <EditIcon size="sm" className="edit-sub-icon-button__icon" />
-            <span className="edit-sub-icon-button__label">Edit Icon</span>
+            <span className="edit-sub-icon-button__label">Edit Sub Icon</span>
         </button>
     );
 }
