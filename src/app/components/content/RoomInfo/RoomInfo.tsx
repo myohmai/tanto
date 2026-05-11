@@ -21,12 +21,12 @@ type RoomInfoProps = {
     isPublic: boolean;
     isPrivate: boolean;
     roomName: string;
-    roomInfomation: string;
+    roomInformation: string;
     roomMember: number;
     tags: string[];
 }
 
-export const RoomInfo = ({ bannerUrl, roomIconUrl, subIcon, onSearch, onEdit, onMenu, onEnter, isEntered, isPublic, isPrivate, roomName, roomInfomation, roomMember, tags }: RoomInfoProps) => {
+export const RoomInfo = ({ bannerUrl, roomIconUrl, subIcon, onSearch, onEdit, onMenu, onEnter, isEntered, isPublic, isPrivate, roomName, roomInformation, roomMember, tags }: RoomInfoProps) => {
     const [expanded, setExpanded] = useState(false);
     const [overflow, setOverflow] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -47,7 +47,7 @@ export const RoomInfo = ({ bannerUrl, roomIconUrl, subIcon, onSearch, onEdit, on
                     cancelAnimationFrame(id);
                     window.removeEventListener("resize", checkOverflow);
                 };
-        }, [roomInfomation]);
+        }, [roomInformation]);
     const formatMemberCount = (count: number, locale = "ja") => {
         if (locale === "ja") {
             if (count >= 100000000) return `${(count / 100000000).toFixed(1)}億`;
@@ -75,9 +75,9 @@ export const RoomInfo = ({ bannerUrl, roomIconUrl, subIcon, onSearch, onEdit, on
                     {isPublic ? <HostIcon size="sm" className="room-info__name--icon icon-color-secondary" /> : ""}
                     {isPrivate? <><HostIcon size="sm" className="room-info__name--icon icon-color-secondary" /><LockIcon size="sm" className="room-info__name--icon icon-color-secondary" /></> : ""}
                 </div>
-                <div className="room-info__infomation-wrap">
-                    <div ref={ref} className={`room-info__infomation ${expanded ? "is-open" : ""}`}>{roomInfomation}</div>
-                    {overflow && !expanded && (<div className="room-info__infomation--more bg-color-primary">...<button onClick={() => setExpanded(true)}>more</button></div>)}
+                <div className="room-info__information-wrap">
+                    <div ref={ref} className={`room-info__information ${expanded ? "is-open" : ""}`}>{roomInformation}</div>
+                    {overflow && !expanded && (<div className="room-info__information--more bg-color-primary">...<button onClick={() => setExpanded(true)}>more</button></div>)}
                 </div>
                 <div className="room-info__tag inline-sm">
                     {tags.map((tag) => (

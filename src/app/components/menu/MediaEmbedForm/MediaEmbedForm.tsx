@@ -72,7 +72,17 @@ export const MediaEmbedForm = ({ onSubmit, isOpen, onClose } : Props) => {
                     {error &&(<p className="input-box__error">{error}</p>)}
                 </div>
             </div>
-            <SubmitButton label="Submit" onClick={() => {if(!value || error) return onSubmit(value)}} disabled={!value || !!error} />
+            <SubmitButton
+                label="Submit"
+                onClick={() => {
+                    if (!value || error) return;
+                    onSubmit(value);
+                    setValue('');
+                    setError('');
+                    onClose();
+                }}
+                disabled={!value || !!error}
+            />
         </BottomSheet>
     )
 }

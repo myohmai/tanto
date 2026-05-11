@@ -12,20 +12,29 @@ export type QuizeList = {
 }
 
 type Props = {
+    quizes?: QuizeList[] | null;
     onQuizes: (value: QuizeList[]) => void;
     isSubmitted: boolean;
 }
 
-export const SetQuizes = ({ onQuizes, isSubmitted }: Props ) => {
-    const [questions, setQuestions] = useState<QuizeList[]>([
-        { 
-            id: crypto.randomUUID(), 
-            question: "",
-            option: [
-                {id: crypto.randomUUID(), text: "", score: 0}
+export const SetQuizes = ({ quizes, onQuizes, isSubmitted }: Props ) => {
+    const [questions, setQuestions] = useState<QuizeList[]>(
+        quizes?.length
+            ? quizes
+            : [
+                {
+                    id: crypto.randomUUID(),
+                    question: "",
+                    option: [
+                        {
+                            id: crypto.randomUUID(),
+                            text: "",
+                            score: 0
+                        }
+                    ]
+                }
             ]
-        }
-    ])
+    );
     return(
         <div className="set-quizes stack-sm">
             {questions.map((question, index) => {

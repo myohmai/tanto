@@ -1,0 +1,1 @@
+export { EditSalonIconButton } from './EditSalonIconButton'

@@ -23,64 +23,282 @@ export const ChooseSubIcon = ({ onSubmit, isOpen, onClose }: Props ) => {
         <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName='choose-sub-icon stack-lg' >
             <div className='choose-sub-icon__title'>Choose a color or emoji for your sub icon</div>
             <div className="choose-sub-icon__icons">
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'red' ? 'is-selected' : '' }`} onClick={() => setSelectedSubIcon({ type: 'fond', value: 'red'})}>
+                <button
+                    type='button'
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'red' ? 'is-selected' : '' }`}
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond', 
+                            value: 'red'
+                        })
+                    }}
+                >
                     <FondIcon bias="red" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'orange' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'orange'})}>
+                <button 
+                    type='button'
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'orange' ? 'is-selected' : '' }`} 
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond',
+                            value: 'orange'
+                        })
+                    }}
+                >
                     <FondIcon bias="orange" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'light-orange' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'light-orange'})}>
+                <button
+                    type='button'
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'light-orange' ? 'is-selected' : '' }`}
+                        onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond',
+                            value: 'light-orange'
+                        })
+                    }}
+                >
                     <FondIcon bias="light-orange" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'yellow' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'yellow'})}>
+                <button type='button'
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'yellow' ? 'is-selected' : '' }`}
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond',
+                            value: 'yellow'
+                        })
+                    }}
+                >
                     <FondIcon bias="yellow" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'yellow-green' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'yellow-green'})}>
+                <button
+                    type='button'
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'yellow-green' ? 'is-selected' : '' }`}
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond', 
+                            value: 'yellow-green'
+                        })
+                    }}
+                >
                     <FondIcon bias="yellow-green" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'green' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'green'})}>
+                <button
+                        type='button'
+                        className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'green' ? 'is-selected' : '' }`} 
+                        onClick={() => {
+                            setEmojiValue('')
+                            setEmojiError('')
+                            setSelectedSubIcon({
+                                type: 'fond',
+                                value: 'green'
+                        })
+                    }}
+                >
                     <FondIcon bias="green" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'turquoise' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'turquoise'})}>
+                <button
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'turquoise' ? 'is-selected' : '' }`}
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond',
+                            value: 'turquoise'
+                        })
+                    }}
+                >
                     <FondIcon bias="turquoise" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'sky-blue' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'sky-blue'})}>
+                <button
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'sky-blue' ? 'is-selected' : '' }`} 
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond',
+                            value: 'sky-blue'
+                        })
+                    }}
+                >
                     <FondIcon bias="sky-blue" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'blue' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'blue'})}>
+                <button
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'blue' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond',
+                            value: 'blue'
+                        })
+                    }}
+                >
                     <FondIcon bias="blue" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'navy' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'navy'})}>
+                <button
+                    type='button'
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'navy' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'navy'
+                            })
+                        }}
+                    >
                     <FondIcon bias="navy" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'purple' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'purple'})}>
+                <button 
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'purple' ? 'is-selected' : '' }`} 
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'purple'
+                        })
+                    }}
+                >
                     <FondIcon bias="purple" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'lavender' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'lavender'})}>
+                <button 
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'lavender' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'lavender'
+                        })
+                    }}
+                >
                     <FondIcon bias="lavender" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'amethyst' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'amethyst'})}>
+                <button
+                type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'amethyst' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'amethyst'
+                        })
+                    }}
+                >
                     <FondIcon bias="amethyst" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'pink' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'pink'})}>
+                <button 
+                    type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'pink' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({
+                            type: 'fond', 
+                            value: 'pink'
+                        })
+                    }}
+                >
                     <FondIcon bias="pink" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'baby-pink' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'baby-pink'})}>
+                <button 
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'baby-pink' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'baby-pink'
+                        })
+                    }}
+                >
                     <FondIcon bias="baby-pink" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'silver' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'silver'})}>
+                <button 
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'silver' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'silver'
+                        })
+                    }}
+                >
                     <FondIcon bias="silver" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'black' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'black'})}>
+                <button 
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'black' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'black'
+                        })
+                    }}
+                >
                     <FondIcon bias="black" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'gold' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'gold'})}>
+                <button 
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'gold' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'gold'
+                        })
+                    }}
+                >
                     <FondIcon bias="gold" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'brown' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'brown'})}>
+                <button
+                    type='button' 
+                    className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'brown' ? 'is-selected' : '' }`}  
+                    onClick={() => {
+                        setEmojiValue('')
+                        setEmojiError('')
+                        setSelectedSubIcon({ 
+                            type: 'fond', 
+                            value: 'brown'
+                        })
+                    }}
+                >
                     <FondIcon bias="brown" />
                 </button>
-                <button type='button' className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'white' ? 'is-selected' : '' }`}  onClick={() => setSelectedSubIcon({ type: 'fond', value: 'white'})}>
+                <button 
+                    type='button' 
+                        className={`choose-sub-icon__icons--button ${selectedSubIcon?.type === 'fond' && selectedSubIcon.value === 'white' ? 'is-selected' : '' }`}  
+                        onClick={() => {
+                            setEmojiValue('')
+                            setEmojiError('')
+                            setSelectedSubIcon({ 
+                                type: 'fond', 
+                                value: 'white'
+                            })
+                        }}
+                    >
                     <FondIcon bias="white" />
                 </button>
             </div>

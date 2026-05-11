@@ -9,7 +9,7 @@ import './EditUserProfile.scss'
 
 type Props = {
     UserIconUrl?: string;
-    subIcon?: UserSubIcon;
+    subIcon?: UserSubIcon | null;
     roomInitialName?: string;
     userName?: string;
     onChangeUserIcon?: (file: File) => void;
@@ -53,6 +53,7 @@ export const EditUserProfile = ({
                             type="text"
                             className="input-box__text-box"
                             maxLength={30}
+                            value={userName ?? ""}
                             placeholder={userName || roomInitialName || "Your Name"}
                             onChange={(e) => {
                                 const value = e.target.value;

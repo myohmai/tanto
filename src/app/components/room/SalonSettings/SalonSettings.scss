@@ -1,0 +1,57 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.salon-settings {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 $spacing-md;
+    gap: $spacing-xl;
+    &__title {
+        @include flex-center;
+        position: relative;
+        font: $font-600_semi-bold;
+    }
+    &__cancel {
+        position: absolute;
+        left: $spacing-md;
+        font: $font-400_regular_sm;
+        border-radius: $radius-full;
+        &:hover {
+            background-color: var(--neutral-color-100);
+            transition: background-color 0.15s ease;
+        }
+        &:active {
+            background-color: var(--neutral-color-200);
+        }
+        .night & {
+            &:hover {
+                background-color: var(--neutral-color-600);
+                transition: background-color 0.15s ease;
+            }
+            &:active {
+                background-color: var(--neutral-color-500); 
+            }
+        }
+    }
+    &__room-name {
+        display: flex;
+        font: $font-700_bold;
+        align-items: center;
+        gap: $spacing-md;
+    }
+    &__salon-icon {
+        display: flex;
+        align-items: flex-end;
+        gap: $spacing-md;
+        padding-left: $spacing-md;
+    }
+    &__topic {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+    &__check-icon {
+        fill: var(--accent-color-100);
+    }
+}

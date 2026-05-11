@@ -12,11 +12,12 @@ export type MediaItem = {
 
 export type MediaProps = {
     source: MediaItem[];
-    type: MediaLabelType;
+    type?: MediaLabelType | null;
     lang: Lang;
+    onRemove?: (index: number) => void;
 }
 
-export const Media = ( { source, type, lang }: MediaProps ) => {
+export const Media = ( { source, type, lang, onRemove }: MediaProps ) => {
     const items = source.slice(0, 4);
     const [activeIndex, setActiveIndex] = useState< number | null>(null);
     const [startX, setStartX] = useState<number | null>(null);
@@ -24,9 +25,41 @@ export const Media = ( { source, type, lang }: MediaProps ) => {
     const renderItem = (item: MediaItem, i: number) =>{
         switch (item.type) {
             case "image":
-                return <img key={i} src={item.url} onClick={() => setActiveIndex(i)}/>;
+                return (
+                    <div className="media-item-wrapper" key={i}>
+                        <img src={item.url} onClick={() => setActiveIndex(i)} />
+                        
+                            {onRemove && (
+                            <button
+                                className="media-cancel"
+                                onClick={(e) => {
+                                e.stopPropagation();
+                                onRemove(i);
+                                }}
+                            >
+                                <CancelIcon className="media-cancel-icon" />
+                            </button>
+                        )}
+                    </div>
+
+);
             case "video":
-                return <video key={i} src={item.url} controls onClick={() => setActiveIndex(i)}/>
+                return (
+                    <div className="media-item-wrapper" key={i}>
+                        <video src={item.url} controls onClick={() => setActiveIndex(i)}/>
+                        {onRemove && (
+                            <button
+                                className="media-cancel"
+                                onClick={(e) => {
+                                e.stopPropagation();
+                                onRemove(i);
+                                }}
+                            >
+                                <CancelIcon className="media-cancel-icon" />
+                            </button>
+                        )}
+                    </div>
+                );
             default:
                 return null;
         }
@@ -128,7 +161,7 @@ export const Media = ( { source, type, lang }: MediaProps ) => {
                     )}
                 </div>
             )}
-            <MediaLabel type={type} lang={lang} />
+            {type && <MediaLabel type={type} lang={lang} />}
         </div>
     )
 }

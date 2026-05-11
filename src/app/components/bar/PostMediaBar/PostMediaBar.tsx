@@ -7,13 +7,14 @@ type Props = {
     onSelectFile: (file: File[]) => void;
     onMedia: () => void;
     onPost: () => void;
+    disabled?: boolean;
 }
 
-export const PostMediaBar = ({ onSelectFile, onMedia, onPost }: Props ) => {
+export const PostMediaBar = ({ onSelectFile, onMedia, onPost, disabled }: Props ) => {
     return(
         <div className='post-media-bar bg-color-primary padding-sm-lg '>
             <AddMediaContainer onSelectFile={onSelectFile} onClick={onMedia} />
-            <PostButton onClick={onPost} />
+            <PostButton onClick={onPost} disabled={disabled}/>
         </div>
     )
 }

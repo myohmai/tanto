@@ -256,6 +256,7 @@ body {
     width: 100%;
     height: auto;
     &__container {
+        position: relative;
         width: 100%;
         height: auto;
         padding: $spacing-sm $spacing-md;
@@ -292,6 +293,28 @@ body {
             }
         }
     }
+    &__text-area {
+        width: 100%;
+        outline: none;
+        font: $font-400_regular;
+        color: var(--neutral-color-700);
+        white-space: pre-wrap;
+        resize: none;
+        &:focus-visible {
+            outline: none;
+            box-shadow: none;
+        }
+        &::placeholder {
+            font: $font-400_regular;
+            color: var(--neutral-color-500);
+        }
+        .night & {
+            color: var(--neutral-color-100);
+            &::placeholder {
+                color: var(--neutral-color-200);
+            }
+        }
+    }
     &__error {
         width: 100%;
         font: $font-500_medium_sm;
@@ -312,7 +335,7 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     .night & {
         color: var(--neutral-color-100);
-        background-color: var(--neutral-color-700);
+        background-color: var(--neutral-color-500);
     }
     animation: fadeIn 0.2s ease;
 }

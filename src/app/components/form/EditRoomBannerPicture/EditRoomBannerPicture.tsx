@@ -4,8 +4,8 @@ import './EditRoomBannerPicture.scss'
 import { useState } from "react";
 
 type Props = {
-    bannerImageUrl: string;
-    onChangeBanner?: (file: File) => void;
+    bannerImageUrl?: string | null;
+    onChangeBanner: (file: File) => void;
 }
 
 export const EditRoomBannerPicture = ({ bannerImageUrl, onChangeBanner }: Props ) => {

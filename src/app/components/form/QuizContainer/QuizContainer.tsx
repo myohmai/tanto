@@ -7,7 +7,7 @@ import './QuizContainer.scss'
 
 type Props = {
     onScore: (value: number) => void;
-    questions: QuizeList[];
+    questions: QuizeList[] | undefined;
 }
 
 export const QuizContainer = ({ onScore, questions }: Props) => {
@@ -24,7 +24,7 @@ export const QuizContainer = ({ onScore, questions }: Props) => {
 
     return (
         <div className="quiz-container bg-color-primary">
-            {questions.slice(0, 5).map((q, index) => (
+            {questions?.slice(0, 5).map((q, index) => (
                 <QuestionContainer
                     key={q.id}
                     questionNumber={index + 1}

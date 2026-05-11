@@ -1,0 +1,22 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.delete-button {
+    width: 100%;
+    height: auto;
+    border: 1px solid $color-warning--500;
+    border-radius: $radius-sm;
+    @include flex-center;
+    font: $font-400_regular;
+    color: $color-warning--500;
+    &:hover {
+        outline: 1px solid $color-warning--500;
+    }
+    &:active {
+        outline: 2px solid $color-warning--500;
+        box-shadow: 0 0 5 $color-warning--500;
+    }
+    &__icon {
+        fill: $color-warning--500;
+    }
+}

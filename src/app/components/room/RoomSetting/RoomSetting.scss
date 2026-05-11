@@ -1,0 +1,134 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.room-setting {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    &__wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 56px $spacing-md $spacing-xxl;
+    }
+    &__room-icon-wrapper {
+        position: absolute;
+        top: -8px;
+        display: flex;
+        align-items: flex-end;
+        gap: $spacing-lg;
+    }
+    &__info-count {
+        position: absolute;
+        bottom: $spacing-md;
+        right: $spacing-lg;
+        font: $font-400_regular_sm;
+        display: inline-block;
+        z-index: 5;
+        &::before {
+            content: "";
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            position: absolute;
+            width: 130%;
+            height: 130%;
+            border-radius: $radius-full;
+            background-color: var(--neutral-color-100);
+            opacity: 1;
+            z-index: -1;
+        }
+        .night &::before {
+            background-color: var(--neutral-color-500);
+        }
+    }
+    &__initial {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+        }
+    &__initial-icon-wrapper {
+        display: flex;
+        gap: $spacing-lg;
+        align-items: flex-end;
+    }
+    &__host {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+    &__visibility {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+    &__pulldown {
+        width: 100%;
+        display: flex;
+        gap: $spacing-md;
+        align-items: flex-start;
+        justify-content: stretch;
+        border-radius: $radius-sm;
+    }
+    &__pulldown-wrapper {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+    &__pulldown-button {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        padding: $spacing-xs;
+        border-radius: $radius-sm;
+        font: $font-400_regular;
+        gap: $spacing-md;
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        &:active {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        &:disabled {
+            cursor: not-allowed;
+            background-color: rgba(0, 0, 0, 0.2);
+            filter: brightness(0.8);
+        }
+
+    }
+    &__selected {
+        flex: 1 1 auto;
+    }
+    &__entry-way {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+    &__keyword {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+    &__quiz {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+    &__quiz-score-range {
+        font: $font-400_regular_sm;
+    }
+    &__salon {
+        display: inline-flex;
+        gap: $spacing-sm;
+        font: $font-400_regular;
+    }
+    &__salon-icon {
+        fill: var(--accent-color-100);
+    }
+}
+.not-premium {
+    text-decoration: none;
+    font: $font-300_light_xs;
+}

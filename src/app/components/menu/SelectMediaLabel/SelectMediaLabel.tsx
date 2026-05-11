@@ -10,14 +10,13 @@ import { useState } from 'react';
 import './SelectMediaLabel.scss'
 
 type Props = {
-    value: MediaLabelType;
     onSubmit: (value: MediaLabelType) => void;
     isOpen: boolean;
     onClose: () => void;
 }
 
-export const SelectMediaLabel = ({ value, onSubmit, isOpen, onClose } : Props ) => {
-    const [selected, setSelected] = useState<MediaLabelType>(value);
+export const SelectMediaLabel = ({ onSubmit, isOpen, onClose } : Props ) => {
+    const [selected, setSelected] = useState<MediaLabelType | null>(null);
     return(
         <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName='select-media-label stack-md'>
             <div className="select-media-label__title">Select Media Label</div>
@@ -28,8 +27,15 @@ export const SelectMediaLabel = ({ value, onSubmit, isOpen, onClose } : Props ) 
                 <Option<MediaLabelType> label="Quote" value="quote" isSelected={selected === "quote"} onSelect={(value) => setSelected(value)}/>
                 <Option<MediaLabelType> label="AI" value="ai" isSelected={selected === "ai"} onSelect={(value) => setSelected(value)}/>
             </div>
-            <MediaLabelDescription type={selected} lang="en" />
-            <SubmitButton label='Submit' onClick={() => onSubmit(selected)} />
+            {selected && (<MediaLabelDescription type={selected} lang="en" />)}
+            <SubmitButton
+                label='Submit'
+                onClick={() => {
+                    if (!selected) return;
+                    onSubmit(selected);
+                }}
+                disabled={!selected}
+            />
         </BottomSheet>
     )
 }

@@ -47,12 +47,12 @@
             flex: 0 0 auto;
         }
     }
-    &__infomation-wrap {
+    &__information-wrap {
         position: relative;
         width: 100%;
         padding-left: $spacing-md;
     }
-    &__infomation {
+    &__information {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
@@ -64,7 +64,7 @@
             display: block;
         }
     }
-    &__infomation--more {
+    &__information--more {
         position: absolute;
         bottom: 0;
         right: 0;

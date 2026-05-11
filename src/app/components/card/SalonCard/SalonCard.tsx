@@ -1,10 +1,8 @@
 import { FondIcon, BiasColor, PinIcon, ArrowRightIcon } from "@/app/components/icons";
+import { SalonIcon } from "@/app/types/salon";
 
 import './SalonCard.scss'
 
-type SalonIcon =
-    | { type: 'emoji'; value: string } 
-    | { type: 'fond'; value: BiasColor };
 
 type Props = {
     salonName: string;

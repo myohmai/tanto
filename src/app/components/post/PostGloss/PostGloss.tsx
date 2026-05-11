@@ -1,0 +1,220 @@
+import { PostMenuBar } from "@/app/components/bar/PostMenuBar";
+import { UserCustomIcon, UserSubIcon } from "@/app/components/custom-icon/UserCustomIcon";
+import { WhereYouAre } from "@/app/components/content/WhereYouAre";
+import { TopicContent } from "@/app/components/content/TopicContent";
+import { PostMediaBar } from "@/app/components/bar/PostMediaBar";
+import { Media, MediaItem } from "@/app/components/media/Media";
+import { MediaLabelType } from "@/app/components/media/MediaLabel";
+import { MediaEmbed } from "@/app/components/media/MediaEmbed";
+import { SelectMediaLabel } from "@/app/components/menu/SelectMediaLabel";
+import { MediaEmbedForm } from "@/app/components/menu/MediaEmbedForm";
+
+import './PostGloss.scss'
+import { useState, useEffect, useRef } from "react";
+
+type PostData = {
+    content: string;
+
+    media?: {
+        source: MediaItem[];
+        type?: MediaLabelType | null;
+    }
+
+    mediaEmbed?: {
+        url: string;
+    }
+
+    topic?: {
+        topicContent: string;
+        mediaSource?: MediaItem[];
+        mediaType?: MediaLabelType;
+        mediaEmbedUrl?: string;
+    }
+
+    postedAt: string;
+    userName: string;
+    salonName?: string;
+    roomName: string;
+}
+
+type Props = {
+    onCancel: () => void;
+    iconUrl?: string;
+    subIcon? : UserSubIcon | null;
+    roomName: string;
+    salonName?: string;
+    userName: string;
+    onRoom: () => void;
+    onSalon?: () => void;
+    onSelectFile: (file: File[]) => void;
+    onPost: (payload: PostData) => void;
+    topic?: {
+        topicContent: string;
+        mediaSource?: MediaItem[];
+        mediaType?: MediaLabelType;
+        mediaEmbedUrl?: string;
+    }
+    lang: "en" | "ja";
+}
+
+export const PostGloss = ({
+    onCancel,
+    iconUrl,
+    subIcon,
+    roomName,
+    salonName,
+    userName,
+    onRoom,
+    onSalon,
+    onSelectFile,
+    onPost,
+    topic,
+    lang
+}: Props) => {
+    const [previews, setPreview] = useState<MediaItem[]>([]);
+    const [mediaType, setMediaType] = useState<MediaLabelType | null>(null);
+    const [isLabelOpen, setIsLabelOpen] = useState(false);
+    const [embedUrl, setEmbedUrl] = useState("")
+    const [isEmbedOpen, setIsEmbedOpen] = useState(false)
+    const [content, setContent] = useState("");
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+    const MAX_LENGTH = 280;
+
+    useEffect(() => {
+        const saved = localStorage.getItem("post-draft");
+        if (!saved) return;
+
+        const draft: PostData = JSON.parse(saved);
+
+        setContent(draft.content);
+        setPreview(draft.media?.source ?? []);
+        setMediaType(draft.media?.type ?? null);
+        setEmbedUrl(draft.mediaEmbed?.url ?? "");
+    }, []);
+
+    const handleSelectFile = (files: File[]) => {
+        const newItems: MediaItem[] = files.map((file) => ({
+            type: file.type.startsWith("video") ? "video" : "image",
+            url: URL.createObjectURL(file),
+        }));
+
+        setPreview((prev) => [...prev, ...newItems]);
+        onSelectFile(files);
+
+    };
+
+    const handlePost = () => {
+        if (content.trim().length === 0) return;
+        if (previews.length > 0 && !mediaType) {
+            setIsLabelOpen(true);
+            return;
+        }
+        const payload: PostData = {
+            content,
+            media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
+            mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            topic,
+            postedAt: new Date().toISOString(),
+            userName,
+            salonName,
+            roomName,
+        };
+        onPost(payload);
+        localStorage.removeItem("post-draft");
+    };
+
+    const handleDraft = () => {
+        const draft: PostData = {
+            content,
+            media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
+            mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            topic,
+            postedAt: new Date().toISOString(),
+            userName,
+            salonName,
+            roomName,
+        };
+
+        localStorage.setItem("post-draft", JSON.stringify(draft));
+    };
+
+    return (
+        <div className="post-gloss bg-color-primary">
+            <PostMenuBar
+                type="new"
+                onCancel={() => {
+                    localStorage.removeItem("post-draft");
+                    onCancel();
+                }}
+                onDraft={handleDraft}
+            />
+            <div className="post-gloss__wrapper">
+                <UserCustomIcon iconUrl={iconUrl} subIcon={subIcon} />
+                <div className="post-gloss__container">
+                    <WhereYouAre isInSalon={false} isInRoom={false} onRoom={onRoom} onSalon={onSalon} roomName={roomName} salonName={salonName} />
+                    <textarea
+                        ref={textareaRef}
+                        id="post-content"
+                        name="content"
+                        placeholder="How are you doing?"
+                        maxLength={MAX_LENGTH}
+                        value={content}
+                        className="post-gloss__text"
+                        onChange={(e) => {
+                            setContent(e.target.value);
+
+                            const el = textareaRef.current;
+                            if (!el) return;
+
+                            el.style.height = "auto";
+                            el.style.height = el.scrollHeight + "px";
+                        }}
+                    />
+                    {previews.length > 0 && (
+                        <Media
+                            source={previews}
+                            type={mediaType}
+                            lang={lang}
+                            onRemove={(index) => {
+                                setPreview((prev) => {
+                                    const target = prev[index];
+                                    if (target) {
+                                    URL.revokeObjectURL(target.url);
+                                    }
+                                    return prev.filter((_, i) => i !== index);
+                                });
+                            }}
+                        />
+                    )}
+                    {embedUrl && ( <MediaEmbed url={embedUrl} />)}
+                    {topic?.topicContent && (<TopicContent topicContent={topic.topicContent} source={topic.mediaSource} type={topic.mediaType} lang={lang} url={topic.mediaEmbedUrl}/>)} 
+                </div>
+            </div>
+            <SelectMediaLabel
+                isOpen={isLabelOpen}
+                onClose={() => setIsLabelOpen(false)}
+                onSubmit={(value) => {
+                    setMediaType(value);
+                    setIsLabelOpen(false);
+                }}
+            />
+            <MediaEmbedForm
+                isOpen={isEmbedOpen}
+                onClose={() => setIsEmbedOpen(false)}
+                onSubmit={(value) => {
+                    setEmbedUrl(value);
+                    setIsEmbedOpen(false);
+                }}
+            />
+            <PostMediaBar
+                onSelectFile={handleSelectFile}
+                onMedia={() => setIsEmbedOpen(true)}
+                onPost={handlePost}
+                disabled={content.trim().length === 0}
+            />
+            <div className="post-gloss__count text-color-primary">
+                {content.length} / {MAX_LENGTH}
+            </div>
+        </div>
+    )
+}

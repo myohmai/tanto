@@ -3,7 +3,7 @@ import './PulldownArrow.scss';
 
 type Props = {
     isOpen: boolean;
-    onToggle: () => void;
+    onToggle?: () => void;
 }
 
 export const PulldownArrow = ({isOpen, onToggle}: Props ) => {

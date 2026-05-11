@@ -4,7 +4,7 @@ export type UserSubIcon =
         | { type: 'fond'; value: BiasColor }; // Sub-icon can be a fond with a specific bias color    
 
 export type UserCustomIconProps = {
-    iconUrl?: string; // URL for the user's custom icon
+    iconUrl?: string | null; // URL for the user's custom icon
     subIcon?: UserSubIcon | null;
     className?: string; // Optional additional class name for styling
 };

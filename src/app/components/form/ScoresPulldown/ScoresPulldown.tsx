@@ -28,17 +28,17 @@ export const ScoresPulldown = ({ value = 3, onChange }: Props ) => {
                 <div className="score-pulldown__wrapper stack-sm">
                     <div className="score-pulldown__scores stack-sm">
                         {SCORE_OPTIONS.map(option => (
-                        <button
-                            key={option.value}
-                            onClick={() => {
-                                setSelectedScore(option.value);
-                                setIsOpen(false);
-                                onChange?.(option.value);
-                            }}
-                        >
-                            {option.label}
-                        </button>
-                ))}
+                            <button
+                                key={option.value}
+                                onClick={() => {
+                                    setSelectedScore(option.value);
+                                    setIsOpen(false);
+                                    onChange?.(option.value);
+                                }}
+                            >
+                                {option.label}
+                            </button>
+                        ))}
                     </div>
                     <div className="score-pulldown__label">score</div>
                 </div>

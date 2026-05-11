@@ -29,10 +29,10 @@
             background-color: var(--neutral-color-200);
         }
         .night & {
-            :hover {
+            &:hover {
                 background-color: var(--neutral-color-600);
             }
-            :active {
+            &:active {
                 background-color: var(--neutral-color-500);
             }
         }

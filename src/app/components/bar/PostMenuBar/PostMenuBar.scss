@@ -3,6 +3,8 @@
 
 .post-menu-bar {
     display: flex;
+    width: 100%;
+    height: auto;
     align-items: center;
     justify-content: space-between;
     font: $font-600_semi-bold;
