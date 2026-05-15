@@ -1,27 +1,19 @@
 import { UserCustomIcon, UserSubIcon } from '@/app/components/custom-icon/UserCustomIcon'
 import { PulldownArrow } from "@/app/components/buttons/PulldownArrow";
+
+import { UserRoomData } from '@/app/types/userroomdata';
+
 import React, { useState } from 'react';
 
 import './DashboardUserNameBar.scss'
 
-type UserNameList = {
-    roomId: string;
-    roomName: string;
-    iconUrl?: string;
-    subIcon?: UserSubIcon;
-    userName: string;
-}
 
-type CurrentRoom = {
-    roomId: string;
-    roomName: string;
-    iconUrl?: string;
-    subIcon?: UserSubIcon;
-    userName: string;
-}
+// ActiveIdentity
+
+type CurrentRoom = UserRoomData;
 
 type Props = {
-    list: UserNameList[];
+    list: UserRoomData[];
     currentRoom: CurrentRoom;
     onChange: (roomId: string) => void;
 }

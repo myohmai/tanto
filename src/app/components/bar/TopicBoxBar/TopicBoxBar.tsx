@@ -6,8 +6,8 @@ import './TopicBoxBar.scss';
 
 type Props = {
     isHost: Boolean;
-    onWhisper: () => void;
-    onView: () => void;
+    onWhisper?: () => void;
+    onView?: () => void;
 }
 
 export const TopicBoxBar = ({ isHost, onWhisper, onView}: Props) => {
@@ -17,7 +17,7 @@ export const TopicBoxBar = ({ isHost, onWhisper, onView}: Props) => {
                 <BoxIcon size="md" className="icon-color-primary"/>
                 <span>Topic Box</span>
             </div>
-            {isHost ? <TopicViewButton onClick={onView} /> : <WhisperButton onClick={onWhisper} />}
+            {isHost ? <TopicViewButton onClick={onView!} /> : <WhisperButton onClick={onWhisper!} />}
         </div>
     )
 }

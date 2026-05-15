@@ -1,8 +1,10 @@
 import { FondIcon, FondLevel, IconSize } from "@/app/components/icons"; 
 
+export type roomSubIcon =  { type: 'fond'; value: FondLevel };
+
 export type RoomCustomIconProps = {
     roomIconUrl?: string | null; // URL for the user's custom icon
-    subIcon?: { type: 'fond'; value: FondLevel }; // Sub-icon can be a fond with a specific bias color
+    subIcon?: roomSubIcon; // Sub-icon can be a fond with a specific bias color
     className?: string;
 };
 

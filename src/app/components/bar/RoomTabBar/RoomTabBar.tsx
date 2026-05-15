@@ -2,7 +2,7 @@ import { TabButton } from '@/app/components/buttons/TabButton';
 
 import './RoomTabBar.scss';
 
-type TabType = 'Gloss' | 'Salon' | 'Turn Table';
+export type TabType = 'Gloss' | 'Salon' | 'Turn Table';
 
 type Props = {
     selectedTab: TabType;

@@ -5,7 +5,10 @@ export type SalonIcon =
     | { type: 'fond'; value: BiasColor };
 
 export type SalonData = {
+    salonId?: string;
+    roomId: string;
     salonName: string;
     salonIcon: SalonIcon;
     isTopicBox: boolean;
+    isPinned: boolean;
 }

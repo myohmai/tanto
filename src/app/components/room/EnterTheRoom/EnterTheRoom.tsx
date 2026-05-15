@@ -1,20 +1,18 @@
 import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
-import { UserSubIcon } from "@/app/components/custom-icon/UserCustomIcon"
 import { EditUserProfile } from "@/app/components/form/EditUserProfile";
+
+import { UserRoomData } from "@/app/types/userroomdata";
+
 import { useState } from "react";
 
 import './EnterTheRoom.scss'
 
-type User = {
-    userName: string;
-    iconUrl?: string;
-    subIcon?: UserSubIcon | null;
-}
-
 
 type Props = {
+    userId: string;
     bannerUrl?: string;
+    roomId: string;
     roomIconUrl?: string;
     roomName: string;
     roomRule: string;
@@ -22,25 +20,30 @@ type Props = {
         iconUrl?: string;
         initialName?: string;
     }
-    onEnter: (payload: User) => void;
+    onEnter: (payload: UserRoomData) => void;
 }
 
 export const EnterTheRoom = ({
+    userId,
     bannerUrl,
+    roomId,
     roomIconUrl,
     roomName,
     roomRule,
     roomMemberIni,
     onEnter
 }: Props) => {
-    const [user, setUser] = useState<User>({
+    const [user, setUser] = useState<UserRoomData>({
+        userId,
+        roomId,
+        roomName,
         userName: roomMemberIni.initialName ?? "",
         iconUrl: "",
         subIcon: null,
     })
 
     const handleEnter = () => {
-        const payload: User = {
+        const payload: UserRoomData = {
             ...user,
         }
         onEnter(payload);

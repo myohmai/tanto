@@ -4,12 +4,15 @@ import { ChooseSalonIcon } from "@/app/components/menu/ChooseSubIcon";
 import { FondIcon, CheckBoxIcon } from "@/app/components/icons";
 import { SalonData } from "@/app/types/salon";
 
+import { nanoid } from "nanoid";
+
 import { useState } from "react";
 
 import './SalonSettings.scss'
 import { SubmitButton } from "../../buttons/SubmitButton";
 
 type Props = {
+    roomId: string;
     roomIconUrl?: string;
     roomName: string;
     onSubmit: (payload: SalonData) => void;
@@ -17,15 +20,18 @@ type Props = {
 }
 
 export const CreateSalon = ({
+    roomId,
     roomIconUrl,
     roomName,
     onSubmit,
     onCancel
 }: Props) => {
     const [salonData, setSalonData] = useState<SalonData>({
+        roomId: roomId,
         salonName: "",
         salonIcon: {type: "fond", value: "red"},
         isTopicBox: false,
+        isPinned: false,
     })
     const [isIconOpen, setIsIconOpen] = useState(false);
     const handleSubmit = () => {
@@ -50,6 +56,7 @@ export const CreateSalon = ({
                     onSubmit={(icon) => {
                         setSalonData((prev) => ({
                             ...prev,
+                            salonId: nanoid(),
                             salonIcon: icon,
                         }))
                     }}

@@ -1,20 +1,19 @@
 import { QuotationIcon } from "@/app/components/icons";
-import { Media, MediaItem, MediaProps } from "@/app/components/media/Media";
-import { MediaLabelType, Lang } from "@/app/components/media/MediaLabel";
+import { Media } from "@/app/components/media/Media";
+import { Lang } from "@/app/components/media/MediaLabel";
 import { MediaEmbed } from "@/app/components/media/MediaEmbed";
+
+import { Topic } from "@/app/types/topic";
 
 import './TopicContent.scss'
 
-export type TopicProps = {
-    topicContent: string;
-    source?: MediaItem[];
-    type?: MediaLabelType;
+type Props = {
+    topic: Topic;
     lang?: Lang;
-    url?: string;
     onClick?: () => void;
 }
 
-export const TopicContent = ({ topicContent, source, type, lang, url, onClick }: TopicProps ) => {
+export const TopicContent = ({ topic, lang, onClick }: Props ) => {
     const getDisplayUrl = (url: string) => {
         try {
             const hostname = new URL(url).hostname.replace(/^www\./, "");
@@ -48,10 +47,10 @@ export const TopicContent = ({ topicContent, source, type, lang, url, onClick }:
         <div className="topic-content bg-color-secondary padding-md stack-sm">
             <QuotationIcon className="icon-color-secondary" />
             <div className="topic-content__text text-color-primary">
-                {renderTextWithLinks(topicContent)}
+                {renderTextWithLinks(topic.topicContent)}
             </div>
-            {source && source.length > 0 && (<Media source={source} type={type!} lang={lang!}/>) }
-            {url && (<MediaEmbed url={url} onClick={onClick} />)}
+            {topic.media?.source && topic.media.source.length > 0 && (<Media source={topic.media.source} type={topic.media.type} lang={lang!}/>) }
+            {topic.mediaEmbed && (<MediaEmbed url={topic.mediaEmbed.url} onClick={onClick} />)}
         </div>
     )
 }

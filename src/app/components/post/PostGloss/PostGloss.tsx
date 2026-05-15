@@ -9,51 +9,31 @@ import { MediaEmbed } from "@/app/components/media/MediaEmbed";
 import { SelectMediaLabel } from "@/app/components/menu/SelectMediaLabel";
 import { MediaEmbedForm } from "@/app/components/menu/MediaEmbedForm";
 
+import { GlossData } from "@/app/types/gloss";
+import { Topic } from "@/app/types/topic";
+
+import { nanoid } from "nanoid";
+
 import './PostGloss.scss'
 import { useState, useEffect, useRef } from "react";
 
-type PostData = {
-    content: string;
 
-    media?: {
-        source: MediaItem[];
-        type?: MediaLabelType | null;
-    }
-
-    mediaEmbed?: {
-        url: string;
-    }
-
-    topic?: {
-        topicContent: string;
-        mediaSource?: MediaItem[];
-        mediaType?: MediaLabelType;
-        mediaEmbedUrl?: string;
-    }
-
-    postedAt: string;
-    userName: string;
-    salonName?: string;
-    roomName: string;
-}
 
 type Props = {
     onCancel: () => void;
     iconUrl?: string;
     subIcon? : UserSubIcon | null;
+    roomId: string;
+    salonId: string;
+    userId: string;
     roomName: string;
     salonName?: string;
     userName: string;
     onRoom: () => void;
     onSalon?: () => void;
     onSelectFile: (file: File[]) => void;
-    onPost: (payload: PostData) => void;
-    topic?: {
-        topicContent: string;
-        mediaSource?: MediaItem[];
-        mediaType?: MediaLabelType;
-        mediaEmbedUrl?: string;
-    }
+    onPost: (payload: GlossData) => void;
+    topic?: Topic;
     lang: "en" | "ja";
 }
 
@@ -61,6 +41,9 @@ export const PostGloss = ({
     onCancel,
     iconUrl,
     subIcon,
+    roomId,
+    salonId,
+    userId,
     roomName,
     salonName,
     userName,
@@ -84,7 +67,7 @@ export const PostGloss = ({
         const saved = localStorage.getItem("post-draft");
         if (!saved) return;
 
-        const draft: PostData = JSON.parse(saved);
+        const draft: GlossData = JSON.parse(saved);
 
         setContent(draft.content);
         setPreview(draft.media?.source ?? []);
@@ -109,7 +92,13 @@ export const PostGloss = ({
             setIsLabelOpen(true);
             return;
         }
-        const payload: PostData = {
+        const payload: GlossData = {
+            glossId: nanoid(),
+            
+            roomId,
+            salonId,
+            userId,
+
             content,
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
@@ -118,13 +107,22 @@ export const PostGloss = ({
             userName,
             salonName,
             roomName,
+
+            replyCount: 0,
+            fondCount: 0,
         };
         onPost(payload);
         localStorage.removeItem("post-draft");
     };
 
     const handleDraft = () => {
-        const draft: PostData = {
+        const draft: GlossData = {
+            glossId: nanoid(),
+
+            roomId,
+            salonId,
+            userId,
+            
             content,
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
@@ -133,6 +131,9 @@ export const PostGloss = ({
             userName,
             salonName,
             roomName,
+
+            replyCount:0,
+            fondCount: 0,
         };
 
         localStorage.setItem("post-draft", JSON.stringify(draft));
@@ -187,7 +188,7 @@ export const PostGloss = ({
                         />
                     )}
                     {embedUrl && ( <MediaEmbed url={embedUrl} />)}
-                    {topic?.topicContent && (<TopicContent topicContent={topic.topicContent} source={topic.mediaSource} type={topic.mediaType} lang={lang} url={topic.mediaEmbedUrl}/>)} 
+                    {topic?.topicContent && (<TopicContent topic={topic} lang={lang}/>)} 
                 </div>
             </div>
             <SelectMediaLabel

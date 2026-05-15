@@ -2,7 +2,7 @@ import { TabButton } from '@/app/components/buttons/TabButton';
 
 import './DashBoardTabBar.scss';
 
-type DashBoardTabType = 'My Gloss' | 'Joined Room' | 'Owned Room';
+export type DashBoardTabType = 'My Gloss' | 'Joined Room' | 'Owned Room';
 
 type Props = {
     selectedTab: DashBoardTabType;

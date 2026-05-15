@@ -17,7 +17,7 @@ export const RoomTopBar = ({ roomName, onBack, onEnter, isEntered, onRoom }: Pro
         <div className="room-top-bar padding-md bg-color-primary text-color-primary">
             <div className="room-top-bar__container inline-lg">
                 <BackButton onClick={onBack} />
-                <WhereYouAre isInSalon={false} roomName={roomName} onRoom={onRoom} />
+                <WhereYouAre isInRoom={false} isInSalon={true} roomName={roomName} onRoom={onRoom} />
             </div>
             <RoomEnterButton isInRoom={true} isEntered={isEntered} onClick={onEnter} />
         </div>

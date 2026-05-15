@@ -6,17 +6,13 @@ import { SeeAlso } from "@/app/components/media/SeeAlso";
 
 import { useState } from "react";
 
+import type { MusicService,TurnTableData } from '@/app/types/turntable';
+
 import './TurnTableMediaCard.scss'
 
-type MusicService = "youtube" | "spotify" | "appleMusic"
 
 type Props = {
-    cover: {
-        src: string;
-        alt: string;
-    };
-    songName: string;
-    artistName: string;
+    turntableData: TurnTableData;
     hasSeeAlso?: Boolean;
     onSeeAlso?: () => void;
     primaryService: MusicService;
@@ -33,9 +29,7 @@ type Props = {
 }
 
 export const TurnTableMediaCard = ({
-    cover,
-    songName,
-    artistName,
+    turntableData,
     hasSeeAlso,
     onSeeAlso,
     primaryService,
@@ -50,10 +44,10 @@ export const TurnTableMediaCard = ({
     const [isOpen, setIsOpen] = useState(false)
     return(
         <div className="turn-table-media-card bg-color-primary padding-lg stack-sm">
-            <img src={cover.src} alt={cover.alt} className="turn-table-media-card__cover" />
+            <img src={turntableData.music?.cover} className="turn-table-media-card__cover" />
             <div className="turn-table-media-card__info text-color-primary stack-xs">
-                <div className="turn-table-media-card__song-name">{songName}</div>
-                <div className="turn-table-media-card__artist-name">{artistName}</div>
+                <div className="turn-table-media-card__song-name">{turntableData.music?.title}</div>
+                <div className="turn-table-media-card__artist-name">{turntableData.music?.artist}</div>
             </div>
             <div className="turn-table-media-card__player">
                 <div className="turn-table-media-card__player--button">

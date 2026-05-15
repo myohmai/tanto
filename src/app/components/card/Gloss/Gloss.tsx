@@ -3,27 +3,30 @@ import { UserCustomIcon, UserSubIcon } from "@/app/components/custom-icon/UserCu
 import { RoomCustomIcon  } from "@/app/components/custom-icon/RoomCustomIcon";
 import { WhereYouAre } from "@/app/components/content/WhereYouAre";
 import { MenuButton } from "@/app/components/buttons/MenuButton";
-import { Notification, NotificationType, NotificationMessage } from "@/app/components/evaluation/Notification";
-import { Media, MediaItem } from "@/app/components/media/Media";
-import { MediaLabelType } from "@/app/components/media/MediaLabel";
+import { Notification, NotificationType } from "@/app/components/evaluation/Notification";
+import { Media, } from "@/app/components/media/Media";
 import { MediaEmbed } from "@/app/components/media/MediaEmbed";
 import { TopicContent } from "@/app/components/content/TopicContent";
 import { Revaluation } from "@/app/components/evaluation/Revaluation";
 import { FondButton } from "@/app/components/buttons/FondButton";
 import { ReplyButton } from "@/app/components/buttons/ReplyButton";
+import { GlossMenu } from "@/app/components/menu/GlossMenu";
+import { ReportMenu } from "@/app/components/menu/ReportMenu";
+import { ShowGlossId } from "@/app/components/menu/ShowGlossId";
+
+import type { GlossData } from "@/app/types/gloss";
+import type { Report,ReportType } from "@/app/types/report";
+
+import { useState } from "react";
 
 import './Gloss.scss'
 
 
 type GlossProps = {
-    glossContent: string;
+    glossData: GlossData;
     isInFeed: boolean;
     isInRoom: boolean;
     isInSalon: boolean;
-    roomName: string;
-    salonName?: string;
-    userName: string;
-    postedAt: string;
     className?: string;
     user: {
         iconUrl: string;
@@ -33,81 +36,78 @@ type GlossProps = {
         iconUrl: string;
         subIcon?: { type: 'fond'; value: FondLevel };
     }
-    media?: {
-        source: MediaItem[];
-        type: MediaLabelType;
-    }
-    mediaEmbed?: {
-        url: string;
-        onSeeAlso?: () => void;
-    }
-    topic?: {
-        topicContent: string;
-        mediaSource?: MediaItem[];
-        mediaType?: MediaLabelType;
-        mediaEmbedUrl?: string;
-        onTopicSeeAlso?: () => void;
-    }
+    onSeeAlso?: () => void;
+    onTopicSeeAlso?: () => void;
+    
     notification?: {
         type: NotificationType;
     }
     revaluation?: {
-        onYes: () => void;
-        onNo: () => void;
+        onYes: (glossId: string) => void;
+        onNo: (glossId: string) => void;
     }
     action: {
         onRoom: () => void;
         onSalon?: () => void;
-        onFond: () => void;
+        onFond: (glossId: string) => void;
         onReply: () => void;
-        onMenu: () => void;
     }
+    onSelect: (reason: Report) => void;
     fond: {
-        value: number;
         isPressed: boolean;
-    }
-    reply: {
-        count: number;
     }
     lang: 'en' | 'ja';
 }
 
 export const Gloss = ({
-    glossContent,
+    glossData,
     isInFeed,
     isInRoom,
     isInSalon,
-    roomName,
-    salonName,
-    userName,
-    postedAt,
     className,
     user,
     room,
-    media,
-    mediaEmbed,
-    topic,
+    onSeeAlso,
+    onTopicSeeAlso,
     notification,
     revaluation,
     action,
+    onSelect,
     fond,
-    reply,
     lang
 }: GlossProps) => {
+    const [menuOpen, setMenuOpen ] = useState(false)
+    const [reportOpen, setReportOpen] = useState(false)
+    const [glossIdOpen, setGlossIdOpen ] = useState(false)
+
+    const [isShowToast, setIsShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    const handleShare = async () => {
+    const url = `${window.location.origin}/gloss/${glossData.glossId}`;
+
+        await navigator.clipboard.writeText(url);
+        
+    };
+    
+
     const { iconUrl: userIconUrl , subIcon: userSubIcon } = user;
     const { iconUrl: roomIconUrl , subIcon: roomSubIcon } = room;
 
-    const source = media?.source;
-    const type = media?.type;
+    const source = glossData.media?.source;
+    const type = glossData.media?.type;
 
-    const url = mediaEmbed?.url;
-    const onSeeAlso = mediaEmbed?.onSeeAlso;
+    const url = glossData.mediaEmbed?.url;
 
-    const topicContent = topic?.topicContent;
-    const mediaSource = topic?.mediaSource;
-    const mediaType = topic?.mediaType;
-    const mediaEmbedUrl = topic?.mediaEmbedUrl;
-    const onTopicSeeAlso = topic?.onTopicSeeAlso;
+    const topicContent = glossData.topic?.topicContent;
+
+    const handleReport = (type: ReportType) => {
+        onSelect({
+                type,
+                createdAt: Date.now()
+            });
+        };
+    
 
     // text to link
 
@@ -185,22 +185,79 @@ export const Gloss = ({
             <div className="gloss__content-wrapper stack-md">
                 <div className="gloss__content-container stack-sm">
                     <div className="gloss__name-wrapper">
-                        <MenuButton onClick={action.onMenu} className="gloss__menu" />
-                        {isInRoom && (<WhereYouAre isInSalon={false} isInRoom={isInRoom} onRoom={action.onRoom} roomName={roomName} onSalon={action.onSalon} salonName={salonName} />)}
-                        <div className="gloss__name inline-xs"><span>{userName}</span><span className="gloss__date">{formatPostedAt(postedAt, lang)}</span></div>
+                        <MenuButton onClick={() => setMenuOpen(true)} className="gloss__menu" />
+                        {isInRoom && (<WhereYouAre isInSalon={false} isInRoom={isInRoom} onRoom={action.onRoom} roomName={glossData.roomName} onSalon={action.onSalon} salonName={glossData.salonName} />)}
+                        <div className="gloss__name inline-xs"><span>{glossData.userName}</span><span className="gloss__date">{formatPostedAt(glossData.postedAt, lang)}</span></div>
                     </div>
                     {notification && (<Notification type={notification.type} lang={lang}/>)}
-                    <div className="gloss__content">{renderTextWithLinks(glossContent)}</div>
-                    {source && source.length > 0 && (<Media source={source} type={type!} lang={lang!} />)}
+                    <div className="gloss__content">{renderTextWithLinks(glossData.content)}</div>
+                    {source && source.length > 0 && (<Media source={source} type={type} lang={lang!} />)}
                     {url && (<MediaEmbed url={url} onClick={onSeeAlso} />)}
-                    {topicContent && (<TopicContent topicContent={topicContent} source={mediaSource} type={mediaType} lang={lang} url={mediaEmbedUrl} onClick={onTopicSeeAlso} />)}
-                    {revaluation && <Revaluation lang={lang} onYes={revaluation.onYes} onNo={revaluation.onNo} />}
+                    {topicContent && (<TopicContent topic={glossData.topic!} lang={lang} onClick={onTopicSeeAlso} />)}
+                    {revaluation && <Revaluation
+                        lang={lang}
+                        onYes={() => revaluation.onYes(glossData.glossId)}
+                        onNo={() => revaluation.onNo(glossData.glossId)}
+                    />}
                 </div>
                 <div className="gloss__action inline-md">
-                    <FondButton value={fond.value} onClick={action.onFond} isPressed={fond.isPressed} />
-                    <ReplyButton onClick={action.onReply} replyCount={reply.count} />
+                    <FondButton
+                        glossData={glossData}
+                        onClick={() => action.onFond(glossData.glossId)}
+                        isPressed={fond.isPressed} />
+                    <ReplyButton onClick={action.onReply} replyCount={glossData.replyCount} />
                 </div>
-            </div>           
+            </div> 
+            <GlossMenu  
+                onShare={async () => {
+                    await handleShare();
+                    setToastMessage("URL Copied");
+
+                    setIsShowToast(true);
+                    setMenuOpen(false);
+
+                    setTimeout(() => {
+                        setIsShowToast(false);
+                    }, 2000);
+                }}
+                onBlock={() => {
+                    setToastMessage("Coming Soon");
+                    setIsShowToast(true);
+                    setMenuOpen(false);
+
+                    setTimeout(() => {
+                        setIsShowToast(false);
+                    }, 2000);
+                }}
+                onMessage={() => {
+                    setToastMessage("Coming Soon");
+                    setIsShowToast(true);
+                    setMenuOpen(false);
+
+                    setTimeout(() => {
+                        setIsShowToast(false);
+                    }, 2000);
+                }}
+                onReport={() => {
+                    setReportOpen(true);
+                    setMenuOpen(false);
+                }}
+                onId={() => {
+                    setGlossIdOpen(true);
+                    setMenuOpen(false);
+                }}
+                isOpen={menuOpen}
+                onClose={() => setMenuOpen(false)}
+            />
+
+            <ReportMenu onSelect={handleReport} isOpen={reportOpen} onClose={() => setReportOpen(false)} />
+            <ShowGlossId glossId={glossData.glossId} isOpen={glossIdOpen} onClose={() => setGlossIdOpen(false)} />
+
+            {isShowToast && (
+                    <div className="toast">
+                        {toastMessage}
+                    </div>
+                )}
         </div>
     )
 }

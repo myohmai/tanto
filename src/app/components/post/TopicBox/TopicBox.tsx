@@ -1,45 +1,34 @@
 import { AddMediaContainer } from "@/app/components/container/AddMediaContainer";
-import { Media, MediaItem } from "@/app/components/media/Media";
+import { Media } from "@/app/components/media/Media";
 import { MediaLabelType } from "@/app/components/media/MediaLabel";
 import { MediaEmbed } from "@/app/components/media/MediaEmbed";
 import { SelectMediaLabel } from "@/app/components/menu/SelectMediaLabel";
 import { MediaEmbedForm } from "@/app/components/menu/MediaEmbedForm";
 
+import { MediaItem } from "@/app/types/media";
+import { Topic } from "@/app/types/topic";
+
+import { nanoid } from "nanoid";
+
 import './TopicBox.scss'
 import { useState, useRef } from "react";
 
-type topicPostData = {
-    content: string;
-
-    media?: {
-        source: MediaItem[];
-        type?: MediaLabelType | null;
-    }
-
-    mediaEmbed?: {
-        url: string;
-    }
-    postedAt: string;
-    userName: string;
-    salonName?: string;
-    roomName: string;
-}
 
 type Props = {
     onSelectFile: (file: File[]) => void;
-    onWhisper: (payload: topicPostData) => void;
-    userName: string;
-    salonName?: string;
-    roomName: string;
+    onWhisper: (payload: Topic) => void;
+    userId: string;
+    salonId: string;
+    roomId: string;
     lang: "en" | "ja";
 }
 
 export const TopicBox = ({
     onSelectFile,
     onWhisper,
-    userName,
-    salonName,
-    roomName,
+    userId,
+    salonId,
+    roomId,
     lang
 }: Props ) => {
     const [previews, setPreview] = useState<MediaItem[]>([]);
@@ -47,7 +36,7 @@ export const TopicBox = ({
     const [isLabelOpen, setIsLabelOpen] = useState(false);
     const [embedUrl, setEmbedUrl] = useState("")
     const [isEmbedOpen, setIsEmbedOpen] = useState(false)
-    const [content, setContent] = useState("");
+    const [topicContent, setTopicContent] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const MAX_LENGTH = 280;
 
@@ -62,19 +51,27 @@ export const TopicBox = ({
 
     };
     const handlePost = () => {
-        if (content.trim().length === 0) return;
+        if (topicContent.trim().length === 0) return;
         if (previews.length > 0 && !mediaType) {
             setIsLabelOpen(true);
             return;
         }
-        const payload: topicPostData = {
-            content,
+        const payload: Topic = {
+            topicId: nanoid(),
+
+            roomId,
+            salonId,
+            userId,
+
+            topicContent,
+
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
-            mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            mediaEmbed: {
+                url: embedUrl,
+            },
+
             postedAt: new Date().toISOString(),
-            userName,
-            salonName,
-            roomName,
+            
         };
         onWhisper(payload);
     };
@@ -90,10 +87,10 @@ export const TopicBox = ({
                         name="content"
                         placeholder="How are you doing?"
                         maxLength={MAX_LENGTH}
-                        value={content}
+                        value={topicContent}
                         className="topic-box__text"
                         onChange={(e) => {
-                            setContent(e.target.value);
+                            setTopicContent(e.target.value);
 
                             const el = textareaRef.current;
                             if (!el) return;
@@ -120,7 +117,7 @@ export const TopicBox = ({
                     )}
                     {embedUrl && ( <MediaEmbed url={embedUrl} />)}
                     <div className="topic-box__count text-color-primary">
-                        {content.length} / {MAX_LENGTH}
+                        {topicContent.length} / {MAX_LENGTH}
                     </div>
                 </div>
                 <AddMediaContainer onSelectFile={handleSelectFile} onClick={() => setIsEmbedOpen(true)} />
@@ -128,7 +125,7 @@ export const TopicBox = ({
             <button
                 type="button"
                 onClick={handlePost}
-                disabled={content.trim().length === 0}
+                disabled={topicContent.trim().length === 0}
                 className="topic-box__whisper padding-sm-md"
                 >Whisper</button>
             <SelectMediaLabel

@@ -1,7 +1,7 @@
 import { InfoIcon } from "@/app/components/icons";
 import "./MediaLabelDescription.scss";
 
-import { MediaLabelType } from '@/app/components/media/MediaLabel'
+import { MediaLabelType } from "@/app/types/media";
 
 type DescriptionText = {
     id: MediaLabelType;

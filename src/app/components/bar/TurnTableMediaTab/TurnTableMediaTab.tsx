@@ -1,6 +1,6 @@
 import './TurnTableMediaTab.scss'
 
-type TurnTableMediaType = 'Video' | 'Music';
+export type TurnTableMediaType = 'Video' | 'Music';
 
 type Props = {
     selectedTab: TurnTableMediaType;

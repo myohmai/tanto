@@ -2,14 +2,16 @@ import { EditRoomBannerPicture } from "@/app/components/form/EditRoomBannerPictu
 import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { EditIconButton } from "@/app/components/buttons/EditIconButton";
 import { EditSubIconButton } from "@/app/components/buttons/EditSubIconButton";
-import { UserCustomIcon, UserSubIcon } from "@/app/components/custom-icon/UserCustomIcon";
+import { UserCustomIcon } from "@/app/components/custom-icon/UserCustomIcon";
 import { TagInputBox } from "@/app/components/form/TagInputBox";
-import { SetQuizes, QuizeList } from "@/app/components/form/SetQuizes";
+import { SetQuizes } from "@/app/components/form/SetQuizes";
 import { CheckBoxIcon } from "@/app/components/icons";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
 import { ChooseSubIcon } from "@/app/components/menu/ChooseSubIcon";
 import { PulldownArrow } from "@/app/components/buttons/PulldownArrow";
 import { RoomData } from "@/app/types/room";
+
+import { nanoid } from 'nanoid';
 
 
 import { useState, useRef } from "react";
@@ -26,9 +28,12 @@ export const CreateRoom = ({
     onCreateRoom,
     isPremium
 }: Props) => {
+    const roomId = nanoid();
+    const currentUserId = "auth-user-id"; // 仮
     const INFO_MAX_LENGTH = 280;
     const RULE_MAX_LENGTH = 1000;
     const [roomData, setRoomData] = useState<RoomData>({
+        roomId: roomId,
         roomBannerUrl: null,
         roomIconUrl: null,
         roomName: "",
@@ -43,6 +48,8 @@ export const CreateRoom = ({
             initialName: "",
         },
 
+        roomMemberCount: 0,
+
         roomVisibility: "public",
 
         roomEntrySetting: undefined,
@@ -54,12 +61,16 @@ export const CreateRoom = ({
         roomQuizScore: 0,
 
         roomHost: {
+            userId: currentUserId,
             iconUrl: null,
             userName: "",
             subIcon: null,
         },
 
         hostCreateSalon: false,
+        reports: [],
+        glossCount: 0,
+        recentGlossCount: 0,
     })
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const [isSubIconOpen, setIsSubIconOpen] = useState(false);
@@ -92,12 +103,12 @@ export const CreateRoom = ({
         const payload: RoomData = {
             ...roomData,
             roomHost: {
-                ...roomData.roomHost,
+                userId: currentUserId,
                 iconUrl:
-                    roomData.roomHost.iconUrl ||
+                    roomData.roomHost?.iconUrl ||
                     roomData.roomMemberIni.iconUrl,
                 userName:
-                    roomData.roomHost.userName ||
+                    roomData.roomHost?.userName ||
                     roomData.roomMemberIni.initialName,
             },
         }
@@ -108,7 +119,7 @@ export const CreateRoom = ({
     const isRoomNameEmpty = roomData.roomName.trim() === "";
     const isRoomInfoEmpty = roomData.roomInformation.trim() === "";
     const isRoomMemberIniOver = roomData.roomMemberIni.initialName.length > 30;
-    const isRoomHostOver = roomData.roomHost.userName.length > 30;
+    const isRoomHostOver = (roomData.roomHost?.userName ?? "").length > 30;
     const isKeyWordEmpty = roomData.roomKeyWord?.trim() === "";
     const isKeyWordHinEmpty = roomData.roomKeyWordHint?.trim() === "";
     const isScoreEmpty = !roomData.roomQuizScore || roomData.roomQuizScore <= 0;
@@ -273,15 +284,17 @@ export const CreateRoom = ({
                 <div className="room-setting__host">
                     <div className="input-box__label">Room Host's Initial Icon</div>
                     <div className="room-setting__initial-icon-wrapper">
-                        <UserCustomIcon iconUrl={roomData.roomHost.iconUrl || roomData.roomMemberIni.iconUrl} subIcon={roomData.roomHost.subIcon} />
+                        <UserCustomIcon iconUrl={roomData.roomHost?.iconUrl || roomData.roomMemberIni.iconUrl} subIcon={roomData.roomHost?.subIcon} />
                         <EditIconButton
                             onSelectFile={
                                 (file) => {
                                     setRoomData((prev) => ({
-                                        ...prev,
-                                        roomHost: {
-                                            ...prev.roomHost,
-                                            iconUrl: URL.createObjectURL(file),
+                                            ...prev,
+                                            roomHost: {
+                                                userId: prev.roomHost?.userId ?? currentUserId,
+                                                iconUrl: URL.createObjectURL(file),
+                                                userName: prev.roomHost?.userName ?? "",
+                                                subIcon: prev.roomHost?.subIcon ?? null,
                                         }
                                     }));
                                 }
@@ -296,16 +309,18 @@ export const CreateRoom = ({
                                 type="text"
                                 className="input-box__text-box"
                                 placeholder={roomData.roomMemberIni.initialName || "UserName"}
-                                value={roomData.roomHost.userName}
+                                value={roomData.roomHost?.userName}
                                 maxLength={30}
                                 onChange={(e) => {
                                     setRoomData((prev) => ({
-                                        ...prev,
-                                        roomHost: {
-                                            ...prev.roomHost,
-                                            userName: e.target.value,
-                                        }
-                                    }))
+                                    ...prev,
+                                    roomHost: {
+                                        userId: prev.roomHost?.userId ?? currentUserId,
+                                        iconUrl: prev.roomHost?.iconUrl ?? null,
+                                        userName: e.target.value,
+                                        subIcon: prev.roomHost?.subIcon ?? null,
+                                    }
+                                    }));
                                 }}
                             />
                             {isSubmitted && isRoomHostOver && (
@@ -319,7 +334,9 @@ export const CreateRoom = ({
                                 setRoomData((prev) => ({
                                     ...prev,
                                     roomHost: {
-                                        ...prev.roomHost,
+                                        userId: prev.roomHost?.userId ?? currentUserId,
+                                        iconUrl: prev.roomHost?.iconUrl ?? null,
+                                        userName: prev.roomHost?.userName ?? "",
                                         subIcon: subIcon,
                                     }
                                 }));

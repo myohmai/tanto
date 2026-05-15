@@ -336,6 +336,7 @@ export const ChooseSalonIcon = ({ onSubmit, isOpen, onClose }: Props ) => {
                 if (!selectedSubIcon) return
 
                 onSubmit(selectedSubIcon)
+                onClose()
             }}
             disabled={!!emojiError || !selectedSubIcon} />
         </BottomSheet>

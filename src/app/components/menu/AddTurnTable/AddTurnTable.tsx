@@ -3,19 +3,37 @@ import { LinkIcon,MoodIcon } from '@/app/components/icons'
 import { SubmitButton } from '@/app/components/buttons/SubmitButton'
 import { BottomSheet } from '@/app/components/menu/BottomSheet'
 
-import { use, useState } from 'react'
+import type { TurnTableData } from '@/app/types/turntable';
+
+import { parseTurnTable } from "@/app/logic/turntable/parser";
+
+import { useState } from 'react'
 
 import './AddTurnTable.scss'
 
 type Props = {
-    onSubmit: (value: string) => void;
+    roomId: string;
+    onSubmit: (data: TurnTableData) => void;
     isOpen: boolean;
     onClose: () => void;
 }
 
-export const AddTurnTable = ({ onSubmit, isOpen, onClose } : Props ) => {
+export const AddTurnTable = ({ roomId, onSubmit, isOpen, onClose } : Props ) => {
     const [value, setValue] = useState('')
     const [error, setError] = useState('')
+
+    const handleSubmit = () => {
+        try {
+            if (!value || error) return;
+
+            const data = parseTurnTable(value, roomId);
+
+            onSubmit(data);
+        } catch (e) {
+            console.error(e);
+            setError("Invalid URL");
+        }
+    };
 
     const validUrl = (url: string) => {
         try {
@@ -69,7 +87,11 @@ export const AddTurnTable = ({ onSubmit, isOpen, onClose } : Props ) => {
                         )}
                 </div>
             </div>
-            <SubmitButton label="Submit" onClick={() => {if(!value || error) return onSubmit(value)}} disabled={!value || !!error}/>
+            <SubmitButton
+                label="Submit"
+                onClick={handleSubmit}
+                disabled={!value || !!error}
+            />
         </BottomSheet>
     )
 }

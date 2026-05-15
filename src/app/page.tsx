@@ -1,13 +1,35 @@
 'use client';
 
 import Image from "next/image";
-import { CreateSalon } from '@/app/components/room/SalonSettings';
+import { Gloss } from '@/app/components/card/Gloss';
 import { EditIconButton } from '@/app/components/buttons/EditIconButton'
 import React, { useState } from 'react';
 
 import type { RoomData } from "@/app/types/room";
 
+import { GlossData } from "./types/gloss";
 
+
+const dummyGloss: GlossData = {
+    glossId: "gloss-001",
+
+    roomId: "room-001",
+    salonId: "salon-001",
+    userId: "user-001",
+
+    content:
+        "今日はかなりGlossの構造整理できた。 https://example.com",
+
+    postedAt: new Date().toISOString(),
+
+    reports: [],
+
+    userName: "名無しさん",
+    salonName: "雑談",
+    roomName: "TangledTo",
+    fondCount: 0,
+    replyCount: 0,
+};
 
 
 const initialSource: MediaItem[] = [
@@ -18,13 +40,14 @@ const initialSource: MediaItem[] = [
 
 const initialRoomData: RoomData = {
   roomName: "Room",
-  roomInformation: "",
-  tags: "",
-  roomRule: "",
+  roomInformation: "info",
+  tags: ["tag", "mmm"],
+  roomRule: "この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大き",
   roomMemberIni : {
     initialName: "USer",
     iconUrl: "",
   },
+  roomMemberCount: 10000,
   roomHost : {
     userName: "Host",
     iconUrl: "",
@@ -37,6 +60,7 @@ const initialRoomData: RoomData = {
   roomKeyWord: "",
   roomKeyWordHint: "",
   hostCreateSalon: false,
+
 }
 
 import type { QuizeList } from "@/app/components/form/SetQuizes/SetQuizes";
@@ -113,7 +137,29 @@ const [user, setUser] = useState(initialUser);
   return (
     <div className="night">
       
-      <CreateSalon roomName="Room"/>
+    <Gloss
+    glossData={dummyGloss}
+    isInFeed={true}
+    isInRoom={false}
+    isInSalon={false}
+    user={{
+        iconUrl: "https://picsum.photos/200",
+    }}
+    room={{
+        iconUrl: "https://picsum.photos/300",
+    }}
+    action={{
+        onRoom: () => {},
+        onSalon: () => {},
+        onFond: () => {},
+        onReply: () => {},
+    }}
+    onSelect={() => {}}
+    fond={{
+        isPressed: false,
+    }}
+    lang="en"
+/>
 
       </div>
   );

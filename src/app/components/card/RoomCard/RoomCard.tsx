@@ -1,13 +1,13 @@
 import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { UserCustomIcon , UserSubIcon} from "@/app/components/custom-icon/UserCustomIcon";
 import { PersonIcon, EditIcon, ArrowRightIcon } from "@/app/components/icons";
-import { FondLevel } from "@/app/components/icons";
+import type { FondLevel } from "@/app/components/icons";
 
 import './RoomCard.scss'
 
 type Props = {
     room: {
-        iconUrl: string;
+        iconUrl?: string | null;
         subIcon?: { type: 'fond'; value: FondLevel };
     }
     user?: {

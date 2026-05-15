@@ -1,14 +1,11 @@
-import { MediaLabel, MediaLabelType, Lang } from "@/app/components/media/MediaLabel";
+import { MediaLabel, Lang } from "@/app/components/media/MediaLabel";
 import { ArrowLeftIcon, ArrowRightIcon, CancelIcon } from '@/app/components/icons';
+
+import { MediaItem, MediaLabelType } from "@/app/types/media";
 
 import "./Media.scss"
 
 import React, { useState, useEffect } from "react";
-
-export type MediaItem = {
-    type: "image" | "video";
-    url: string;
-};
 
 export type MediaProps = {
     source: MediaItem[];

@@ -1,27 +1,24 @@
 import { FondIcon, BiasColor, PinIcon, ArrowRightIcon } from "@/app/components/icons";
-import { SalonIcon } from "@/app/types/salon";
+
+import type { SalonData } from "@/app/types/salon";
 
 import './SalonCard.scss'
 
 
 type Props = {
-    salonName: string;
+    salonData: SalonData;
     onSalon: () => void;
-    icon: SalonIcon;
     latestPostedAt: string;
     glossCount: number;
     latestImages?: string[];
-    isPinned: Boolean;
 }
 
 export const SalonCard = ({
-    salonName,
+    salonData,
     onSalon,
-    icon,
     latestPostedAt,
     glossCount,
     latestImages,
-    isPinned
 }: Props ) => {
     // Date caluculate
 
@@ -78,12 +75,12 @@ export const SalonCard = ({
     return (
         <button type="button" onClick={onSalon} className="salon-card padding-lg-md bg-color-primary text-color-primary">
             <div className="salon-card__salon-info inline-lg">
-                {icon?.type === 'emoji' && (<span className="salon-card__emoji">{icon.value}</span>)}
-                {icon?.type === 'fond' && (<FondIcon size="lg" bias={icon.value} className="salon-card__fond" />)}
+                {salonData.salonIcon?.type === 'emoji' && (<span className="salon-card__emoji">{salonData.salonIcon.value}</span>)}
+                {salonData.salonIcon?.type === 'fond' && (<FondIcon size="lg" bias={salonData.salonIcon.value} className="salon-card__fond" />)}
                 <div className="salon-card__salon-info-container stack-xs">
                     <div className="salon-card__name-wrapper">
-                        <span className="salon-card__salon-name">{salonName}</span>
-                        {isPinned && (<PinIcon variant="fill" className="salon-card__pin icon-color-primary" />)}
+                        <span className="salon-card__salon-name">{salonData.salonName}</span>
+                        {salonData.isPinned && (<PinIcon variant="fill" className="salon-card__pin icon-color-primary" />)}
                     </div>
                     <div className="room-card--inner-container inline-sm">
                         <span className="salon-card__count">
