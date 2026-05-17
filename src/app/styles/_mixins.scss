@@ -1,5 +1,6 @@
 // mixins
 
+
 @mixin container-size {
 	width: 100%;
 	min-width: 360px;
@@ -22,4 +23,9 @@
 @mixin flex-between {
 	display: flex;
 	justify-content: space-between;
+}
+@mixin button-fixed {
+	position: fixed;
+	bottom: 100px;
+	right: 24px;
 }

@@ -4,7 +4,7 @@ import { UserCustomIcon, UserSubIcon } from "@/app/components/custom-icon/UserCu
 
 import './BottomNavBar.scss';
 
-type BottomNavType = 'Home' | 'Room' | 'Mood' | 'Message' | 'Dashboard';
+type BottomNavType = 'Home' | 'Hallway' | 'Mood' | 'Message' | 'Dashboard';
 type CurenntRoom ={
     roomId: string;
     iconUrl?: string;
@@ -23,8 +23,8 @@ export const BottomNavBar = ({ bottomSelectTab, onChange, currentRoom }: Props) 
             <button type="button" onClick={() => onChange('Home')} aria-label="Home">
                 <HomeIcon size='lg' variant={bottomSelectTab === "Home" ? 'fill' : 'line'} className="icon-color-primary" />
             </button>
-            <button type="button" onClick={() => onChange('Room')} aria-label="Room">
-                <RoomIcon size='lg' variant={bottomSelectTab === "Room" ? 'fill' : 'line'} className="icon-color-primary" />
+            <button type="button" onClick={() => onChange('Hallway')} aria-label="Hallway">
+                <RoomIcon size='lg' variant={bottomSelectTab === "Hallway" ? 'fill' : 'line'} className="icon-color-primary" />
             </button>
             <button type="button" onClick={() => onChange('Mood')} aria-label="Mood">
                 <MoodIcon size='lg' variant={bottomSelectTab === "Mood" ? 'fill' : 'line'} className="icon-color-primary" />

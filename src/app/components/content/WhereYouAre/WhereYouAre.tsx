@@ -7,8 +7,8 @@ type Props =
         isInRoom: boolean;
         roomName: string;
         salonName?: string;
-        onRoom: () => void;
-        onSalon?: () => void;
+        onRoom: (e: React.MouseEvent<HTMLButtonElement>) => void;
+        onSalon?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     };
 
 export const WhereYouAre = ( { isInSalon, isInRoom, roomName, salonName, onRoom, onSalon }: Props ) => {

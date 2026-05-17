@@ -8,12 +8,14 @@ import { useRef } from "react";
 
 type Props = {
     salons: SalonData[];
+    onClick: (value: SalonData) => void;
     onRefresh?: () => void;
     isLoading?: boolean;
 }
 
 export const SalonList = ({
     salons,
+    onClick,
     onRefresh,
     isLoading
 }: Props) => {
@@ -51,8 +53,9 @@ export const SalonList = ({
         >
             {salons.map((salon) => (
                 <SalonCard
+                    key={salon.salonId}
                     salonData={salon}
-                    onSalon={() => {}}
+                    onSalon={() => {onClick(salon)}}
                     latestPostedAt={new Date().toISOString()}
                     glossCount={0}
                     latestImages={[]}

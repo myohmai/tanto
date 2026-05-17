@@ -1,0 +1,7 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.topic-list-menu {
+    width: 100%;
+    display: block;
+}

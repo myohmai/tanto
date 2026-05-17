@@ -5,7 +5,7 @@ import './MediaEmbed.scss'
 
 type Props = {
     url: string;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 

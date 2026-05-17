@@ -17,7 +17,7 @@ import { ShowGlossId } from "@/app/components/menu/ShowGlossId";
 import type { GlossData } from "@/app/types/gloss";
 import type { Report,ReportType } from "@/app/types/report";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import './Gloss.scss'
 
@@ -29,12 +29,12 @@ type GlossProps = {
     isInSalon: boolean;
     className?: string;
     user: {
-        iconUrl: string;
-        subIcon?: UserSubIcon;
+        iconUrl: string | undefined;
+        subIcon?: UserSubIcon | null;
     }
     room: {
-        iconUrl: string;
-        subIcon?: { type: 'fond'; value: FondLevel };
+        iconUrl: string | null | undefined;
+        subIcon?: { type: 'fond'; value: FondLevel } | undefined;
     }
     onSeeAlso?: () => void;
     onTopicSeeAlso?: () => void;
@@ -56,6 +56,7 @@ type GlossProps = {
     fond: {
         isPressed: boolean;
     }
+    onGlossClick?: (glossId: string) => void;
     lang: 'en' | 'ja';
 }
 
@@ -74,6 +75,7 @@ export const Gloss = ({
     action,
     onSelect,
     fond,
+    onGlossClick,
     lang
 }: GlossProps) => {
     const [menuOpen, setMenuOpen ] = useState(false)
@@ -82,6 +84,26 @@ export const Gloss = ({
 
     const [isShowToast, setIsShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    const [localFondCount, setLocalFondCount] = useState(glossData.fondCount);
+    const [localIsPressed, setLocalIsPressed] = useState(fond.isPressed);
+
+    useEffect(() => {
+        setLocalFondCount(glossData.fondCount);
+    }, [glossData.fondCount]);
+
+    useEffect(() => {
+        setLocalIsPressed(fond.isPressed);
+    }, [fond.isPressed]);
+
+    const handleFond = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        if (localIsPressed) return;
+
+        setLocalFondCount((count) => count + 1);
+        setLocalIsPressed(true);
+        action.onFond(glossData.glossId);
+    };
 
     const handleShare = async () => {
     const url = `${window.location.origin}/gloss/${glossData.glossId}`;
@@ -179,33 +201,97 @@ export const Gloss = ({
     };
 
     return (
-    <div className={`gloss padding-md inline-md bg-color-primary text-color-primary ${className ?? ""}`}>
+    <div
+        className={`gloss padding-md inline-md bg-color-primary text-color-primary ${className ?? ""}`}
+        onClick={() => onGlossClick?.(glossData.glossId)}
+    >
             {isInFeed && (<button type="button" onClick={action.onRoom} className="gloss__icon-button"><RoomCustomIcon roomIconUrl={roomIconUrl} subIcon={roomSubIcon} className="gloss__icon" /></button>)}
-            {!isInFeed && (isInRoom || isInSalon) && (<button type="button" onClick={isInRoom ? action.onSalon : action.onRoom} title={isInRoom ? "Go to Salon" : "Go to Room"} className="gloss__icon-button"><UserCustomIcon iconUrl={userIconUrl} subIcon={userSubIcon} className="gloss__icon" /></button>)}
+            {!isInFeed && (isInRoom || isInSalon) && (
+                <button type="button" onClick={isInRoom ? action.onSalon : action.onRoom} title={isInRoom ? "Go to Salon" : "Go to Room"} className="gloss__icon-button"><UserCustomIcon iconUrl={userIconUrl} subIcon={userSubIcon} className="gloss__icon" /></button>)}
             <div className="gloss__content-wrapper stack-md">
                 <div className="gloss__content-container stack-sm">
                     <div className="gloss__name-wrapper">
-                        <MenuButton onClick={() => setMenuOpen(true)} className="gloss__menu" />
-                        {isInRoom && (<WhereYouAre isInSalon={false} isInRoom={isInRoom} onRoom={action.onRoom} roomName={glossData.roomName} onSalon={action.onSalon} salonName={glossData.salonName} />)}
+                        <MenuButton
+                            onClick={(e) => {
+                                setMenuOpen(true);
+                                e.stopPropagation();
+                            }}
+                            className="gloss__menu" />
+                        {isInRoom && (
+                            <WhereYouAre 
+                                isInSalon={false} 
+                                isInRoom={true} 
+                                onRoom={(e) => {
+                                    e.stopPropagation()
+                                    action.onRoom
+                                    }}
+                                roomName={glossData.roomName} 
+                                onSalon={(e) => {
+                                    e.stopPropagation()
+                                    action.onSalon
+                                }} 
+                                salonName={glossData.salonName}
+                            />)}
+                        {isInFeed && (
+                            <WhereYouAre 
+                                isInSalon={false} 
+                                isInRoom={false} 
+                                onRoom={(e) => {
+                                    e.stopPropagation()
+                                    action.onRoom
+                                    }}
+                                roomName={glossData.roomName}
+                                onSalon={(e) => {
+                                    e.stopPropagation()
+                                    action.onSalon
+                                }}
+                                salonName={glossData.salonName}
+                            />)}
                         <div className="gloss__name inline-xs"><span>{glossData.userName}</span><span className="gloss__date">{formatPostedAt(glossData.postedAt, lang)}</span></div>
                     </div>
                     {notification && (<Notification type={notification.type} lang={lang}/>)}
                     <div className="gloss__content">{renderTextWithLinks(glossData.content)}</div>
                     {source && source.length > 0 && (<Media source={source} type={type} lang={lang!} />)}
-                    {url && (<MediaEmbed url={url} onClick={onSeeAlso} />)}
-                    {topicContent && (<TopicContent topic={glossData.topic!} lang={lang} onClick={onTopicSeeAlso} />)}
+                    {url && (
+                        <MediaEmbed 
+                            url={url}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                onSeeAlso
+                            }} 
+                        />
+                    )}
+                    {topicContent && (
+                        <TopicContent 
+                        topic={glossData.topic!}
+                        lang={lang}
+                        onClick={(e)=> {
+                            e.stopPropagation()
+                            onTopicSeeAlso
+                        }} />)}
                     {revaluation && <Revaluation
                         lang={lang}
-                        onYes={() => revaluation.onYes(glossData.glossId)}
-                        onNo={() => revaluation.onNo(glossData.glossId)}
+                        onYes={(e) => {
+                            e.stopPropagation()
+                            revaluation.onYes(glossData.glossId)
+                        }}
+                        onNo={(e) => {
+                            e.stopPropagation()
+                            revaluation.onNo(glossData.glossId)
+                        }}
                     />}
                 </div>
                 <div className="gloss__action inline-md">
                     <FondButton
-                        glossData={glossData}
-                        onClick={() => action.onFond(glossData.glossId)}
-                        isPressed={fond.isPressed} />
-                    <ReplyButton onClick={action.onReply} replyCount={glossData.replyCount} />
+                        glossData={{ ...glossData, fondCount: localFondCount }}
+                        onClick={handleFond}
+                        isPressed={localIsPressed} />
+                    <ReplyButton
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        action.onReply();
+                    }} 
+                    replyCount={glossData.replyCount} />
                 </div>
             </div> 
             <GlossMenu  

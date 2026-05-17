@@ -1,10 +1,9 @@
-import { UserCustomIcon } from "@/app/components/custom-icon/UserCustomIcon";
-import { BiasColor } from "@/app/components/icons";
+import { UserCustomIcon, UserSubIcon} from "@/app/components/custom-icon/UserCustomIcon";
 import './ReplyBar.scss';
 
 type Props = {
-    userIconUrl: string;
-    userSubIcon?: { type: 'emoji'; value: string } | { type: 'fond'; value: BiasColor };
+    userIconUrl: string | undefined;
+    userSubIcon?: UserSubIcon | undefined | null;
     onClick: () => void;
 };
 

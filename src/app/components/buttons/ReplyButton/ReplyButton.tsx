@@ -3,7 +3,7 @@ import "./ReplyButton.scss";
 
 type Props = {
     replyCount: number;
-    onClick: () => void;
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const ReplyButton = ({ replyCount, onClick }: Props) => {

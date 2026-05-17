@@ -1,6 +1,6 @@
 import { RoomCard } from "@/app/components/card/RoomCard";
 
-import type { RoomData } from "@/app/types/room";
+import type { RoomData, UserRoomData } from "@/app/types";
 
 import './RoomList.scss'
 
@@ -9,6 +9,8 @@ import { useRef } from "react";
 type Props = {
     rooms: RoomData[];
     scope: 'feed' | 'dashboard';
+    users?: UserRoomData[];
+    onRoom: (roomId: string) => void;
     onRefresh?: () => void;
     isLoading?: boolean;
 }
@@ -16,6 +18,8 @@ type Props = {
 export const RoomList = ({
     rooms,
     scope,
+    users,
+    onRoom,
     onRefresh,
     isLoading
 }: Props) => {
@@ -51,22 +55,31 @@ export const RoomList = ({
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
         >
-            {rooms.map((room) => (
-                <RoomCard
-                    room={{
-                        iconUrl: room.roomIconUrl
-                    }}
-                    user={{}}
-                    roomName={room.roomName}
-                    userName=""
-                    onRoom={()=>{}}
-                    onEdit={() => {}}
-                    latestPostedAt=""
-                    glossCount={0}
-                    latestImages={[]}
-                    isInDashboard={scope === 'dashboard'}
+            {rooms.map((room) => {
+                const user = users?.find((user) => user.roomId === room.roomId);
+                const displayUser = user ?? room.roomHost;
+
+                return (
+                    <RoomCard
+                        key={room.roomId}
+                        room={{
+                            iconUrl: room.roomIconUrl
+                        }}
+                        user={{
+                            iconUrl: displayUser?.iconUrl ?? undefined,
+                            subIcon: displayUser?.subIcon ?? undefined,
+                        }}
+                        roomName={room.roomName}
+                        userName={displayUser?.userName ?? ""}
+                        onRoom={() => onRoom(room.roomId)}
+                        onEdit={() => {}}
+                        latestPostedAt=""
+                        glossCount={room.glossCount}
+                        latestImages={[]}
+                        isInDashboard={scope === 'dashboard'}
                     />
-            ))}
+                );
+            })}
 
             {isLoading && (
                 <div className="room-list__loading">

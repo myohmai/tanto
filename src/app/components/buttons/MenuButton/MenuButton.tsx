@@ -2,7 +2,7 @@ import { MenuIcon } from "@/app/components/icons"
 import './MenuButton.scss'
 
 type Props = {
-    onClick: () => void;
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
     className?: string;
 }
 

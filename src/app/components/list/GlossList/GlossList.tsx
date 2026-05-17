@@ -6,24 +6,46 @@ import './GlossList.scss'
 
 import { useRef } from "react";
 
+import { FondLevel } from "@/app/components/icons";
+import { UserRoomData } from "@/app/types";
+
+type GlossListRoom = {
+    roomId?: string;
+    iconUrl: string | null | undefined;
+    subIcon?: { type: 'fond'; value: FondLevel } | undefined;
+}
+
 type Props = {
     glosses: GlossData[];
 
+    user: UserRoomData[] | undefined;
+    room: GlossListRoom | GlossListRoom[];
+
     scope: 'feed' | 'room' | 'salon';
+
+    onGlossClick?: (glossId: string) => void;
 
     onRefresh?: () => void;
     isLoading?: boolean;
+    onFond?: (glossId: string) => void;
 }
 
 export const GlossList = ({
     glosses,
+    user,
+    room,
     scope,
+    onGlossClick,
     onRefresh,
-    isLoading
+    isLoading,
+    onFond
 }: Props) => {
     const startY = useRef<number | null>(null);
     const pullDistance = useRef(0);
     const isTriggered = useRef(false);
+
+    const safeUsers = user ?? [];
+    const rooms = Array.isArray(room) ? room : [room];
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         if (e.currentTarget.scrollTop !== 0) return;
@@ -53,34 +75,44 @@ export const GlossList = ({
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
         >
-            {glosses.map((gloss) => (
-                <Gloss
-                    key={gloss.glossId}
-                    glossData={gloss}
-                    isInFeed={scope === "feed"}
-                    isInRoom={scope === "room"}
-                    isInSalon={scope === "salon"}
-                    user={{
-                        iconUrl: "",
-                        subIcon: undefined
-                    }}
-                    room={{
-                        iconUrl: "",
-                        subIcon: undefined
-                    }}
-                    action={{
-                        onRoom: () => {},
-                        onSalon: () => {},
-                        onFond: () => {},
-                        onReply: () => {},
-                    }}
-                    fond={{
-                        isPressed: false,
-                    }}
-                    onSelect={() => {}}
-                    lang="ja"
-                />
-            ))}
+            {glosses.map((gloss) =>{
+                const u = safeUsers.find(
+                    (user) => user.userId === gloss.userId && user.roomId === gloss.roomId
+                );
+                const r = rooms.find((room) => room.roomId === gloss.roomId) ?? rooms[0] ?? {
+                    iconUrl: undefined,
+                    subIcon: undefined,
+                };
+
+                return(
+                    <Gloss
+                        key={gloss.glossId}
+                        onGlossClick={() => {
+                            onGlossClick?.(gloss.glossId);
+                        }}
+                        glossData={gloss}
+                        isInFeed={scope === "feed"}
+                        isInRoom={scope === "room"}
+                        isInSalon={scope === "salon"}
+                        user={{
+                            iconUrl: u?.iconUrl,
+                            subIcon: u?.subIcon,
+                        }}
+                        room={r}
+                        action={{
+                            onRoom: () => {},
+                            onSalon: () => {},
+                            onFond: () => onFond?.(gloss.glossId),
+                            onReply: () => {},
+                        }}
+                        fond={{
+                            isPressed: false,
+                        }}
+                        onSelect={() => {}}
+                        lang="ja"
+                    />
+                );
+            })}
             {isLoading && (
                 <div className="gloss-list__loading">
                     Loading...

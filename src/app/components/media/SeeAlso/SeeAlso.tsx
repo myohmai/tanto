@@ -3,7 +3,7 @@ import { ArrowRightIcon } from "@/app/components/icons";
 import './SeeAlso.scss'
 
 type Props = {
-    onClick: () => void;
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const SeeAlso = ({ onClick }: Props) => {

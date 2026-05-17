@@ -26,7 +26,9 @@ export const CreateSalon = ({
     onSubmit,
     onCancel
 }: Props) => {
+    const [salonId] = useState(() => nanoid());
     const [salonData, setSalonData] = useState<SalonData>({
+        salonId,
         roomId: roomId,
         salonName: "",
         salonIcon: {type: "fond", value: "red"},
@@ -56,7 +58,6 @@ export const CreateSalon = ({
                     onSubmit={(icon) => {
                         setSalonData((prev) => ({
                             ...prev,
-                            salonId: nanoid(),
                             salonIcon: icon,
                         }))
                     }}

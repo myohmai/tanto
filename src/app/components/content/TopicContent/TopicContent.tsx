@@ -3,14 +3,14 @@ import { Media } from "@/app/components/media/Media";
 import { Lang } from "@/app/components/media/MediaLabel";
 import { MediaEmbed } from "@/app/components/media/MediaEmbed";
 
-import { Topic } from "@/app/types/topic";
+import { Topic } from "@/app/types";
 
 import './TopicContent.scss'
 
 type Props = {
     topic: Topic;
     lang?: Lang;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const TopicContent = ({ topic, lang, onClick }: Props ) => {

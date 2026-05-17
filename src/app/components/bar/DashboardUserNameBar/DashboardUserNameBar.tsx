@@ -1,7 +1,7 @@
 import { UserCustomIcon, UserSubIcon } from '@/app/components/custom-icon/UserCustomIcon'
 import { PulldownArrow } from "@/app/components/buttons/PulldownArrow";
 
-import { UserRoomData } from '@/app/types/userroomdata';
+import { UserRoomData } from '@/app/types/userRoomData';
 
 import React, { useState } from 'react';
 

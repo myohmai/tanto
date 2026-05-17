@@ -2,6 +2,7 @@
 @use '@/app/styles/mixins' as *;
 
 .create-salon-button {
+    @include button-fixed;
     @include flex-center;
     width: 48px;
     height: 48px;

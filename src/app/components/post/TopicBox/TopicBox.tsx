@@ -66,9 +66,7 @@ export const TopicBox = ({
             topicContent,
 
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
-            mediaEmbed: {
-                url: embedUrl,
-            },
+            mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
 
             postedAt: new Date().toISOString(),
             

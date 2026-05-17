@@ -11,8 +11,8 @@ type Props = {
         subIcon?: { type: 'fond'; value: FondLevel };
     }
     user?: {
-        iconUrl: string;
-        subIcon?: UserSubIcon;
+        iconUrl?: string | null;
+        subIcon?: UserSubIcon | null;
     }
     roomName: string;
     userName: string;
@@ -86,7 +86,6 @@ export const RoomCard = ({
         if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
         return count.toLocaleString("en-US");
     };
-    const trim = (num: number) => num.toFixed(1).replace(".0", "");
     return (
         <div className="room-card padding-lg-md bg-color-primary text-color-primary">
             <button type="button" onClick={onRoom} className="room-card__room-wrapper">

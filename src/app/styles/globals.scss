@@ -228,6 +228,7 @@ body {
 }
 
 .custom-icon {
+    position: relative;
     width: $user-icon-size;
     height: $user-icon-size;
     border-radius: $radius-full;

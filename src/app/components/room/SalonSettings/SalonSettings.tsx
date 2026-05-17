@@ -14,7 +14,7 @@ import { SubmitButton } from "../../buttons/SubmitButton";
 
 type Props = {
     salonData: SalonData;
-    roomIconUrl?: string;
+    roomIconUrl?: string | undefined | null;
     roomName: string;
     onChangeSalonData: (payload: SalonData) => void;
     onSubmit: (payload: SalonData) => void;
@@ -22,7 +22,7 @@ type Props = {
     onDelete: () => void;
 }
 
-export const CreateSalon = ({
+export const SalonSettings = ({
     salonData,
     roomIconUrl,
     roomName,

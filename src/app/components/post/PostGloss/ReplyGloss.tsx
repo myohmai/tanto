@@ -14,7 +14,7 @@ import { Topic } from "@/app/types/topic";
 import { nanoid } from "nanoid";
 
 import './PostGloss.scss'
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 
 
 type Props = {
@@ -29,10 +29,10 @@ type Props = {
     iconUrl?: string;
     subIcon? : UserSubIcon | null;
     roomId: string;
-    salonId: string;
-    userId: string;
+    salonId: string | undefined;
+    userId: string | undefined;
     roomName: string;
-    salonName?: string;
+    salonName?: string | undefined;
     userName: string;
     onRoom: () => void;
     onSalon?: () => void;
@@ -41,6 +41,19 @@ type Props = {
     topic?: Topic;
     lang: "en" | "ja";
 }
+
+const getReplyDraft = (): GlossData | null => {
+    if (typeof window === "undefined") return null;
+
+    const saved = localStorage.getItem("reply-draft");
+    if (!saved) return null;
+
+    try {
+        return JSON.parse(saved);
+    } catch {
+        return null;
+    }
+};
 
 export const ReplyGloss = ({
     replyTo,
@@ -60,26 +73,19 @@ export const ReplyGloss = ({
     topic,
     lang
 }: Props) => {
-    const [previews, setPreview] = useState<MediaItem[]>([]);
-    const [mediaType, setMediaType] = useState<MediaLabelType | null>(null);
+    const [draft] = useState<GlossData | null>(() => getReplyDraft());
+    const [previews, setPreview] = useState<MediaItem[]>(
+        () => draft?.media?.source ?? []
+    );
+    const [mediaType, setMediaType] = useState<MediaLabelType | null>(
+        () => draft?.media?.type ?? null
+    );
     const [isLabelOpen, setIsLabelOpen] = useState(false);
-    const [embedUrl, setEmbedUrl] = useState("")
+    const [embedUrl, setEmbedUrl] = useState(() => draft?.mediaEmbed?.url ?? "")
     const [isEmbedOpen, setIsEmbedOpen] = useState(false)
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(() => draft?.content ?? "");
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const MAX_LENGTH = 280;
-
-    useEffect(() => {
-        const saved = localStorage.getItem("post-draft");
-        if (!saved) return;
-
-        const draft: GlossData = JSON.parse(saved);
-
-        setContent(draft.content);
-        setPreview(draft.media?.source ?? []);
-        setMediaType(draft.media?.type ?? null);
-        setEmbedUrl(draft.mediaEmbed?.url ?? "");
-    }, []);
 
     const handleSelectFile = (files: File[]) => {
         const newItems: MediaItem[] = files.map((file) => ({
@@ -108,6 +114,7 @@ export const ReplyGloss = ({
             content,
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            reports: [],
             topic,
             postedAt: new Date().toISOString(),
             userName,
@@ -119,7 +126,7 @@ export const ReplyGloss = ({
             replyToGlossId: replyTo.glossId,
         };
         onPost(payload);
-        localStorage.removeItem("post-draft");
+        localStorage.removeItem("reply-draft");
     };
 
     const handleDraft = () => {
@@ -133,6 +140,7 @@ export const ReplyGloss = ({
             content,
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            reports: [],
             topic,
             postedAt: new Date().toISOString(),
             userName,
@@ -144,7 +152,7 @@ export const ReplyGloss = ({
             replyToGlossId: replyTo.glossId,
         };
 
-        localStorage.setItem("post-draft", JSON.stringify(draft));
+        localStorage.setItem("reply-draft", JSON.stringify(draft));
     };
 
     return (
@@ -152,7 +160,7 @@ export const ReplyGloss = ({
             <PostMenuBar
                 type="reply"
                 onCancel={() => {
-                    localStorage.removeItem("post-draft");
+                    localStorage.removeItem("reply-draft");
                     onCancel();
                 }}
                 onDraft={handleDraft}

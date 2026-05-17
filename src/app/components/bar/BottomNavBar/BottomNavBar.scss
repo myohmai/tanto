@@ -2,9 +2,12 @@
 @use '@/app/styles/mixins' as *;
 
 .bottom-nav-bar {
+    position: fixed;
+    bottom: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
+    gap: $spacing-lg;
     width: 100%;
     height: fit-content;
     padding: 12px $spacing-lg;
@@ -12,7 +15,7 @@
         position: relative;
         width: $icon-lg;
         height: $icon-lg;
-        flex-shrink: 0;
+        flex: 0 0 auto;
     }
     &__user-icon {
         position: absolute;

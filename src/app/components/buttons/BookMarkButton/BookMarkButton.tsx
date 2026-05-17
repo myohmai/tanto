@@ -2,7 +2,7 @@ import { BookMarkIcon } from "@/app/components/icons";
 import './BookMarkButton.scss'
 
 type Props = {
-    onToggle: () => void;
+    onToggle: (e: React.MouseEvent<HTMLButtonElement>) => void;
     isBookmarked: boolean;
 }
 

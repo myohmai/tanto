@@ -5,8 +5,8 @@ export type GlossData = {
     glossId: string;
     
     roomId: string;
-    salonId: string;
-    userId: string;
+    salonId: string | undefined;
+    userId: string | undefined;
 
     content: string;
 
@@ -19,7 +19,7 @@ export type GlossData = {
         url: string;
     }
 
-    reports: Report[];
+    reports?: Report[];
 
     revaluation?: {
         yesCount: number;

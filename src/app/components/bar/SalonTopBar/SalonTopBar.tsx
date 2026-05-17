@@ -36,7 +36,7 @@ export const SalonTopBar = ({
         <div className="salon-top-bar padding-md bg-color-primary text-color-primary">
             <div className="salon-top-bar__container inline-lg">
                 <BackButton onClick={onBack} />
-                <WhereYouAre isInRoom={false} isInSalon={true} roomName={roomName} salonName={salonName} onRoom={onRoom} onSalon={onSalon} />
+                <WhereYouAre isInRoom={false} isInSalon={false} roomName={roomName} salonName={salonName} onRoom={onRoom} onSalon={onSalon} />
             </div>
             <MenuButton onClick={() => setMenuOpen(true)} />
                 <SalonMenu

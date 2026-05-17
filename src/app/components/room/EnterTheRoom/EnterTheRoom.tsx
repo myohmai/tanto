@@ -2,7 +2,7 @@ import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
 import { EditUserProfile } from "@/app/components/form/EditUserProfile";
 
-import { UserRoomData } from "@/app/types/userroomdata";
+import { UserRoomData } from "@/app/types/userRoomData";
 
 import { useState } from "react";
 

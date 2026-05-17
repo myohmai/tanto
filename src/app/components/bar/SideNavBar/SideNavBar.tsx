@@ -3,7 +3,7 @@ import { LogOutButton } from '@/app/components/buttons/LogOutButton'
 
 import './SideNavBar.scss'
 
-type SideBarType = 'Home' | 'Room' | 'Mood' | 'Search' | 'Message' | 'Dashboard' | 'Fond' | 'Bookmark' | 'Settings';
+type SideBarType = 'Home' | 'Hallway' | 'Mood' | 'Search' | 'Message' | 'Dashboard' | 'Fond' | 'Bookmark' | 'Settings';
 
 type Props = {
     selected: SideBarType;
@@ -19,9 +19,9 @@ export const SideNavBar = ({ selected, onChange, onLogOut }: Props) => {
                     <HomeIcon size='lg' variant={selected === "Home" ? "fill" : "line"} className='icon-color-primary'/>
                     <span className='sidebar__label'>Home</span>
                 </button>
-                <button type='button' className='sidebar__button inline-md' onClick={() => onChange('Room')}>
-                    <RoomIcon size='lg' variant={selected === "Room" ? "fill" : "line"} className='icon-color-primary'/>
-                    <span className='sidebar__label'>Room</span>
+                <button type='button' className='sidebar__button inline-md' onClick={() => onChange('Hallway')}>
+                    <RoomIcon size='lg' variant={selected === "Hallway" ? "fill" : "line"} className='icon-color-primary'/>
+                    <span className='sidebar__label'>Hallway</span>
                 </button>
                 <button type='button' className='sidebar__button inline-md' onClick={() => onChange('Mood')}>
                     <MoodIcon size='lg' variant={selected === "Mood" ? "fill" : "line"} className='icon-color-primary'/>

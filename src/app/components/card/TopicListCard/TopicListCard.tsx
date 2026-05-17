@@ -2,39 +2,36 @@ import { MenuButton } from "@/app/components/buttons/MenuButton";
 import { TopicContent } from "@/app/components/content/TopicContent";
 import { QuoteButton } from "@/app/components/buttons/QuoteButton";
 import { BookMarkButton } from "@/app/components/buttons/BookMarkButton";
+import { TopicListMenu } from "@/app/components/menu/TopicListMenu";
 
-import { MediaItem } from "@/app/components/media/Media";
-import { MediaLabelType, Lang } from "@/app/components/media/MediaLabel";
+import { Lang } from "@/app/components/media/MediaLabel";
+
+import { Topic } from "@/app/types";
+
+import { useState } from "react";
 
 import './TopicListCard.scss'
 
 type Props = {
-    postedAt: string;
-    topicContent: string;
-    source?: MediaItem[];
-    type?: MediaLabelType;
+    topic: Topic;
     lang?: Lang;
-    url?: string;
-    onSeeAlso?: () => void;
-    onMenu: () => void;
-    onQuote: () => void;
-    onBookMark: () => void;
+    onSeeAlso?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onQuote: (topicId: string) => void;
+    onBookMark: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onBlock: () => void;
     isBookmarked: boolean;
 }
 
 export const TopicListCard = ({
-    postedAt,
-    topicContent,
-    source,
-    type,
+    topic,
     lang,
-    url,
     onSeeAlso,
-    onMenu,
     onQuote,
     onBookMark,
+    onBlock,
     isBookmarked
 }: Props ) => {
+    const [isOpen, setIsOpen] = useState(false);
         // Date caluculate
 
     const formatPostedAt = (postedAt: string, lang: 'ja' | 'en' = 'ja') => {
@@ -74,14 +71,19 @@ export const TopicListCard = ({
     return (
         <div className="topic-card padding-md stack-md bg-color-primary text-color-primary">
             <div className="topic-card__header">
-                <span className="topic-card__date">{formatPostedAt(postedAt, lang)}</span>
-                <MenuButton onClick={onMenu} />
+                <span className="topic-card__date">{formatPostedAt(topic.postedAt, lang)}</span>
+                <MenuButton
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        setIsOpen(true)
+                    }} />
             </div>
-            <TopicContent topicContent={topicContent} source={source} type={type} lang={lang} url={url} onClick={onSeeAlso} />
+            <TopicContent topic={topic} lang={lang}onClick={onSeeAlso} />
             <div className="topic-card__footer">
-                <QuoteButton onClick={onQuote} />
+                <QuoteButton onClick={() => onQuote(topic.topicId)} />
                 <BookMarkButton onToggle={onBookMark} isBookmarked={isBookmarked}/>
             </div>
+            <TopicListMenu onBlock={onBlock} isOpen={isOpen} onClose={() => setIsOpen(false)} />
         </div>
     )
 }

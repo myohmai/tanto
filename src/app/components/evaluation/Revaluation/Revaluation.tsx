@@ -19,8 +19,8 @@ const revaluationMessage: Record<Lang, { message: string; yes: string; no: strin
 
 type Props = {
     lang: 'en' | 'ja';
-    onYes: () => void;
-    onNo: () => void;  
+    onYes: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onNo: (e: React.MouseEvent<HTMLButtonElement>) => void;  
 }
 
 export const Revaluation = ({ lang, onYes, onNo }: Props) => {

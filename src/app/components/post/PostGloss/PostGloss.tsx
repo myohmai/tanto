@@ -15,7 +15,7 @@ import { Topic } from "@/app/types/topic";
 import { nanoid } from "nanoid";
 
 import './PostGloss.scss'
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 
 
 
@@ -37,6 +37,19 @@ type Props = {
     lang: "en" | "ja";
 }
 
+const getPostDraft = (): GlossData | null => {
+    if (typeof window === "undefined") return null;
+
+    const saved = localStorage.getItem("post-draft");
+    if (!saved) return null;
+
+    try {
+        return JSON.parse(saved);
+    } catch {
+        return null;
+    }
+};
+
 export const PostGloss = ({
     onCancel,
     iconUrl,
@@ -54,26 +67,19 @@ export const PostGloss = ({
     topic,
     lang
 }: Props) => {
-    const [previews, setPreview] = useState<MediaItem[]>([]);
-    const [mediaType, setMediaType] = useState<MediaLabelType | null>(null);
+    const [draft] = useState<GlossData | null>(() => getPostDraft());
+    const [previews, setPreview] = useState<MediaItem[]>(
+        () => draft?.media?.source ?? []
+    );
+    const [mediaType, setMediaType] = useState<MediaLabelType | null>(
+        () => draft?.media?.type ?? null
+    );
     const [isLabelOpen, setIsLabelOpen] = useState(false);
-    const [embedUrl, setEmbedUrl] = useState("")
+    const [embedUrl, setEmbedUrl] = useState(() => draft?.mediaEmbed?.url ?? "")
     const [isEmbedOpen, setIsEmbedOpen] = useState(false)
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(() => draft?.content ?? "");
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const MAX_LENGTH = 280;
-
-    useEffect(() => {
-        const saved = localStorage.getItem("post-draft");
-        if (!saved) return;
-
-        const draft: GlossData = JSON.parse(saved);
-
-        setContent(draft.content);
-        setPreview(draft.media?.source ?? []);
-        setMediaType(draft.media?.type ?? null);
-        setEmbedUrl(draft.mediaEmbed?.url ?? "");
-    }, []);
 
     const handleSelectFile = (files: File[]) => {
         const newItems: MediaItem[] = files.map((file) => ({
@@ -102,6 +108,7 @@ export const PostGloss = ({
             content,
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            reports: [],
             topic,
             postedAt: new Date().toISOString(),
             userName,
@@ -126,6 +133,7 @@ export const PostGloss = ({
             content,
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            reports: [],
             topic,
             postedAt: new Date().toISOString(),
             userName,
