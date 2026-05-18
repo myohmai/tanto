@@ -25,6 +25,10 @@ type Props = {
 
     onGlossClick?: (glossId: string) => void;
 
+    fond: {isPressed: (glossId: string) => boolean;};
+
+    onSelect?: (glossId: string, reason: Report) => void;
+
     onRefresh?: () => void;
     isLoading?: boolean;
     onFond?: (glossId: string) => void;
@@ -36,6 +40,8 @@ export const GlossList = ({
     room,
     scope,
     onGlossClick,
+    fond,
+    onSelect,
     onRefresh,
     isLoading,
     onFond
@@ -105,10 +111,8 @@ export const GlossList = ({
                             onFond: () => onFond?.(gloss.glossId),
                             onReply: () => {},
                         }}
-                        fond={{
-                            isPressed: false,
-                        }}
-                        onSelect={() => {}}
+                        fond={fond}
+                        onSelect={(reason) => onSelect?.(gloss.glossId, reason)}
                         lang="ja"
                     />
                 );

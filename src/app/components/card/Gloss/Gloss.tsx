@@ -52,9 +52,9 @@ type GlossProps = {
         onFond: (glossId: string) => void;
         onReply: () => void;
     }
-    onSelect: (reason: Report) => void;
+    onSelect?: (reason: Report) => void;
     fond: {
-        isPressed: boolean;
+        isPressed: (glossId: string) => boolean;
     }
     onGlossClick?: (glossId: string) => void;
     lang: 'en' | 'ja';
@@ -85,25 +85,7 @@ export const Gloss = ({
     const [isShowToast, setIsShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-    const [localFondCount, setLocalFondCount] = useState(glossData.fondCount);
-    const [localIsPressed, setLocalIsPressed] = useState(fond.isPressed);
-
-    useEffect(() => {
-        setLocalFondCount(glossData.fondCount);
-    }, [glossData.fondCount]);
-
-    useEffect(() => {
-        setLocalIsPressed(fond.isPressed);
-    }, [fond.isPressed]);
-
-    const handleFond = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
-        if (localIsPressed) return;
-
-        setLocalFondCount((count) => count + 1);
-        setLocalIsPressed(true);
-        action.onFond(glossData.glossId);
-    };
+    
 
     const handleShare = async () => {
     const url = `${window.location.origin}/gloss/${glossData.glossId}`;
@@ -124,7 +106,7 @@ export const Gloss = ({
     const topicContent = glossData.topic?.topicContent;
 
     const handleReport = (type: ReportType) => {
-        onSelect({
+        onSelect?.({
                 type,
                 createdAt: Date.now()
             });
@@ -283,9 +265,9 @@ export const Gloss = ({
                 </div>
                 <div className="gloss__action inline-md">
                     <FondButton
-                        glossData={{ ...glossData, fondCount: localFondCount }}
-                        onClick={handleFond}
-                        isPressed={localIsPressed} />
+                        glossData={{ ...glossData }}
+                        onClick={action.onFond}
+                        isPressed={fond.isPressed} />
                     <ReplyButton
                         onClick={(e) => {
                         e.stopPropagation();

@@ -14,8 +14,9 @@ import { getGlosses, updateGlossFond } from "@/repositories/gloss";
 import { getRooms } from "@/repositories/room";
 import { getUserRoomData } from "@/repositories/userRoom";
 import { getCurrentUserId } from "@/repositories/currentUser";
+import { toggleFond,  getAllFonds } from "@/repositories/fond";
 
-import type { GlossData, RoomData, UserRoomData } from "@/app/types";
+import type { GlossData, RoomData, UserRoomData, Fond } from "@/app/types";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -29,14 +30,35 @@ export default function Page() {
     const [userRooms, setUserRooms] = useState<UserRoomData[]>([]);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
+    const [fonds, setFonds] = useState<Fond[]>([]);
+    const isPressed = (glossId: string) =>
+        fonds.some(
+            f => f.glossId === glossId && f.userId === currentUserId
+        );
+    const handleReport = (glossId: string, report: Report) => {
+        setGlosses(prev =>
+            prev.map(gloss =>
+                gloss.glossId === glossId
+                    ? {
+                        ...gloss,
+                        reports: [
+                            ...(gloss.reports ?? []),
+                            report,
+                        ],
+                    }
+                    : gloss
+            )
+        );
+    };
 
     useEffect(() => {
-        Promise.all([getCurrentUserId(), getGlosses(), getRooms(), getUserRoomData()]).then(
-            ([currentUserId, glosses, rooms, userRooms]) => {
+        Promise.all([getCurrentUserId(), getGlosses(), getRooms(), getUserRoomData(), getAllFonds()]).then(
+            ([currentUserId, glosses, rooms, userRooms, fonds]) => {
                 setCurrentUserId(currentUserId);
                 setGlosses(glosses);
                 setRooms(rooms);
                 setUserRooms(userRooms);
+                setFonds(fonds);
                 setCurrentRoomId((currentRoomId) =>
                     currentRoomId ?? userRooms.find((userRoom) => userRoom.userId === currentUserId)?.roomId ?? userRooms[0]?.roomId ?? null
                 );
@@ -45,8 +67,14 @@ export default function Page() {
     }, []);
 
     const handleFond = async (glossId: string) => {
-        await updateGlossFond(glossId);
-        const updatedGlosses = await getGlosses();
+        await toggleFond(glossId, "currentUser");
+
+        const [updatedGlosses, newFonds] = await Promise.all([
+            getGlosses(),
+            getAllFonds(),
+        ]);
+
+        setFonds(newFonds)
         setGlosses(updatedGlosses);
     };
 
@@ -148,12 +176,14 @@ export default function Page() {
                         subIcon: undefined,
                     }))}
                     onFond={handleFond}
+                    fond={{isPressed}}
                     onGlossClick={(glossId) => {
                         const gloss = glosses.find((gloss) => gloss.glossId === glossId);
                         if (!gloss) return;
 
                         router.push(`/room/${gloss.roomId}/salon/${gloss.salonId}/gloss/${gloss.glossId}`);
                     }}
+                    onSelect={(glossId, reason) => {handleReport(glossId, reason)}}
                 />
             )}
         </div>

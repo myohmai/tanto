@@ -14,8 +14,10 @@ import { getRooms } from "@/repositories/room";
 import { getSalons } from "@/repositories/salon";
 import { getGlosses, updateGlossFond } from "@/repositories/gloss";
 import { getUserRoomData } from "@/repositories/userRoom";
+import { toggleFond,  getAllFonds } from "@/repositories/fond";
 
-import { GlossData, SalonData, type RoomData, type UserRoomData } from "@/app/types";
+import { GlossData, SalonData, type RoomData, type UserRoomData, type Fond } from "@/app/types";
+
 
 
 
@@ -29,8 +31,31 @@ export default function Page() {
     const [replyData, setReplyData] = useState<GlossData[]>([]);
     const [userRoomData, setUserRoomData] = useState<UserRoomData[]>([]);
     const [glossUser, setGlossUser] = useState<UserRoomData | null>(null);
+
+    const [fonds, setFonds] = useState<Fond[]>([]);
     const [currentUserRoom, setCurrentUserRoom] =
         useState<UserRoomData | null>(null);
+
+    const isPressed = (glossId: string) =>
+        fonds.some(
+            f => f.glossId === glossId && f.userId === "currentUser"
+        );
+    
+    const handleReport = (glossId: string, report: Report) => {
+        setGlossData(prev =>
+            prev.map(gloss =>
+                gloss.glossId === glossId
+                    ? {
+                        ...gloss,
+                        reports: [
+                            ...(gloss.reports ?? []),
+                            report,
+                        ],
+                    }
+                    : gloss
+            )
+        );
+    };
 
     useEffect(() => {
         getRooms().then((rooms) => {
@@ -63,7 +88,9 @@ export default function Page() {
                 );
                 setGlossUser(glossUser ?? null);
             });
+            getAllFonds().then(setFonds);
         });
+        
 
         Promise.all([getCurrentUserId(), getUserRoomData()]).then(
             ([currentUserId, users]) => {
@@ -123,9 +150,9 @@ export default function Page() {
                             onReply: () => {},
                         }}
                         fond={{
-                            isPressed: false,
+                            isPressed
                         }}
-                        onSelect={() => {}}
+                        onSelect={(reason) => {handleReport(glossData[0].glossId, reason)}}
                         lang="ja"
                     />
                     <ReplyList
@@ -135,6 +162,10 @@ export default function Page() {
                             iconUrl: roomData.roomIconUrl,
                             subIcon: undefined,
                         }}
+                        fond={{
+                            isPressed
+                        }}
+                        onSelect={(glossId, reason) => {handleReport(glossId, reason)}}
                         onFond={handleFond}
                     />
                 </div>

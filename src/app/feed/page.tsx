@@ -9,14 +9,37 @@ import { GlossList } from "@/app/components/list/GlossList";
 import { getRooms } from "@/repositories/room";
 import { getGlosses, updateGlossFond } from "@/repositories/gloss";
 import { getUserRoomData } from "@/repositories/userRoom";
+import { toggleFond,  getAllFonds } from "@/repositories/fond";
 
-import { GlossData, type RoomData, type UserRoomData } from "@/app/types";
+import { GlossData, type RoomData, type UserRoomData, type Fond } from "@/app/types";
 
 export default function Page() {
     const router = useRouter();
     const [glossData, setGlossData] = useState<GlossData[]>([]);
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [users, setUsers] = useState<UserRoomData[]>([]);
+    const [fonds, setFonds] = useState<Fond[]>([]);
+
+    const handleReport = (glossId: string, report: Report) => {
+
+    setGlossData(prev => {
+    const next = prev.map(gloss =>
+        gloss.glossId === glossId
+            ? {
+                ...gloss,
+                reports: [
+                    ...(gloss.reports ?? []),
+                    report,
+                ],
+            }
+            : gloss
+    );
+
+    console.log("UPDATED:", next.find(g => g.glossId === glossId)?.reports);
+
+    return next;
+});
+};
 
     useEffect(() => {
         getGlosses().then((glosses) => {
@@ -30,6 +53,7 @@ export default function Page() {
         getUserRoomData().then((users) => {
             setUsers(users);
         });
+        getAllFonds().then(setFonds);
     }, []);
 
     const handleFond = async (glossId: string) => {
@@ -37,9 +61,18 @@ export default function Page() {
         const glosses = await getGlosses();
         setGlossData(glosses);
     };
+    const isPressed = (glossId: string) =>
+        fonds.some(
+            f => f.glossId === glossId && f.userId === "currentUser"
+        );
 
     return (
         <div className="feed">
+            <pre>
+
+                {JSON.stringify(glossData, null, 2)}
+
+                </pre>
             <HeadBar
                 onReload={() => {}}
                 onSearch={() => {}}
@@ -61,6 +94,10 @@ export default function Page() {
 
                     router.push(`/room/${gloss.roomId}/salon/${gloss.salonId}/gloss/${gloss.glossId}`);
                 }}
+                fond={{
+                    isPressed
+                }}
+                onSelect={(glossId, reason) => {handleReport(glossId, reason)}}
             />
         </div>
     )

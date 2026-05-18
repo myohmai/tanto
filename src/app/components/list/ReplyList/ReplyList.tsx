@@ -14,6 +14,8 @@ type Props = {
         iconUrl: string | null | undefined;
         subIcon?: undefined;
     };
+    fond: {isPressed: (glossId: string) => boolean;};
+    onSelect?: (glossId: string, reason: Report) => void;
     onRefresh?: () => void;
     isLoading?: boolean;
     onFond?: (glossId: string) => void;
@@ -23,6 +25,8 @@ export const ReplyList = ({
     glosses,
     users,
     room,
+    fond,
+    onSelect,
     onRefresh,
     isLoading,
     onFond
@@ -87,10 +91,8 @@ export const ReplyList = ({
                             onFond: () => onFond?.(gloss.glossId),
                             onReply: () => {},
                         }}
-                        fond={{
-                            isPressed: false,
-                        }}
-                        onSelect={() => {}}
+                        fond={fond}
+                        onSelect={(reason) => onSelect?.(gloss.glossId, reason)}
                         lang="ja"
                     />
                 );

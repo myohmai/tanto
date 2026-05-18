@@ -7,6 +7,7 @@ type GlossFondUpdate = {
     fondCount: number;
 };
 
+
 const getPostedGlosses = (): GlossData[] => {
     if (typeof window === "undefined") return [];
 
@@ -42,13 +43,19 @@ const applyFondUpdates = (glosses: GlossData[]) => {
     const fondUpdates = getFondUpdates();
     return glosses.map((gloss) => {
         const update = fondUpdates[gloss.glossId];
-        return update ? { ...gloss, ...update } : gloss;
+        return update
+            ? { ...gloss, fondCount: update.fondCount }
+            : gloss;
     });
 };
 
 export const getGlosses = async (): Promise<GlossData[]> => {
     const glosses = [...getPostedGlosses(), ...mockGlosses];
-    return applyFondUpdates(glosses);
+
+    const withFond = applyFondUpdates(glosses);
+    const withReply = calcReplyCounts(withFond);
+
+    return withReply;
 };
 
 export const updateGlossFond = async (
@@ -68,4 +75,22 @@ export const updateGlossFond = async (
     };
 
     saveFondUpdates(updates);
+};
+
+
+
+const calcReplyCounts = (glosses: GlossData[]) => {
+    const countMap: Record<string, number> = {};
+
+    glosses.forEach((gloss) => {
+        if (!gloss.replyToGlossId) return;
+
+        countMap[gloss.replyToGlossId] =
+            (countMap[gloss.replyToGlossId] ?? 0) + 1;
+    });
+
+    return glosses.map((gloss) => ({
+        ...gloss,
+        replyCount: countMap[gloss.glossId] ?? 0,
+    }));
 };
