@@ -5,7 +5,9 @@ export type NotificationType =
     | 'specific'
     | 'uncomfortable'
     | 'divided'
-    | 'unreliable';
+    | 'unreliable'
+    | 'sensitive'
+    | 'adult';
 
 export type NotificationMessage = {
     id: NotificationType;
@@ -19,8 +21,8 @@ export const notification: NotificationMessage[] = [
     {
         id: 'specific',
         message: {
-            en: 'Supported by a specific group of users',
-            ja: '一部のユーザー層に支持されています',
+            en: 'This seems to be causing discomfort to a specific group of users',
+            ja: '一部のユーザー層に不快感を与えているようです',
         },
     },
     {
@@ -42,6 +44,20 @@ export const notification: NotificationMessage[] = [
         message: {
             en: 'This information is unreliable',
             ja: '不確かな情報です',
+        },
+    },
+    {
+        id: 'sensitive',
+        message: {
+            en: 'Please be mindful of how this information is handled',
+            ja: '情報の取り扱いにご注意ください',
+        },
+    },
+    {
+        id: 'adult',
+        message: {
+            en: 'This content may be intended for adult audiences',
+            ja: 'アダルトコンテンツの可能性があります',
         },
     },
 ];

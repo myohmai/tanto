@@ -68,6 +68,7 @@ export const CreateRoom = ({
         },
 
         hostCreateSalon: false,
+        entityIds: [],
         reports: [],
         glossCount: 0,
         recentGlossCount: 0,

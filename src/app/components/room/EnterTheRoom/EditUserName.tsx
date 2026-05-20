@@ -1,3 +1,4 @@
+"use client";
 import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
 import { UserSubIcon } from "@/app/components/custom-icon/UserCustomIcon"
@@ -5,10 +6,10 @@ import { EditUserProfile } from "@/app/components/form/EditUserProfile";
 
 import './EnterTheRoom.scss'
 
-type User = {
+export type User = {
     userName: string;
-    iconUrl?: string;
-    subIcon?: UserSubIcon | null;
+    iconUrl?: string ;
+    subIcon?: UserSubIcon | null ;
 }
 
 
@@ -19,8 +20,8 @@ type Props = {
     roomName: string;
     roomRule: string;
     roomMemberIni: {
-        iconUrl?: string;
-        initialName?: string;
+        iconUrl?: string | null | undefined;
+        initialName?: string | null | undefined;
     }
     onChangeUserData: (payload: User) => void;
     onEnter: (payload: User) => void;
@@ -37,7 +38,7 @@ export const EditUserName = ({
 }: Props) => {
 
     const handleEnter = () => {
-        if (!user.userName.trim()) return;
+        if (!user.userName?.trim()) return;
         onEnter(user);
     }
     return(
@@ -55,7 +56,7 @@ export const EditUserName = ({
                 <EditUserProfile
                     UserIconUrl={user.iconUrl || roomMemberIni.iconUrl}
                     subIcon={user.subIcon || null}
-                    userName={user.userName}
+                    userName={user.userName! ||  roomMemberIni.initialName!}
                     roomInitialName={roomMemberIni.initialName}
                     onChangeUserIcon={(file) => {
                         onChangeUserData({

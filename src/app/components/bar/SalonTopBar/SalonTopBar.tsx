@@ -18,6 +18,7 @@ type Props = {
     onEdit: () => void;
     onMute: () => void;
     isHost: boolean;
+    isMuted: boolean;
 }
 
 export const SalonTopBar = ({ 
@@ -29,7 +30,8 @@ export const SalonTopBar = ({
     onPin,
     onEdit,
     onMute,
-    isHost
+    isHost,
+    isMuted
 }: Props ) => {
     const [menuOpen, setMenuOpen] = useState(false)
     return(
@@ -46,6 +48,7 @@ export const SalonTopBar = ({
                     isHost={isHost}
                     isOpen={menuOpen}
                     onClose={() => setMenuOpen(false)} 
+                    isMuted={isMuted}
                 />
         </div>
     )

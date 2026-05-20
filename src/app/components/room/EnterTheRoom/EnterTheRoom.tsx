@@ -1,3 +1,4 @@
+"use client";
 import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
 import { EditUserProfile } from "@/app/components/form/EditUserProfile";
@@ -11,14 +12,14 @@ import './EnterTheRoom.scss'
 
 type Props = {
     userId: string;
-    bannerUrl?: string;
+    bannerUrl?: string | null;
     roomId: string;
-    roomIconUrl?: string;
+    roomIconUrl?: string | null;
     roomName: string;
     roomRule: string;
     roomMemberIni: {
-        iconUrl?: string;
-        initialName?: string;
+        iconUrl?: string | null;
+        initialName?: string | null;
     }
     onEnter: (payload: UserRoomData) => void;
 }

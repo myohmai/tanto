@@ -3,7 +3,7 @@ import { SideNavBar } from "@/app/components/bar/SideNavBar";
 import { BottomNavBar } from "@/app/components/bar/BottomNavBar";
 import type { UserSubIcon } from "@/app/components/custom-icon/UserCustomIcon";
 import { getCurrentUserId } from "@/repositories/currentUser";
-import { getUserRoomData } from "@/repositories/userRoom";
+import { getUserRoomsByUser } from "@/repositories/userRoom";
 
 import 'destyle.css'
 import './layout.scss';
@@ -44,30 +44,35 @@ export default function ResponsiveShell({ children }: { children: ReactNode }) {
   const [currentRoom, setCurrentRoom] = useState<CurrentRoom | undefined>(undefined);
 
   useEffect(() => {
-    Promise.all([getCurrentUserId(), getUserRoomData()]).then(
-      ([currentUserId, userRooms]) => {
-        setCurrentUserId(currentUserId);
-        setUserRooms(
-          userRooms.map((userRoom) => ({
-            roomId: userRoom.roomId,
-            iconUrl: userRoom.iconUrl ?? undefined,
-            subIcon: userRoom.subIcon ?? undefined,
-          }))
-        );
+  const load = async () => {
+    const uid = await getCurrentUserId();
+    const userRooms = await getUserRoomsByUser(uid);
 
-        const profileRoom = userRooms.find(
-          (userRoom) => userRoom.userId === currentUserId
-        );
-        if (profileRoom) {
-          setCurrentRoom({
-            roomId: profileRoom.roomId,
-            iconUrl: profileRoom.iconUrl ?? undefined,
-            subIcon: profileRoom.subIcon ?? undefined,
-          });
-        }
-      }
+    setCurrentUserId(uid);
+
+    setUserRooms(
+      userRooms.map((userRoom) => ({
+        roomId: userRoom.roomId,
+        iconUrl: userRoom.iconUrl ?? undefined,
+        subIcon: userRoom.subIcon ?? undefined,
+      }))
     );
-  }, []);
+
+    const profileRoom = userRooms.find(
+      (userRoom) => userRoom.userId === uid
+    );
+
+    if (profileRoom) {
+      setCurrentRoom({
+        roomId: profileRoom.roomId,
+        iconUrl: profileRoom.iconUrl ?? undefined,
+        subIcon: profileRoom.subIcon ?? undefined,
+      });
+    }
+  };
+
+  load();
+}, []);
   useEffect(() => {
     const updateMode = () => {
       const width = window.innerWidth;
@@ -118,9 +123,6 @@ export default function ResponsiveShell({ children }: { children: ReactNode }) {
     switch (value) {
       case "Home":
         router.push("/feed");
-        break;
-      case "Hallway":
-        router.push("/hallway");
         break;
       case "Hallway":
         router.push("/hallway");

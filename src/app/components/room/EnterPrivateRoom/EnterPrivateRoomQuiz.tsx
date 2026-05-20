@@ -8,10 +8,10 @@ import './EnterPrivateRoom.scss'
 
 
 type Props = {
-    bannerUrl?: string;
-    roomIconUrl?: string;
-    roomName: string;
-    roomQuiz?: QuizeList[];
+    bannerUrl?: string | null;
+    roomIconUrl?: string | null;
+    roomName: string ;
+    roomQuiz?: QuizeList[] | null;
     roomQuizScore?: number;
     onEnter: () => void;
 }

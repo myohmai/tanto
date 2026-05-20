@@ -5,3 +5,4 @@ export * from "./turntable";
 export * from "./userRoomData";
 export * from "./topic";
 export * from "./fond";
+export * from "./entity";

@@ -8,14 +8,19 @@ import { RoomMenu } from "@/app/components/menu/RoomMenu";
 import { ReportMenu } from "@/app/components/menu/ReportMenu";
 import type { Report,ReportType } from "@/app/types/report";
 
+
 import type { RoomData } from "@/app/types/room";
 
 import { useState, useEffect, useRef } from "react";
 
 import './RoomInfo.scss'
 
+type RoomWithMeta = RoomData & {
+    roomMemberCount: number; 
+};
+
 type RoomInfoProps = {
-    roomData : RoomData;
+    roomData : RoomWithMeta;
     subIcon?: { type: 'fond'; value: FondLevel };
     onSearch: () => void;
     onEdit: () => void;
@@ -24,9 +29,11 @@ type RoomInfoProps = {
     onMute: () => void;
     onSelect: (reason: Report) => void;
     isEntered: boolean;
+    isOwn?: boolean;
+    isMuted: boolean;
 }
 
-export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare, onMute, onSelect, isEntered }: RoomInfoProps) => {
+export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare, onMute, onSelect, isEntered, isOwn, isMuted }: RoomInfoProps) => {
     const [expanded, setExpanded] = useState(false);
     const [overflow, setOverflow] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -36,6 +43,7 @@ export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare
 
     const handleReport = (type: ReportType) => {
     onSelect({
+            reporterId: "auth-user-id", // TODO: replace with actual auth user id
             type,
             createdAt: Date.now()
         });
@@ -119,7 +127,7 @@ export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare
                 </div>
                 <div className="room-info__members">{formatMemberCount(roomData.roomMemberCount)} gathering here</div>
             </div>
-            <RoomMenu onShare={onShare} onMute={onMute} onReport={() => setReportOpen(true)} onClose={() => setMenuOpen(false)} isOpen={menuOpen} />
+            <RoomMenu onShare={onShare} onMute={onMute} onReport={() => setReportOpen(true)} onClose={() => setMenuOpen(false)} isOpen={menuOpen} isOwn={isOwn} isMuted={isMuted} />
             <ReportMenu onSelect={handleReport} isOpen={reportOpen} onClose={() => setReportOpen(false)} />
         </div>
     )

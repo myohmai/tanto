@@ -1,9 +1,13 @@
 import { Gloss } from "@/app/components/card/Gloss";
 
 import type { GlossData } from "@/app/types/gloss";
+import type { Report } from "@/app/types/report";
 import type { UserRoomData } from "@/app/types";
 
 import './ReplyList.scss'
+
+import { getCurrentUserId } from "@/repositories/currentUser";
+import { useEffect, useState } from "react";
 
 import { useRef } from "react";
 
@@ -18,8 +22,17 @@ type Props = {
     onSelect?: (glossId: string, reason: Report) => void;
     onRefresh?: () => void;
     isLoading?: boolean;
-    onFond?: (glossId: string) => void;
+    action: {
+        onRoom: (glossData: GlossData) => void;
+        onSalon: (glossData: GlossData) => void;
+        onFond: (glossId: string) => void;
+        onReply: (glossData: GlossData) => void;
+    };
+    onBlock?: (userId: string) => void;
+
+    blockedUserIds: Set<string>; 
 }
+
 
 export const ReplyList = ({
     glosses,
@@ -29,11 +42,18 @@ export const ReplyList = ({
     onSelect,
     onRefresh,
     isLoading,
-    onFond
+    action,
+    onBlock,
+    blockedUserIds
 }: Props) => {
+    const [currentUserId, setCurrentUserId] = useState<string>("");
     const startY = useRef<number | null>(null);
     const pullDistance = useRef(0);
     const isTriggered = useRef(false);
+
+    useEffect(() => {
+        getCurrentUserId().then(setCurrentUserId);
+    }, []);
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         if (e.currentTarget.scrollTop !== 0) return;
@@ -56,6 +76,9 @@ export const ReplyList = ({
         pullDistance.current = 0;
         isTriggered.current = false;
     };
+    const handleRoom = (gloss: GlossData) => action.onRoom(gloss);
+    const handleSalon = (gloss: GlossData) => action.onSalon(gloss);
+    const handleReply = (gloss: GlossData) => action.onReply(gloss);
     return (
         <div
             className="reply-list"
@@ -86,13 +109,16 @@ export const ReplyList = ({
                             subIcon: room?.subIcon
                         }}
                         action={{
-                            onRoom: () => {},
-                            onSalon: () => {},
-                            onFond: () => onFond?.(gloss.glossId),
-                            onReply: () => {},
+                            onRoom: handleRoom,
+                            onSalon: handleSalon,
+                            onFond: () => action.onFond(gloss.glossId),
+                            onReply: handleReply,
                         }}
                         fond={fond}
                         onSelect={(reason) => onSelect?.(gloss.glossId, reason)}
+                        onBlock={() => onBlock?.(gloss.userId!)}
+                        isBlocked={blockedUserIds.has(gloss.userId!)}
+                        isOwn={gloss.userId === currentUserId}
                         lang="ja"
                     />
                 );

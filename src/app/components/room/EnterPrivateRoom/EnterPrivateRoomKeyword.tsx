@@ -7,8 +7,8 @@ import './EnterPrivateRoom.scss'
 
 
 type Props = {
-    bannerUrl?: string;
-    roomIconUrl?: string;
+    bannerUrl?: string | null;
+    roomIconUrl?: string | null;
     roomName: string;
     roomKeyWord?: string;
     roomKeyWordHint?: string;

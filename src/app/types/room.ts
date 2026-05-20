@@ -15,8 +15,8 @@ export type RoomData = {
     roomRule: string;
 
     roomMemberIni: {
-        iconUrl?: string | null;
-        initialName: string;
+        iconUrl?: string | null | undefined;
+        initialName: string | null | undefined;
     }
 
     roomMemberCount: number;
@@ -39,6 +39,8 @@ export type RoomData = {
     }
 
     hostCreateSalon: boolean;
+
+    entityIds: string[];
 
     reports: Report[]
 

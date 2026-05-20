@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter, useParams } from "next/navigation";
 
 import './page.scss'
@@ -12,29 +12,50 @@ import { ReplyBar } from "@/app/components/buttons/ReplyBar";
 import { getCurrentUserId } from "@/repositories/currentUser";
 import { getRooms } from "@/repositories/room";
 import { getSalons } from "@/repositories/salon";
-import { getGlosses, updateGlossFond } from "@/repositories/gloss";
+import { getProcessedGlosses } from "@/app/logic/gloss/calcGloss";
 import { getUserRoomData } from "@/repositories/userRoom";
 import { toggleFond,  getAllFonds } from "@/repositories/fond";
+import { toggleBlock } from "@/repositories/block";
+import { getBlocksByUser } from "@/repositories/block";
+import { toggleMute, getMutesByUser } from "@/repositories/mute";
 
+import { canAccessRoom } from "@/app/logic/room/roomAccess";
+
+import type { Report } from "@/app/types/report";
 import { GlossData, SalonData, type RoomData, type UserRoomData, type Fond } from "@/app/types";
 
 
 
 
-export default function Page() {
+export default function Page({ params }: { params: Promise<{ roomId: string; salonId: string; glossId: string; }> }) {
     const router = useRouter();
-    const params = useParams<{ roomId: string; salonId: string; glossId: string; }>();
-    
+    const { roomId, salonId, glossId } = use(params);
+
     const [roomData, setRoomData] = useState<RoomData | null>(null);
     const [salonData, setSalonData] = useState<SalonData | null>(null);
     const [glossData, setGlossData] = useState<GlossData[]>([]);
     const [replyData, setReplyData] = useState<GlossData[]>([]);
     const [userRoomData, setUserRoomData] = useState<UserRoomData[]>([]);
     const [glossUser, setGlossUser] = useState<UserRoomData | null>(null);
+    const [blockedUserIds, setBlockedUserIds] = useState<Set<string>>(new Set());
+    const [mutedSalonIds, setMutedSalonIds] = useState<Set<string>>(new Set());
 
     const [fonds, setFonds] = useState<Fond[]>([]);
     const [currentUserRoom, setCurrentUserRoom] =
         useState<UserRoomData | null>(null);
+
+    const hostUser = roomData?.roomHost
+    ? [{
+        userId: roomData.roomHost.userId,
+        userName: roomData.roomHost.userName,
+        iconUrl: roomData.roomHost.iconUrl,
+        subIcon: roomData.roomHost.subIcon,
+        roomId: roomId,
+        roomName: roomData.roomName,
+    }]
+    : [];
+    const users = [...hostUser, ...userRoomData];
+
 
     const isPressed = (glossId: string) =>
         fonds.some(
@@ -57,59 +78,108 @@ export default function Page() {
         );
     };
 
+    const handleBlock = async (userId: string) => {
+        await toggleBlock(userId, "currentUser");
+
+        const glosses = await getProcessedGlosses();
+        const gloss = glosses.find(g => g.glossId === glossId);
+
+        setGlossData(gloss ? [gloss] : []);
+        setReplyData(
+            glosses.filter(g => g.replyToGlossId === glossId)
+        );
+    };
+
     useEffect(() => {
-        getRooms().then((rooms) => {
-            const room = rooms.find(r => r.roomId === params.roomId);
-            setRoomData(room ?? null);
-        });
+        getCurrentUserId().then((currentUserId) => {
 
-        getSalons().then((salons) => {
-            setSalonData(
-                salons.find(s => s.salonId === params.salonId) ?? null
-            );
-        });
-
-        getGlosses().then((glosses) => {
-            const gloss = glosses.find(g => g.glossId === params.glossId);
-            setGlossData(gloss ? [gloss] : []);
-            setReplyData(
-                glosses.filter((gloss) => gloss.replyToGlossId === params.glossId)
-            );
-
-            if (!gloss) {
-                setGlossUser(null);
-                return;
-            }
-
-            getUserRoomData().then((users) => {
-                setUserRoomData(users);
-                const glossUser = users.find(
-                    (x) => x.userId === gloss.userId && x.roomId === gloss.roomId
-                );
-                setGlossUser(glossUser ?? null);
+            getRooms().then((rooms) => {
+                const room = rooms.find(r => r.roomId === roomId);
+                setRoomData(room ?? null);
             });
-            getAllFonds().then(setFonds);
-        });
-        
 
-        Promise.all([getCurrentUserId(), getUserRoomData()]).then(
-            ([currentUserId, users]) => {
+            getSalons().then((salons) => {
+                setSalonData(
+                    salons.find(s => s.salonId === salonId) ?? null
+                );
+            });
+
+            getProcessedGlosses().then((glosses) => {
+                const gloss = glosses.find(g => g.glossId === glossId);
+                setGlossData(gloss ? [gloss] : []);
+                setReplyData(
+                    glosses.filter((g) => g.replyToGlossId === glossId)
+                );
+
+                if (!gloss) {
+                    setGlossUser(null);
+                    return;
+                }
+
+                getUserRoomData(currentUserId, roomId).then((users) => {
+                    setUserRoomData(users);
+
+                    const glossUser = users.find(
+                        (x) =>
+                            x.userId === gloss.userId &&
+                            x.roomId === gloss.roomId
+                    );
+
+                    setGlossUser(glossUser ?? null);
+                });
+
+                getAllFonds().then(setFonds);
+            });
+
+            getUserRoomData(currentUserId, roomId).then((users) => {
                 const currentUserRoom = users.find(
                     (user) =>
                         user.userId === currentUserId &&
-                        user.roomId === params.roomId
+                        user.roomId === roomId
                 );
 
                 setCurrentUserRoom(currentUserRoom ?? null);
-            }
-        );
-    }, [params]);
+            });
+
+        });
+    }, [roomId, salonId, glossId]);
+
+        useEffect(() => {
+        getCurrentUserId().then((uid) => {
+            getBlocksByUser(uid).then((blocks) => {
+                setBlockedUserIds(
+                    new Set(blocks.map(b => b.targetUserId))
+                );
+            });
+        });
+    }, []);
+
+    useEffect(() => {
+        getMutesByUser("currentUser").then((mutes) => {
+            setMutedSalonIds(
+                new Set(
+                    mutes
+                        .filter(m => m.salonId)
+                        .map(m => m.salonId!)
+                )
+            );
+        });
+    }, []);
 
     const handleFond = async (glossId: string) => {
-        await updateGlossFond(glossId);
-        const glosses = await getGlosses();
+        await toggleFond(glossId, "currentUser");
+        const glosses = await getProcessedGlosses();
         const gloss = glosses.find((g) => g.glossId === glossId);
         setGlossData(gloss ? [gloss] : []);
+    };
+    
+    const handleReply = async () => {
+        const allowed = await canAccessRoom(roomId);
+        if (!allowed) return;
+
+        router.push(
+            `/room/${roomId}/salon/${salonId}/gloss/${glossId}/reply`
+        );
     };
 
     if (!roomData || !salonData || glossData.length === 0) return null;
@@ -121,12 +191,31 @@ export default function Page() {
                     roomName={roomData?.roomName ?? ""}
                     salonName={salonData?.salonName ?? ""}
                     onBack={() => router.back()}
-                    onRoom={() => router.push(`/room/${params.roomId}`)}
-                    onSalon={() => router.push(`/room/${params.roomId}/salon/${params.salonId}`)}
+                    onRoom={() => router.push(`/room/${roomId}`)}
+                    onSalon={() => router.push(`/room/${roomId}/salon/${salonId}`)}
                     onPin={() => {}}
-                    onEdit={() => {}}
-                    onMute={() => {}}
-                    isHost={false}
+                    onEdit={() => router.push(`/room/${roomId}/salon/${salonId}/edit`)}
+                    onMute={async () => {
+                            await toggleMute({
+                                userId: "currentUser",
+                                salonId: salonId,
+                            });
+
+                            const mutes = await getMutesByUser("currentUser");
+
+                            setMutedSalonIds(
+                                new Set(
+                                    mutes
+                                        .filter(m => m.salonId)
+                                        .map(m => m.salonId!)
+                                )
+                            );
+
+                            const glosses = await getProcessedGlosses();
+                            setGlossData(glosses.filter(g => g.salonId === salonId));
+                        }}
+                    isHost={roomData.roomHost?.userId === currentUserRoom?.userId}
+                    isMuted={mutedSalonIds.has(salonId)}
                 />
             </div>
             <div className="gloss-page__scroll">
@@ -137,27 +226,30 @@ export default function Page() {
                         isInRoom={false}
                         isInSalon={true}
                         user={{
-                            iconUrl: glossUser?.iconUrl,
-                            subIcon: glossUser?.subIcon
+                            iconUrl: users[0]?.iconUrl,
+                            subIcon: users[0]?.subIcon
                         }}
                         room={{
                             iconUrl: roomData.roomIconUrl!,
                         }}
                         action={{
-                            onRoom: () => {},
-                            onSalon: () => {},
+                            onRoom: () => router.push(`/room/${roomId}`),
+                            onSalon: () => router.push(`/room/${roomId}/salon/${salonId}`),
                             onFond: handleFond,
-                            onReply: () => {},
+                            onReply: handleReply,
                         }}
                         fond={{
                             isPressed
                         }}
+                        onBlock={() => handleBlock(glossData[0].userId!)}
                         onSelect={(reason) => {handleReport(glossData[0].glossId, reason)}}
+                        isBlocked={blockedUserIds.has(glossData[0].userId!)}
+                        isOwn={glossData[0].userId === currentUserRoom?.userId}
                         lang="ja"
                     />
                     <ReplyList
                         glosses={replyData}
-                        users={userRoomData}
+                        users={users}
                         room={{
                             iconUrl: roomData.roomIconUrl,
                             subIcon: undefined,
@@ -166,7 +258,14 @@ export default function Page() {
                             isPressed
                         }}
                         onSelect={(glossId, reason) => {handleReport(glossId, reason)}}
-                        onFond={handleFond}
+                        action={{
+                            onRoom: (glossData) => router.push(`/room/${glossData.roomId}`),
+                            onSalon: (glossData) => router.push(`/room/${glossData.roomId}/salon/${glossData.salonId}`),
+                            onFond: handleFond,
+                            onReply: handleReply,
+                        }}
+                        onBlock={handleBlock}
+                        blockedUserIds={blockedUserIds}
                     />
                 </div>
                 <ReplyBar
@@ -174,7 +273,7 @@ export default function Page() {
                     userSubIcon={currentUserRoom?.subIcon}
                     onClick={() =>
                         router.push(
-                            `/room/${params.roomId}/salon/${params.salonId}/gloss/${params.glossId}/reply`
+                            `/room/${roomId}/salon/${salonId}/gloss/${glossId}/reply`
                         )
                     }
                 />

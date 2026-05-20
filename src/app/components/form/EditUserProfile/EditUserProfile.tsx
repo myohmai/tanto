@@ -8,9 +8,9 @@ import { useState } from "react"
 import './EditUserProfile.scss'
 
 type Props = {
-    UserIconUrl?: string;
+    UserIconUrl?: string | null;
     subIcon?: UserSubIcon | null;
-    roomInitialName?: string;
+    roomInitialName?: string | null;
     userName?: string;
     onChangeUserIcon?: (file: File) => void;
     onSubIcon?: (icon: UserSubIcon) => void;

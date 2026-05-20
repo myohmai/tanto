@@ -6,11 +6,17 @@ import './RoomList.scss'
 
 import { useRef } from "react";
 
+type RoomWithMeta = RoomData & {
+    latestPostedAt?: string;
+    latestImages?: string[];
+};
+
 type Props = {
-    rooms: RoomData[];
+    rooms: RoomWithMeta[];
     scope: 'feed' | 'dashboard';
     users?: UserRoomData[];
     onRoom: (roomId: string) => void;
+    onEdit?: (roomId: string) => void;
     onRefresh?: () => void;
     isLoading?: boolean;
 }
@@ -20,8 +26,9 @@ export const RoomList = ({
     scope,
     users,
     onRoom,
+    onEdit,
     onRefresh,
-    isLoading
+    isLoading,
 }: Props) => {
     const startY = useRef<number | null>(null);
     const pullDistance = useRef(0);
@@ -72,10 +79,10 @@ export const RoomList = ({
                         roomName={room.roomName}
                         userName={displayUser?.userName ?? ""}
                         onRoom={() => onRoom(room.roomId)}
-                        onEdit={() => {}}
-                        latestPostedAt=""
+                        onEdit={() => onEdit?.(room.roomId)}
+                        latestPostedAt={room.latestPostedAt}
                         glossCount={room.glossCount}
-                        latestImages={[]}
+                        latestImages={room.latestImages}
                         isInDashboard={scope === 'dashboard'}
                     />
                 );

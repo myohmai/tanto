@@ -29,7 +29,7 @@ type GlossProps = {
     isInSalon: boolean;
     className?: string;
     user: {
-        iconUrl: string | undefined;
+        iconUrl: string | undefined | null;
         subIcon?: UserSubIcon | null;
     }
     room: {
@@ -47,16 +47,19 @@ type GlossProps = {
         onNo: (glossId: string) => void;
     }
     action: {
-        onRoom: () => void;
-        onSalon?: () => void;
+        onRoom: (gloss: GlossData) => void;
+        onSalon?: (gloss: GlossData) => void;
         onFond: (glossId: string) => void;
-        onReply: () => void;
+        onReply: (gloss: GlossData) => void;
     }
     onSelect?: (reason: Report) => void;
     fond: {
         isPressed: (glossId: string) => boolean;
     }
+    onBlock: () => void;
     onGlossClick?: (glossId: string) => void;
+    isBlocked: boolean;
+    isOwn: boolean;
     lang: 'en' | 'ja';
 }
 
@@ -76,6 +79,9 @@ export const Gloss = ({
     onSelect,
     fond,
     onGlossClick,
+    onBlock,
+    isBlocked,
+    isOwn,
     lang
 }: GlossProps) => {
     const [menuOpen, setMenuOpen ] = useState(false)
@@ -107,6 +113,7 @@ export const Gloss = ({
 
     const handleReport = (type: ReportType) => {
         onSelect?.({
+                reporterId: "auth-user-id", // TODO: replace with actual auth user id
                 type,
                 createdAt: Date.now()
             });
@@ -187,9 +194,9 @@ export const Gloss = ({
         className={`gloss padding-md inline-md bg-color-primary text-color-primary ${className ?? ""}`}
         onClick={() => onGlossClick?.(glossData.glossId)}
     >
-            {isInFeed && (<button type="button" onClick={action.onRoom} className="gloss__icon-button"><RoomCustomIcon roomIconUrl={roomIconUrl} subIcon={roomSubIcon} className="gloss__icon" /></button>)}
+            {isInFeed && (<button type="button" onClick={() => action.onRoom(glossData)} className="gloss__icon-button"><RoomCustomIcon roomIconUrl={roomIconUrl} subIcon={roomSubIcon} className="gloss__icon" /></button>)}
             {!isInFeed && (isInRoom || isInSalon) && (
-                <button type="button" onClick={isInRoom ? action.onSalon : action.onRoom} title={isInRoom ? "Go to Salon" : "Go to Room"} className="gloss__icon-button"><UserCustomIcon iconUrl={userIconUrl} subIcon={userSubIcon} className="gloss__icon" /></button>)}
+                <button type="button" onClick={isInRoom ? () => action.onSalon?.(glossData) : () => action.onRoom(glossData)} title={isInRoom ? "Go to Salon" : "Go to Room"} className="gloss__icon-button"><UserCustomIcon iconUrl={userIconUrl} subIcon={userSubIcon} className="gloss__icon" /></button>)}
             <div className="gloss__content-wrapper stack-md">
                 <div className="gloss__content-container stack-sm">
                     <div className="gloss__name-wrapper">
@@ -205,12 +212,12 @@ export const Gloss = ({
                                 isInRoom={true} 
                                 onRoom={(e) => {
                                     e.stopPropagation()
-                                    action.onRoom
-                                    }}
+                                    action.onRoom(glossData)
+                                }}
                                 roomName={glossData.roomName} 
                                 onSalon={(e) => {
                                     e.stopPropagation()
-                                    action.onSalon
+                                    action.onSalon?.(glossData)
                                 }} 
                                 salonName={glossData.salonName}
                             />)}
@@ -220,12 +227,12 @@ export const Gloss = ({
                                 isInRoom={false} 
                                 onRoom={(e) => {
                                     e.stopPropagation()
-                                    action.onRoom
+                                    action.onRoom(glossData)
                                     }}
                                 roomName={glossData.roomName}
                                 onSalon={(e) => {
                                     e.stopPropagation()
-                                    action.onSalon
+                                    action.onSalon?.(glossData)
                                 }}
                                 salonName={glossData.salonName}
                             />)}
@@ -271,7 +278,7 @@ export const Gloss = ({
                     <ReplyButton
                         onClick={(e) => {
                         e.stopPropagation();
-                        action.onReply();
+                        action.onReply(glossData);
                     }} 
                     replyCount={glossData.replyCount} />
                 </div>
@@ -289,13 +296,8 @@ export const Gloss = ({
                     }, 2000);
                 }}
                 onBlock={() => {
-                    setToastMessage("Coming Soon");
-                    setIsShowToast(true);
+                    onBlock();
                     setMenuOpen(false);
-
-                    setTimeout(() => {
-                        setIsShowToast(false);
-                    }, 2000);
                 }}
                 onMessage={() => {
                     setToastMessage("Coming Soon");
@@ -316,6 +318,8 @@ export const Gloss = ({
                 }}
                 isOpen={menuOpen}
                 onClose={() => setMenuOpen(false)}
+                isBlocked={isBlocked}
+                isOwn={isOwn}
             />
 
             <ReportMenu onSelect={handleReport} isOpen={reportOpen} onClose={() => setReportOpen(false)} />

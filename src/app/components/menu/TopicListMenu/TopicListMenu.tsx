@@ -9,12 +9,13 @@ type Props = {
     onBlock: () => void;
     isOpen: boolean;
     onClose: () => void;
+    isBlocked: boolean;
 }
 
-export const TopicListMenu = ({ onBlock, isOpen, onClose }: Props) => {
+export const TopicListMenu = ({ onBlock, isOpen, onClose, isBlocked }: Props) => {
     return(
         <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName="topic-list-menu stack-md" >
-                <BottomMenuButton icon={<UserBlockIcon />} label="Block this user" onClick={onBlock} />
+                <BottomMenuButton icon={<UserBlockIcon />} label={isBlocked ? "Unblock this user" : "Block this user"} onClick={onBlock} />
         </BottomSheet>
     )
 }

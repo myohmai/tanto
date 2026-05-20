@@ -20,6 +20,7 @@ type Props = {
     onBookMark: (e: React.MouseEvent<HTMLButtonElement>) => void;
     onBlock: () => void;
     isBookmarked: boolean;
+    isBlocked: boolean;
 }
 
 export const TopicListCard = ({
@@ -29,7 +30,8 @@ export const TopicListCard = ({
     onQuote,
     onBookMark,
     onBlock,
-    isBookmarked
+    isBookmarked,
+    isBlocked
 }: Props ) => {
     const [isOpen, setIsOpen] = useState(false);
         // Date caluculate
@@ -83,7 +85,7 @@ export const TopicListCard = ({
                 <QuoteButton onClick={() => onQuote(topic.topicId)} />
                 <BookMarkButton onToggle={onBookMark} isBookmarked={isBookmarked}/>
             </div>
-            <TopicListMenu onBlock={onBlock} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+            <TopicListMenu onBlock={onBlock} isOpen={isOpen} onClose={() => setIsOpen(false)} isBlocked={isBlocked} />
         </div>
     )
 }

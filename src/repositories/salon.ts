@@ -57,3 +57,35 @@ export const getSalons = async (): Promise<SalonData[]> => {
 
     return salons;
 };
+
+export async function updateSalon(payload: SalonData) {
+    if (typeof window === "undefined") return;
+
+    const saved = localStorage.getItem("updated-salons");
+    const updatedSalons: SalonData[] = saved ? JSON.parse(saved) : [];
+
+    const existsIndex = updatedSalons.findIndex(
+        (s) => s.salonId === payload.salonId
+    );
+
+    if (existsIndex !== -1) {
+        updatedSalons[existsIndex] = payload;
+    } else {
+        updatedSalons.push(payload);
+    }
+
+    localStorage.setItem("updated-salons", JSON.stringify(updatedSalons));
+}
+
+export async function deleteSalon(salonId: string) {
+    if (typeof window === "undefined") return;
+
+    const deletedSalonIds = localStorage.getItem("deleted-salon-ids");
+    const list: string[] = deletedSalonIds ? JSON.parse(deletedSalonIds) : [];
+
+    if (!list.includes(salonId)) {
+        list.push(salonId);
+    }
+
+    localStorage.setItem("deleted-salon-ids", JSON.stringify(list));
+}

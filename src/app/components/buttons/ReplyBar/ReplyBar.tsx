@@ -2,7 +2,7 @@ import { UserCustomIcon, UserSubIcon} from "@/app/components/custom-icon/UserCus
 import './ReplyBar.scss';
 
 type Props = {
-    userIconUrl: string | undefined;
+    userIconUrl: string | undefined | null;
     userSubIcon?: UserSubIcon | undefined | null;
     onClick: () => void;
 };

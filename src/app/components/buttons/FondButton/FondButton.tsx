@@ -1,32 +1,19 @@
 import './FondButton.scss';
 import { FondIcon, FondLineIcon } from '@/app/components/icons';
-import type { FondLevel } from '@/app/components/icons/types';
 
 import type { GlossData } from "@/app/types/gloss";
+import { calcFondLevel } from "@/app/logic/gloss/calcFondLevel";
 
 type Props = {
     glossData: GlossData;
     isPressed: (glossId: string) => boolean;
     onClick: (glossId: string) => void;
 }
-const getFondLevel = (
-    fondCount: number,
-    reportCount: number
-): FondLevel => {
-    const score = Math.max(0, fondCount - reportCount * 5);
-    if (score >= 1000) return '500';
-    if (score >= 800) return '400';
-    if (score >= 600) return '300';
-    if (score >= 400) return '200';
-    return '100';
-}
 
 export const FondButton = ({ glossData, isPressed, onClick }: Props) => {
     const fondCount = glossData.fondCount;
-    const reportCount = glossData.reports?.length ?? 0;
-    const level = getFondLevel(fondCount, reportCount);
-    
-    // TODO: calculate FondLevel from value (threshold logic)
+    const level = calcFondLevel(glossData);
+
     let fondHeart;
     if (fondCount === 0) {
         fondHeart = <FondLineIcon size="md" className="fond-button__icon icon-color-secondary" />;

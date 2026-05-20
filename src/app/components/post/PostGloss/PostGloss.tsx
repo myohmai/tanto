@@ -21,14 +21,14 @@ import { useState, useRef } from "react";
 
 type Props = {
     onCancel: () => void;
-    iconUrl?: string;
+    iconUrl?: string | null;
     subIcon? : UserSubIcon | null;
     roomId: string;
     salonId: string;
     userId: string;
     roomName: string;
     salonName?: string;
-    userName: string;
+    userName: string | null | undefined;
     onRoom: () => void;
     onSalon?: () => void;
     onSelectFile: (file: File[]) => void;

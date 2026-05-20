@@ -19,3 +19,24 @@ export const getRooms = async () => {
 
     return [...createdRooms, ...mockRooms];
 };
+
+export const saveRoom = (room: RoomData) => {
+    const saved = localStorage.getItem("created-rooms");
+    const rooms = saved ? JSON.parse(saved) : [];
+
+    const updated = rooms.some((r: RoomData) => r.roomId === room.roomId)
+        ? rooms.map((r: RoomData) => r.roomId === room.roomId ? room : r)
+        : [...rooms, room];
+
+    localStorage.setItem("created-rooms", JSON.stringify(updated));
+};
+
+export const deleteRoom = (roomId: string) => {
+    const saved = localStorage.getItem("created-rooms");
+    if (!saved) return;
+
+    const rooms = JSON.parse(saved);
+    const updated = rooms.filter((r: RoomData) => r.roomId !== roomId);
+
+    localStorage.setItem("created-rooms", JSON.stringify(updated));
+};

@@ -1,5 +1,6 @@
 import { MediaItem, MediaLabelType } from "@/app/types/media"
 import { Topic } from "@/app/types/topic"
+import type { Report } from "@/app/types/report"
 
 export type GlossData = {
     glossId: string;
@@ -29,7 +30,7 @@ export type GlossData = {
     topic?: Topic;
 
     postedAt: string;
-    userName: string;
+    userName: string | undefined | null;
     salonName?: string;
     roomName: string;
 

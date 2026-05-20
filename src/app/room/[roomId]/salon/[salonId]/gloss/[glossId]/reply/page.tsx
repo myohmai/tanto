@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState,use } from "react";
+import { useRouter } from "next/navigation";
 
 import { ReplyGloss } from "@/app/components/post/PostGloss";
 
@@ -13,13 +13,9 @@ import { getUserRoomData } from "@/repositories/userRoom";
 
 import type { GlossData, RoomData, SalonData, UserRoomData } from "@/app/types";
 
-export default function Page() {
+export default function Page({ params }: { params: Promise<{ roomId: string; salonId: string; glossId: string; }> }) {
     const router = useRouter();
-    const params = useParams<{
-        roomId: string;
-        salonId: string;
-        glossId: string;
-    }>();
+    const { roomId, salonId, glossId } = use(params);
 
     const [roomData, setRoomData] = useState<RoomData | null>(null);
     const [salonData, setSalonData] = useState<SalonData | null>(null);
@@ -36,13 +32,13 @@ export default function Page() {
             getUserRoomData(),
             getCurrentUserId(),
         ]).then(([rooms, salons, glosses, userRooms, currentUserId]) => {
-            const room = rooms.find((room) => room.roomId === params.roomId);
+            const room = rooms.find((room) => room.roomId === roomId);
             const salon = salons.find(
                 (salon) =>
-                    salon.roomId === params.roomId &&
-                    salon.salonId === params.salonId
+                    salon.roomId === roomId &&
+                    salon.salonId === salonId
             );
-            const gloss = glosses.find((gloss) => gloss.glossId === params.glossId);
+            const gloss = glosses.find((gloss) => gloss.glossId === glossId);
             const replyToUser = gloss
                 ? userRooms.find(
                     (userRoom) =>
@@ -53,7 +49,7 @@ export default function Page() {
             const currentUserRoom = userRooms.find(
                 (userRoom) =>
                     userRoom.userId === currentUserId &&
-                    userRoom.roomId === params.roomId
+                    userRoom.roomId === roomId
             );
 
             setRoomData(room ?? null);
@@ -62,7 +58,7 @@ export default function Page() {
             setReplyToUser(replyToUser ?? null);
             setCurrentUserRoom(currentUserRoom ?? null);
         });
-    }, [params.roomId, params.salonId, params.glossId]);
+    }, [roomId, salonId, glossId]);
 
     if (!roomData || !salonData || !replyToGloss || !currentUserRoom) return null;
 
@@ -79,14 +75,14 @@ export default function Page() {
             iconUrl={currentUserRoom.iconUrl}
             subIcon={currentUserRoom.subIcon}
             roomId={roomData.roomId}
-            salonId={salonData.salonId ?? params.salonId}
+            salonId={salonData.salonId ?? salonId}
             userId={currentUserRoom.userId}
             roomName={roomData.roomName}
             salonName={salonData.salonName}
             userName={currentUserRoom.userName}
-            onRoom={() => router.push(`/room/${params.roomId}`)}
+            onRoom={() => router.push(`/room/${roomId}`)}
             onSalon={() =>
-                router.push(`/room/${params.roomId}/salon/${params.salonId}`)
+                router.push(`/room/${roomId}/salon/${salonId}`)
             }
             onSelectFile={() => {}}
             onPost={(payload: GlossData) => {
@@ -99,7 +95,7 @@ export default function Page() {
                 );
 
                 router.push(
-                    `/room/${params.roomId}/salon/${params.salonId}/gloss/${params.glossId}`
+                    `/room/${roomId}/salon/${salonId}/gloss/${glossId}`
                 );
             }}
             lang="ja"

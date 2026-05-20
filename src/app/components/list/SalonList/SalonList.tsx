@@ -6,9 +6,15 @@ import './SalonList'
 
 import { useRef } from "react";
 
+type SalonWithMeta = SalonData & {
+    latestPostedAt?: string;
+    latestImages?: string[];
+    glossCount?: number;
+};
+
 type Props = {
-    salons: SalonData[];
-    onClick: (value: SalonData) => void;
+    salons: SalonWithMeta[];
+    onClick: (value: SalonWithMeta) => void;
     onRefresh?: () => void;
     isLoading?: boolean;
 }
@@ -56,9 +62,9 @@ export const SalonList = ({
                     key={salon.salonId}
                     salonData={salon}
                     onSalon={() => {onClick(salon)}}
-                    latestPostedAt={new Date().toISOString()}
-                    glossCount={0}
-                    latestImages={[]}
+                    latestPostedAt={salon.latestPostedAt ?? ""}
+                    glossCount={salon.glossCount ?? 0}
+                    latestImages={salon.latestImages ?? []}
                 />
             ))}
 

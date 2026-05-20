@@ -1,3 +1,4 @@
+"use client";
 import { EditRoomBannerPicture } from "@/app/components/form/EditRoomBannerPicture";
 import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { EditIconButton } from "@/app/components/buttons/EditIconButton";
@@ -82,10 +83,11 @@ export const RoomSetting = ({
         onSubmitRoomSetting(payload);
 }
 
-    const isRoomNameOver = roomData.roomName.length > 30;
+    const isRoomNameOver = roomData.roomName?.length > 30;
     const isRoomNameEmpty = roomData.roomName.trim() === "";
     const isRoomInfoEmpty = roomData.roomInformation.trim() === "";
-    const isRoomMemberIniOver = roomData.roomMemberIni.initialName.length > 30;
+    const isRoomMemberIniOver =
+    (roomData.roomMemberIni.initialName ?? "").length > 30;
     const isRoomHostOver = (roomData.roomHost?.userName ?? "").length > 30;
     const isKeyWordEmpty = roomData.roomKeyWord?.trim() === "";
     const isKeyWordHinEmpty = roomData.roomKeyWordHint?.trim() === "";
@@ -228,7 +230,7 @@ export const RoomSetting = ({
                                 type="text"
                                 className="input-box__text-box"
                                 placeholder="UserName"
-                                value={roomData.roomMemberIni.initialName}
+                                value={roomData.roomMemberIni.initialName ?? ""}
                                 maxLength={30}
                                 onChange={(e) => {
                                     onChangeRoomData({

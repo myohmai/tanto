@@ -4,9 +4,14 @@ import { useRouter } from "next/navigation";
 import { HeadBar } from "@/app/components/bar/HeadBar";
 import { CreateOwnRoomButton } from "@/app/components/buttons/CreateOwnRoomButton";
 
+import { calcRoomMeta } from "@/app/logic/room/calcMeta";
+
 import { RoomList } from "@/app/components/list/RoomList";
 
 import { getRooms } from "@/repositories/room";
+import { getProcessedGlosses } from "@/app/logic/gloss/calcGloss";
+import { getUserRoomsByUser } from "@/repositories/userRoom";
+import { getCurrentUserId } from "@/repositories/currentUser";
 
 import { type RoomData } from "@/app/types";
 
@@ -14,12 +19,29 @@ import { type RoomData } from "@/app/types";
 export default function Page() {
     const router = useRouter();
     const [rooms, setRooms] = useState<RoomData[]>([]);
+    const [glosses, setGlosses] = useState<any[]>([]);
+    const [userRooms, setUserRooms] = useState<any[]>([]);
+    
+
+    const enrichedRooms = calcRoomMeta(rooms, glosses, userRooms);
 
     useEffect(() => {
-        getRooms().then((rooms) => {
-                setRooms(rooms);
-            }); 
-    }, []);
+    const load = async () => {
+        const uid = await getCurrentUserId();
+
+        const [roomsData, glossData, userRoomData] = await Promise.all([
+            getRooms(),
+            getProcessedGlosses(),
+            getUserRoomsByUser(uid),
+        ]);
+
+        setRooms(roomsData);
+        setGlosses(glossData);
+        setUserRooms(userRoomData);
+    };
+
+    load();
+}, []);
     
     return (
         <div className="hallway">
@@ -29,7 +51,7 @@ export default function Page() {
                 onSideMenu={() => {}}
             />
             <RoomList
-                rooms={rooms}
+                rooms={enrichedRooms}
                 scope="feed"
                 onRoom={(roomId) => router.push(`/room/${roomId}`)}
             />

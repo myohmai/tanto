@@ -10,10 +10,11 @@ type Props = {
     topics: Topic[];
     onQuote: (topicId: string) => void;
     onBookMark: () => void;
-    onBlock: () => void;
+    onBlock: (userId: string) => void;
     isBookMarked: boolean;
     onRefresh?: () => void;
     isLoading?: boolean;
+    blockedUserIds: Set<string>; 
 }
 
 export const TopicList = ({
@@ -23,7 +24,8 @@ export const TopicList = ({
     onBlock,
     isBookMarked,
     onRefresh,
-    isLoading
+    isLoading,   
+    blockedUserIds
 }: Props) => {
     const startY = useRef<number | null>(null);
     const pullDistance = useRef(0);
@@ -63,8 +65,9 @@ export const TopicList = ({
                 topic={topic}
                 onQuote={onQuote}
                 onBookMark={onBookMark}
-                onBlock={onBlock}
+                onBlock={() => onBlock?.(topic.userId)}
                 isBookmarked={isBookMarked}
+                isBlocked={blockedUserIds.has(topic.userId!)}
             />
         ))}
 

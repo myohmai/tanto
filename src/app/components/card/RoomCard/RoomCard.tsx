@@ -18,8 +18,8 @@ type Props = {
     userName: string;
     onRoom: () => void;
     onEdit?: () => void
-    latestPostedAt: string;
-    glossCount: number;
+    latestPostedAt: string | undefined;
+    glossCount: number | undefined;
     latestImages?: string[];
     isInDashboard: boolean;
 }
@@ -95,10 +95,10 @@ export const RoomCard = ({
                         <span className="room-card__room-name">{roomName}</span>
                         <div className="room-card__inner-container inline-sm">
                             <span className="room-card__count">
-                                {formatGlossCount(glossCount)} Glosses
+                                {glossCount !== undefined ? formatGlossCount(glossCount) : '0'} Glosses
                             </span>
                             <span className="room-card__posted_at text-color-secondary">
-                                {formatPostedAt(latestPostedAt)}
+                                {latestPostedAt && formatPostedAt(latestPostedAt)}
                             </span>
                         </div>
                     </div>

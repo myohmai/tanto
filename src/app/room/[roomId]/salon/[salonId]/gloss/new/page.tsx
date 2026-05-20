@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import { PostGloss } from "@/app/components/post/PostGloss";
@@ -12,9 +12,9 @@ import { getUserRoomData } from "@/repositories/userRoom";
 
 import type { GlossData, RoomData, SalonData, UserRoomData } from "@/app/types";
 
-export default function Page() {
+export default function Page({ params }: { params: Promise<{ roomId: string; salonId: string; glossId: string }> }) {
     const router = useRouter();
-    const params = useParams<{ roomId: string; salonId: string }>();
+    const { roomId, salonId, glossId } = use(params);
 
     const [roomData, setRoomData] = useState<RoomData | null>(null);
     const [salonData, setSalonData] = useState<SalonData | null>(null);
@@ -22,55 +22,55 @@ export default function Page() {
         useState<UserRoomData | null>(null);
 
     useEffect(() => {
-        Promise.all([
+    const run = async () => {
+        const [rooms, salons, currentUserId] = await Promise.all([
             getRooms(),
             getSalons(),
-            getUserRoomData(),
             getCurrentUserId(),
-        ]).then(([rooms, salons, userRooms, currentUserId]) => {
-            const room = rooms.find((room) => room.roomId === params.roomId);
-            const salon = salons.find(
-                (salon) =>
-                    salon.roomId === params.roomId &&
-                    salon.salonId === params.salonId
-            );
-            const userRoom = userRooms.find(
-                (userRoom) =>
-                    userRoom.userId === currentUserId &&
-                    userRoom.roomId === params.roomId
-            );
+        ]);
 
-            setRoomData(room ?? null);
-            setSalonData(salon ?? null);
+        const userRooms = await getUserRoomData(currentUserId, roomId);
 
-            if (userRoom) {
-                setCurrentUserRoom(userRoom);
-                return;
-            }
+        const room = rooms.find((room) => room.roomId === roomId);
 
-            if (room?.roomHost?.userId === currentUserId) {
-                setCurrentUserRoom({
-                    userId: currentUserId,
-                    roomId: room.roomId,
-                    roomName: room.roomName,
-                    iconUrl: room.roomHost.iconUrl ?? undefined,
-                    subIcon: room.roomHost.subIcon ?? null,
-                    userName: room.roomHost.userName ?? currentUserId,
-                });
-                return;
-            }
+        const salon = salons.find(
+            (salon) =>
+                salon.roomId === roomId &&
+                salon.salonId === salonId
+        );
 
+        setRoomData(room ?? null);
+        setSalonData(salon ?? null);
+
+        if (userRooms) {
+            setCurrentUserRoom(userRooms[0] ?? null);
+            return;
+        }
+
+        if (room?.roomHost?.userId === currentUserId) {
             setCurrentUserRoom({
                 userId: currentUserId,
-                roomId: params.roomId,
-                roomName: room?.roomName ?? "",
-                iconUrl: undefined,
-                subIcon: null,
-                userName: currentUserId,
+                roomId: room.roomId,
+                roomName: room.roomName,
+                iconUrl: room.roomHost.iconUrl ?? undefined,
+                subIcon: room.roomHost.subIcon ?? null,
+                userName: room.roomHost.userName ?? currentUserId,
             });
-        });
-    }, [params.roomId, params.salonId]);
+            return;
+        }
 
+        setCurrentUserRoom({
+            userId: currentUserId,
+            roomId: roomId,
+            roomName: room?.roomName ?? "",
+            iconUrl: undefined,
+            subIcon: null,
+            userName: currentUserId,
+        });
+    };
+
+    run();
+}, [roomId, salonId]);
     if (!roomData || !salonData || !currentUserRoom) return null;
 
     return (
@@ -79,14 +79,14 @@ export default function Page() {
             iconUrl={currentUserRoom.iconUrl}
             subIcon={currentUserRoom.subIcon}
             roomId={roomData.roomId}
-            salonId={salonData.salonId ?? params.salonId}
+            salonId={salonData.salonId ?? salonId}
             userId={currentUserRoom.userId}
             roomName={roomData.roomName}
             salonName={salonData.salonName}
             userName={currentUserRoom.userName}
-            onRoom={() => router.push(`/room/${params.roomId}`)}
+            onRoom={() => router.push(`/room/${roomId}`)}
             onSalon={() =>
-                router.push(`/room/${params.roomId}/salon/${params.salonId}`)
+                router.push(`/room/${roomId}/salon/${salonId}`)
             }
             onSelectFile={() => {}}
             onPost={(payload: GlossData) => {
@@ -98,7 +98,7 @@ export default function Page() {
                     JSON.stringify([payload, ...postedGlosses])
                 );
 
-                router.push(`/room/${params.roomId}/salon/${params.salonId}`);
+                router.push(`/room/${roomId}/salon/${salonId}`);
             }}
             lang="ja"
         />

@@ -1,6 +1,8 @@
 import { Gloss } from "@/app/components/card/Gloss";
 
 import type { GlossData } from "@/app/types/gloss";
+import type { Report } from "@/app/types/report";
+import type { NotificationResult } from "@/app/logic/report/calcNotification";
 
 import './GlossList.scss'
 
@@ -8,6 +10,9 @@ import { useRef } from "react";
 
 import { FondLevel } from "@/app/components/icons";
 import { UserRoomData } from "@/app/types";
+
+import { getCurrentUserId } from "@/repositories/currentUser";
+import { useEffect, useState } from "react";
 
 type GlossListRoom = {
     roomId?: string;
@@ -29,9 +34,23 @@ type Props = {
 
     onSelect?: (glossId: string, reason: Report) => void;
 
+    action: {
+        onRoom: (gloss: GlossData) => void;
+        onSalon: (gloss: GlossData) => void;
+        onFond: (glossId: string) => void;
+        onReply: (gloss: GlossData) => void;
+    }
+
     onRefresh?: () => void;
     isLoading?: boolean;
-    onFond?: (glossId: string) => void;
+    onBlock?: (userId: string) => void;
+
+    blockedUserIds: Set<string>;
+    notifications?: Record<string, NotificationResult | null>;
+    onRevaluation?: {
+        onYes: (glossId: string) => void;
+        onNo: (glossId: string) => void;
+    };
 }
 
 export const GlossList = ({
@@ -40,11 +59,15 @@ export const GlossList = ({
     room,
     scope,
     onGlossClick,
+    action,
     fond,
     onSelect,
     onRefresh,
     isLoading,
-    onFond
+    onBlock,
+    blockedUserIds,
+    notifications,
+    onRevaluation,
 }: Props) => {
     const startY = useRef<number | null>(null);
     const pullDistance = useRef(0);
@@ -52,6 +75,12 @@ export const GlossList = ({
 
     const safeUsers = user ?? [];
     const rooms = Array.isArray(room) ? room : [room];
+    const [currentUserId, setCurrentUserId] = useState<string>("");
+    
+    useEffect(() => {
+        getCurrentUserId().then(setCurrentUserId);
+    }, []);
+
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         if (e.currentTarget.scrollTop !== 0) return;
@@ -74,6 +103,9 @@ export const GlossList = ({
         pullDistance.current = 0;
         isTriggered.current = false;
     };
+    const handleRoom = (gloss: GlossData) => action.onRoom(gloss);
+    const handleSalon = (gloss: GlossData) => action.onSalon(gloss);
+    const handleReply = (gloss: GlossData) => action.onReply(gloss);
     return (
         <div
             className="gloss-list"
@@ -89,6 +121,10 @@ export const GlossList = ({
                     iconUrl: undefined,
                     subIcon: undefined,
                 };
+                console.log("user prop", user);
+            console.log("safeUsers", safeUsers.length);
+
+                const notifResult = notifications?.[gloss.glossId];
 
                 return(
                     <Gloss
@@ -106,13 +142,18 @@ export const GlossList = ({
                         }}
                         room={r}
                         action={{
-                            onRoom: () => {},
-                            onSalon: () => {},
-                            onFond: () => onFond?.(gloss.glossId),
-                            onReply: () => {},
+                            onRoom: handleRoom,
+                            onSalon: handleSalon,
+                            onFond: () => action.onFond(gloss.glossId),
+                            onReply: handleReply,
                         }}
                         fond={fond}
+                        notification={notifResult ? { type: notifResult.notificationType } : undefined}
+                        revaluation={notifResult?.needsRevaluation ? onRevaluation : undefined}
                         onSelect={(reason) => onSelect?.(gloss.glossId, reason)}
+                        onBlock={() => {onBlock?.(gloss.userId!)}}
+                        isBlocked={blockedUserIds.has(gloss.userId!)}
+                        isOwn={gloss.userId === currentUserId}
                         lang="ja"
                     />
                 );
