@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, use } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import './page.scss'
 
@@ -11,58 +11,56 @@ import { getRooms } from "@/repositories/room";
 import { getSalons } from "@/repositories/salon";
 import { getTopics } from "@/repositories/topic";
 import { getBlocksByUser, toggleBlock } from "@/repositories/block";
+import { getBookmarksByUser, toggleBookmark, type TopicBookmark } from "@/repositories/bookmark";
+import { getCurrentUserId } from "@/repositories/currentUser";
 
 import { type SalonData, type RoomData, type Topic } from "@/app/types";
 
 export default function Page({ params }: { params: Promise<{ roomId: string; salonId: string }> }) {
     const router = useRouter();
     const { roomId, salonId } = use(params);
-    
+
     const [roomData, setRoomData] = useState<RoomData | null>(null);
     const [salonData, setSalonData] = useState<SalonData | null>(null);
     const [topicData, setTopicData] = useState<Topic[]>([]);
     const [blockedUserIds, setBlockedUserIds] = useState<Set<string>>(new Set());
+    const [bookmarks, setBookmarks] = useState<TopicBookmark[]>([]);
+    const [userId, setUserId] = useState<string>("");
 
     useEffect(() => {
-            getRooms().then((rooms) => {
-                const room = rooms.find(r => r.roomId === roomId);
-                setRoomData(room ?? null);
-            });
-    
-            getSalons().then((salons) => {
-                setSalonData(
-                    salons.find(s => s.salonId === salonId) ?? null
-                );
-            });
-    
-            getTopics().then((topics) => {
-                setTopicData(
-                    topics.filter(
-                        (topic) =>
-                            topic.roomId === roomId &&
-                            topic.salonId === salonId
-                    )
-                );
-            });
-        }, [roomId, salonId]);
+        const load = async () => {
+            const uid = await getCurrentUserId();
+            setUserId(uid);
 
-        useEffect(() => {
-            getBlocksByUser("currentUser").then((blocks) => {
-                setBlockedUserIds(
-                    new Set(blocks.map(b => b.targetUserId))
-                );
-            });
-        }, []);
+            const [rooms, salons, topics, blocks, bms] = await Promise.all([
+                getRooms(),
+                getSalons(),
+                getTopics(),
+                getBlocksByUser(uid),
+                getBookmarksByUser(uid),
+            ]);
 
-        const handleBlock = async (targetUserId: string) => {
-            await toggleBlock(targetUserId, "currentUser");
-
-            const blocks = await getBlocksByUser("currentUser");
-
-            setBlockedUserIds(
-                new Set(blocks.map(b => b.targetUserId))
-            );
+            setRoomData(rooms.find(r => r.roomId === roomId) ?? null);
+            setSalonData(salons.find(s => s.salonId === salonId) ?? null);
+            setTopicData(topics.filter(t => t.roomId === roomId && t.salonId === salonId));
+            setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
+            setBookmarks(bms);
         };
+
+        load();
+    }, [roomId, salonId]);
+
+    const handleBookMark = async (topicId: string) => {
+        await toggleBookmark(topicId, userId);
+        const bms = await getBookmarksByUser(userId);
+        setBookmarks(bms);
+    };
+
+    const handleBlock = async (targetUserId: string) => {
+        await toggleBlock(targetUserId, userId);
+        const blocks = await getBlocksByUser(userId);
+        setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
+    };
 
     if (!roomData || !salonData) return null;
 
@@ -85,15 +83,13 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
             <TopicList
                 topics={topicData}
                 onQuote={(topicId) =>
-                    router.push(
-                        `/room/${roomId}/salon/${salonId}/quote?topicId=${topicId}`
-                    )
+                    router.push(`/room/${roomId}/salon/${salonId}/quote?topicId=${topicId}`)
                 }
-                onBookMark={() => {}}
+                onBookMark={handleBookMark}
                 onBlock={handleBlock}
-                isBookMarked={false}
+                isBookMarked={(topicId) => bookmarks.some(b => b.topicId === topicId)}
                 blockedUserIds={blockedUserIds}
             />
         </div>
-    )
+    );
 }

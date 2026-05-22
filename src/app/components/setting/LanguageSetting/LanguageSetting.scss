@@ -1,0 +1,15 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.language-setting {
+    width: 100%;
+    height: calc(100dvh - 56px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $spacing-xxl 0;
+    &__wrapper {
+        width: 100%;
+        height: 100%;
+    }
+}

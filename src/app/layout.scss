@@ -45,3 +45,25 @@
     display: grid;
     grid-template-columns: 1fr;
 }
+
+.layout__drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 100;
+}
+
+.layout__drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100dvh;
+    z-index: 101;
+    animation: slideInDrawer 0.2s ease;
+}
+
+@keyframes slideInDrawer {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+}

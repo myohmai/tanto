@@ -22,6 +22,7 @@ import {
 
 import { CreateSalonButton } from "@/app/components/buttons/CreateSalonButton";
 import { AddTurnTableButton } from "@/app/components/buttons/AddTurnTableButton";
+import { CertificationBar } from "@/app/components/bar/CertificationBar";
 
 import { getRooms } from "@/repositories/room";
 import { getTurntables } from "@/repositories/turntable";
@@ -45,6 +46,7 @@ import { getUserRoomEntitiesByUser } from "@/repositories/userRoomEntity";
 import { getEntities } from "@/repositories/entity";
 import { getUserDisInterestsByUser } from "@/repositories/userDisInterest";
 import { calcNotification, type NotificationResult } from "@/app/logic/report/calcNotification";
+import { getPendingCount } from "@/repositories/songRequest";
 
 import type { Entity, UserRoomEntity, UserDisInterest } from "@/app/types/entity";
 import type { Report } from "@/app/types/report";
@@ -89,6 +91,9 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
     const users = [...hostUser, ...glossUsers];
 
 
+    const [pendingCount, setPendingCount] = useState(0);
+    const [isEntered, setIsEntered] = useState(false);
+
     const [showTopBar, setShowTopBar] = useState(false);
     const isMounted = true;
     const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -101,18 +106,11 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
 
     const [selectMediaTab, setSelectMediaTab] =
         useState<TurnTableMediaType>("Music");
-    
-    const isEntered =
-        userId != null &&
-        (
-            roomData?.roomHost?.userId === userId ||
-            isJoined(roomId, userId)
-        );
         
 
     const isPressed = (glossId: string) =>
         fonds.some(
-            f => f.glossId === glossId && f.userId === "currentUser"
+            f => f.glossId === glossId && f.userId === userId
         );
 
     const handleReport = (glossId: string, report: Report) => {
@@ -130,8 +128,9 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
             )
         );
     };
-    const handleBlock = async (userId: string) => {
-        await toggleBlock(userId, "currentUser");
+    const handleBlock = async (targetId: string) => {
+        if (!userId) return;
+        await toggleBlock({ userId, targetUserId: targetId });
 
         const glosses = await getProcessedGlosses();
         setGlossData(glosses.filter(g => g.roomId === roomId));
@@ -175,6 +174,11 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
     }, [roomId]);
 
     useEffect(() => {
+        if (!roomData || roomData.roomHost) return;
+        getPendingCount(roomId).then(setPendingCount);
+    }, [roomId, roomData]);
+
+    useEffect(() => {
         getSalons().then((salons) => {
             setSalonData(salons.filter((salon) => salon.roomId === roomId));
         });
@@ -191,21 +195,22 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
     }, []);
 
     useEffect(() => {
-        getBlocksByUser("currentUser").then((blocks) => {
+        if (!userId) return;
+        getBlocksByUser(userId).then((blocks) => {
             setBlockedUserIds(
                 new Set(blocks.map(b => b.targetUserId))
             );
         });
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
-        const run = async () => {
-            const userId = await getCurrentUserId();
-            const result = isJoined(roomId, userId);
-        };
-
-        run();
-    }, [roomId]);
+        if (!userId) return;
+        if (roomData?.roomHost?.userId === userId) {
+            setIsEntered(true);
+            return;
+        }
+        isJoined(roomId, userId).then(setIsEntered);
+    }, [roomId, userId, roomData]);
 
     useEffect(() => {
         const load = async () => {
@@ -247,7 +252,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
     
 
     const handleFond = async (glossId: string) => {
-        await toggleFond(glossId, "currentUser");
+        if (!userId) return;
+        await toggleFond(glossId, userId);
 
         const [glosses, newFonds] = await Promise.all([
             getProcessedGlosses(),
@@ -267,8 +273,9 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
 }, [roomId]);
 
     useEffect(() => {
-    getMutesByUser("currentUser").then((mutes) => {
-        setMutedRoomIds(
+        if (!userId) return;
+        getMutesByUser(userId).then((mutes) => {
+            setMutedRoomIds(
                 new Set(
                     mutes
                         .map(m => m.roomId)
@@ -276,13 +283,22 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                 )
             );
         });
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
-        const uid = userId ?? "currentUser";
-        setEntities(getEntities());
-        setUserRoomEntities(getUserRoomEntitiesByUser(uid));
-        setUserDisInterests(getUserDisInterestsByUser(uid));
+        const load = async () => {
+            if (!userId) return;
+            const uid = userId;
+            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
+                getEntities(),
+                getUserRoomEntitiesByUser(uid),
+                getUserDisInterestsByUser(uid),
+            ]);
+            setEntities(entities);
+            setUserRoomEntities(userRoomEntities);
+            setUserDisInterests(userDisInterests);
+        };
+        load();
     }, [userId]);
 
     const glossNotifications = useMemo((): Record<string, NotificationResult | null> => {
@@ -334,15 +350,16 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                     isEntered={isEntered}
                     onShare={() => {}}
                     onMute={async () => {
+                        if (!userId) return;
                         await toggleMute({
-                            userId: "currentUser",
+                            userId,
                             roomId: roomId,
                         });
                         const glosses = await getProcessedGlosses();
                         setGlossData(glosses.filter(g => g.roomId === roomId));
                     }}
                     onSelect={() => {}}
-                    isOwn={roomData?.roomHost?.userId === "currentUser"}
+                    isOwn={roomData?.roomHost?.userId === userId}
                     isMuted={mutedRoomIds.has(roomId)}
                 />
             <div ref={sentinelRef} style={{ height: "1px" }} />
@@ -363,94 +380,109 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                 />
             </div>
 
-            {selectedTab === "Gloss" && (
-                <div style={{ height: "2000px" }}>
-                    <GlossList
-                        glosses={glossData}
-                        scope="room"
-                        user={users}
-                        room={{
-                            iconUrl: roomData.roomIconUrl,  
-                            subIcon: undefined,
-                        }}
-                        action={{
-                            onRoom: (glossData) => router.push(`/room/${glossData.roomId}`),
-                            onSalon: (glossData) => router.push(`/room/${glossData.roomId}/salon/${glossData.salonId}`),
-                            onFond: handleFond,
-                            onReply: (glossData) => {
-                                if (!isEntered) return;
-                                router.push(`/room/${glossData.roomId}/salon/${glossData.salonId}/gloss/${glossData.glossId}/reply`)
-                            },
-                        }}
-                        fond={{
-                            isPressed
-                        }}
-                        onGlossClick={(glossId) => {
-                            const gloss = glossData.find(g => g.glossId === glossId);
-                            if (!gloss) return;
-
-                            router.push(`/room/${roomId}/salon/${gloss.salonId}/gloss/${glossId}`);
-                        }}
-                        onSelect={(glossId, reason) => handleReport(glossId, reason)}
-                        onBlock={(userId) => handleBlock(userId)}
-                        blockedUserIds={blockedUserIds}
-                        notifications={glossNotifications}
-                        onRevaluation={{
-                            onYes: (glossId) => {
-                                setGlossData(prev => prev.map(g =>
-                                    g.glossId === glossId
-                                        ? { ...g, revaluation: { yesCount: (g.revaluation?.yesCount ?? 0) + 1, noCount: g.revaluation?.noCount ?? 0 } }
-                                        : g
-                                ));
-                            },
-                            onNo: (glossId) => {
-                                setGlossData(prev => prev.map(g =>
-                                    g.glossId === glossId
-                                        ? { ...g, revaluation: { yesCount: g.revaluation?.yesCount ?? 0, noCount: (g.revaluation?.noCount ?? 0) + 1 } }
-                                        : g
-                                ));
-                            },
-                        }}
-                    />
-                    </div>
-            )}
-
-            {selectedTab === "Salon" && (
-                <div className="room-top__salon">
-                    <SalonList
-                        salons={salonData}
-                        onClick={(salon) =>
-                            router.push(`/room/${roomData.roomId}/salon/${salon.salonId}`)}/>
-                    {isEntered && (
-                        <CreateSalonButton
-                            onClick={() => router.push(`/room/${roomId}/salon/new`)}
-                        />
-                    )}
+            {roomData.roomVisibility === "private" && !isEntered ? (
+                <div className="room-top__private text-color-secondary">
+                    This room is private
                 </div>
-            )}
-
-            {selectedTab === "Turn Table" && (
-                <div className="room-top__turn-table">
-
-                    <TurnTableMediaTab
-                        selectedTab={selectMediaTab}
-                        onChange={(value) => setSelectMediaTab(value)}
-                    />
-
-                    {selectMediaTab === "Music" && (
-                        <TurnTableMusicList
-                            turntables={turntableData}
-                        />
+            ) : (
+                <>
+                    {selectedTab === "Gloss" && (
+                        <div style={{ height: "2000px" }}>
+                            <GlossList
+                                glosses={glossData}
+                                scope="room"
+                                user={users}
+                                room={{
+                                    iconUrl: roomData.roomIconUrl,
+                                    subIcon: undefined,
+                                }}
+                                action={{
+                                    onRoom: (glossData) => router.push(`/room/${glossData.roomId}`),
+                                    onSalon: (glossData) => router.push(`/room/${glossData.roomId}/salon/${glossData.salonId}`),
+                                    onFond: handleFond,
+                                    onReply: (glossData) => {
+                                        if (!isEntered) return;
+                                        router.push(`/room/${glossData.roomId}/salon/${glossData.salonId}/gloss/${glossData.glossId}/reply`)
+                                    },
+                                }}
+                                fond={{
+                                    isPressed
+                                }}
+                                onGlossClick={(glossId) => {
+                                    const gloss = glossData.find(g => g.glossId === glossId);
+                                    if (!gloss) return;
+                                    router.push(`/room/${roomId}/salon/${gloss.salonId}/gloss/${glossId}`);
+                                }}
+                                onSelect={(glossId, reason) => handleReport(glossId, reason)}
+                                onBlock={(userId) => handleBlock(userId)}
+                                blockedUserIds={blockedUserIds}
+                                notifications={glossNotifications}
+                                onRevaluation={{
+                                    onYes: (glossId) => {
+                                        setGlossData(prev => prev.map(g =>
+                                            g.glossId === glossId
+                                                ? { ...g, revaluation: { yesCount: (g.revaluation?.yesCount ?? 0) + 1, noCount: g.revaluation?.noCount ?? 0 } }
+                                                : g
+                                        ));
+                                    },
+                                    onNo: (glossId) => {
+                                        setGlossData(prev => prev.map(g =>
+                                            g.glossId === glossId
+                                                ? { ...g, revaluation: { yesCount: g.revaluation?.yesCount ?? 0, noCount: (g.revaluation?.noCount ?? 0) + 1 } }
+                                                : g
+                                        ));
+                                    },
+                                }}
+                            />
+                        </div>
                     )}
 
-                    {selectMediaTab === "Video" && (
-                        <TurnTableVideoList
-                            turntables={turntableData}
-                        />
+                    {selectedTab === "Salon" && (
+                        <div className="room-top__salon">
+                            <SalonList
+                                salons={salonData}
+                                onClick={(salon) =>
+                                    router.push(`/room/${roomData.roomId}/salon/${salon.salonId}`)}/>
+                            {isEntered && (!roomData.hostCreateSalon || roomData.roomHost?.userId === userId) && (
+                                <CreateSalonButton
+                                    onClick={() => router.push(`/room/${roomId}/salon/new`)}
+                                />
+                            )}
+                        </div>
                     )}
 
-                    {isEntered && (<AddTurnTableButton onClick={() => {}} />)}
-                </div>
+                    {selectedTab === "Turn Table" && (
+                        <div className="room-top__turn-table">
+
+                            {!roomData.roomHost && pendingCount > 0 && (
+                                <CertificationBar
+                                    onClick={() => router.push(`/room/${roomId}/turntable/pending`)}
+                                />
+                            )}
+
+                            <TurnTableMediaTab
+                                selectedTab={selectMediaTab}
+                                onChange={(value) => setSelectMediaTab(value)}
+                            />
+
+                            {selectMediaTab === "Music" && (
+                                <TurnTableMusicList
+                                    turntables={turntableData}
+                                />
+                            )}
+
+                            {selectMediaTab === "Video" && (
+                                <TurnTableVideoList
+                                    turntables={turntableData}
+                                />
+                            )}
+
+                            {isEntered && (!roomData.roomHost || roomData.roomHost.userId === userId) && (
+                                <AddTurnTableButton onClick={() => {}} />
+                            )}
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

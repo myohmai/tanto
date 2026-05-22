@@ -1,0 +1,18 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.setting-list {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+    }
+    &__name {
+        font: $font-500_medium;
+    }
+}

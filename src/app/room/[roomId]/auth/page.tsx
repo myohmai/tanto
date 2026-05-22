@@ -6,10 +6,11 @@ import { getRooms } from "@/repositories/room";
 export default async function Page({
     params,
 }: {
-    params: { roomId: string };
+    params: Promise<{ roomId: string }>;
 }) {
+    const { roomId } = await params;
     const rooms = await getRooms();
-    const room = rooms.find(r => r.roomId === params.roomId);
+    const room = rooms.find(r => r.roomId === roomId);
 
     if (!room) return null;
 

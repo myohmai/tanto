@@ -15,6 +15,7 @@ type Props = {
     roomId: string;
     roomIconUrl?: string;
     roomName: string;
+    isHost: boolean;
     onSubmit: (payload: SalonData) => void;
     onCancel: () => void;
 }
@@ -23,6 +24,7 @@ export const CreateSalon = ({
     roomId,
     roomIconUrl,
     roomName,
+    isHost,
     onSubmit,
     onCancel
 }: Props) => {
@@ -83,11 +85,12 @@ export const CreateSalon = ({
                     />
                 </div>
             </div>
-            <div className="salon-settings__topic">
+            {isHost && (
+                <div className="salon-settings__topic">
                     <button
                         type="button"
                         onClick={() => {
-                            setSalonData((prev) =>({
+                            setSalonData((prev) => ({
                                 ...prev,
                                 isTopicBox: !prev.isTopicBox,
                             }))
@@ -97,6 +100,7 @@ export const CreateSalon = ({
                     </button>
                     Set up a TopicBox
                 </div>
+            )}
                 <SubmitButton
                     label="Create Salon"
                     disabled={isSalonNameEmpty} 

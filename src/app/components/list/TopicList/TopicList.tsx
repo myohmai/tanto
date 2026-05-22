@@ -9,12 +9,12 @@ import { useRef } from "react";
 type Props = {
     topics: Topic[];
     onQuote: (topicId: string) => void;
-    onBookMark: () => void;
+    onBookMark: (topicId: string) => void;
     onBlock: (userId: string) => void;
-    isBookMarked: boolean;
+    isBookMarked: (topicId: string) => boolean;
     onRefresh?: () => void;
     isLoading?: boolean;
-    blockedUserIds: Set<string>; 
+    blockedUserIds: Set<string>;
 }
 
 export const TopicList = ({
@@ -64,9 +64,9 @@ export const TopicList = ({
                 key={topic.topicId}
                 topic={topic}
                 onQuote={onQuote}
-                onBookMark={onBookMark}
+                onBookMark={(e) => { e.stopPropagation(); onBookMark(topic.topicId); }}
                 onBlock={() => onBlock?.(topic.userId)}
-                isBookmarked={isBookMarked}
+                isBookmarked={isBookMarked(topic.topicId)}
                 isBlocked={blockedUserIds.has(topic.userId!)}
             />
         ))}

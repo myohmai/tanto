@@ -1,91 +1,75 @@
-import type { SalonData } from "@/app/types";
-import { mockSalons } from "@/mocks/salon";
+import { supabase } from '@/lib/supabase';
+import type { SalonData } from '@/app/types';
 
-const getCreatedSalons = (): SalonData[] => {
-    if (typeof window === "undefined") return [];
-
-    const saved = localStorage.getItem("created-salons");
-    if (!saved) return [];
-
-    try {
-        return JSON.parse(saved);
-    } catch {
-        return [];
-    }
+type SalonRow = {
+    salon_id: string;
+    room_id: string;
+    salon_name: string;
+    salon_icon: SalonData['salonIcon'];
+    is_topic_box: boolean;
+    is_pinned: boolean;
 };
 
-const getUpdatedSalons = (): SalonData[] => {
-    if (typeof window === "undefined") return [];
-
-    const saved = localStorage.getItem("updated-salons");
-    if (!saved) return [];
-
-    try {
-        return JSON.parse(saved);
-    } catch {
-        return [];
-    }
-};
-
-const getDeletedSalonIds = (): string[] => {
-    if (typeof window === "undefined") return [];
-
-    const saved = localStorage.getItem("deleted-salon-ids");
-    if (!saved) return [];
-
-    try {
-        return JSON.parse(saved);
-    } catch {
-        return [];
-    }
-};
+const toSalonData = (row: SalonRow): SalonData => ({
+    salonId:    row.salon_id,
+    roomId:     row.room_id,
+    salonName:  row.salon_name,
+    salonIcon:  row.salon_icon,
+    isTopicBox: row.is_topic_box,
+    isPinned:   row.is_pinned,
+});
 
 export const getSalons = async (): Promise<SalonData[]> => {
-    const deletedSalonIds = new Set(getDeletedSalonIds());
-    const updatedSalons = getUpdatedSalons();
-    const createdSalons = getCreatedSalons();
+    const { data, error } = await supabase
+        .from('salons')
+        .select('*');
 
-    const salons = [...createdSalons, ...mockSalons]
-        .filter((salon) => salon.salonId && !deletedSalonIds.has(salon.salonId))
-        .map((salon) => {
-            const updatedSalon = updatedSalons.find(
-                (updatedSalon) => updatedSalon.salonId === salon.salonId
-            );
-
-            return updatedSalon ?? salon;
-        });
-
-    return salons;
+    if (error) throw error;
+    return (data as SalonRow[]).map(toSalonData);
 };
 
-export async function updateSalon(payload: SalonData) {
-    if (typeof window === "undefined") return;
+export const getSalonsByRoom = async (roomId: string): Promise<SalonData[]> => {
+    const { data, error } = await supabase
+        .from('salons')
+        .select('*')
+        .eq('room_id', roomId)
+        .order('is_pinned', { ascending: false });
 
-    const saved = localStorage.getItem("updated-salons");
-    const updatedSalons: SalonData[] = saved ? JSON.parse(saved) : [];
+    if (error) throw error;
+    return (data as SalonRow[]).map(toSalonData);
+};
 
-    const existsIndex = updatedSalons.findIndex(
-        (s) => s.salonId === payload.salonId
-    );
+export const createSalon = async (salon: SalonData) => {
+    const { error } = await supabase.from('salons').insert({
+        room_id:     salon.roomId,
+        salon_name:  salon.salonName,
+        salon_icon:  salon.salonIcon,
+        is_topic_box: salon.isTopicBox,
+        is_pinned:   salon.isPinned,
+    });
 
-    if (existsIndex !== -1) {
-        updatedSalons[existsIndex] = payload;
-    } else {
-        updatedSalons.push(payload);
-    }
+    if (error) throw error;
+};
 
-    localStorage.setItem("updated-salons", JSON.stringify(updatedSalons));
-}
+export const updateSalon = async (salon: SalonData) => {
+    const { error } = await supabase
+        .from('salons')
+        .update({
+            salon_name:  salon.salonName,
+            salon_icon:  salon.salonIcon,
+            is_topic_box: salon.isTopicBox,
+            is_pinned:   salon.isPinned,
+        })
+        .eq('salon_id', salon.salonId!);
 
-export async function deleteSalon(salonId: string) {
-    if (typeof window === "undefined") return;
+    if (error) throw error;
+};
 
-    const deletedSalonIds = localStorage.getItem("deleted-salon-ids");
-    const list: string[] = deletedSalonIds ? JSON.parse(deletedSalonIds) : [];
+export const deleteSalon = async (salonId: string) => {
+    const { error } = await supabase
+        .from('salons')
+        .delete()
+        .eq('salon_id', salonId);
 
-    if (!list.includes(salonId)) {
-        list.push(salonId);
-    }
-
-    localStorage.setItem("deleted-salon-ids", JSON.stringify(list));
-}
+    if (error) throw error;
+};

@@ -128,12 +128,19 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
     }, [roomId]);
 
     useEffect(() => {
-        getCurrentUserId().then((uid) => {
+        const load = async () => {
+            const uid = await getCurrentUserId();
             setCurrentUserId(uid);
-            setEntities(getEntities());
-            setUserRoomEntities(getUserRoomEntitiesByUser(uid));
-            setUserDisInterests(getUserDisInterestsByUser(uid));
-        });
+            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
+                getEntities(),
+                getUserRoomEntitiesByUser(uid),
+                getUserDisInterestsByUser(uid),
+            ]);
+            setEntities(entities);
+            setUserRoomEntities(userRoomEntities);
+            setUserDisInterests(userDisInterests);
+        };
+        load();
     }, []);
 
     useEffect(() => {

@@ -16,6 +16,7 @@ type Props = {
     salonData: SalonData;
     roomIconUrl?: string | undefined | null;
     roomName: string;
+    isHost: boolean;
     onChangeSalonData: (payload: SalonData) => void;
     onSubmit: (payload: SalonData) => void;
     onCancel: () => void;
@@ -26,6 +27,7 @@ export const SalonSettings = ({
     salonData,
     roomIconUrl,
     roomName,
+    isHost,
     onChangeSalonData,
     onSubmit,
     onCancel,
@@ -79,7 +81,8 @@ export const SalonSettings = ({
                     />
                 </div>
             </div>
-            <div className="salon-settings__topic">
+            {isHost && (
+                <div className="salon-settings__topic">
                     <button
                         type="button"
                         onClick={() => {
@@ -93,6 +96,7 @@ export const SalonSettings = ({
                     </button>
                     Set up a TopicBox
                 </div>
+            )}
                 <SubmitButton
                     label="Confirm"
                     disabled={isSalonNameEmpty} 

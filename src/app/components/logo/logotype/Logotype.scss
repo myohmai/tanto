@@ -1,0 +1,12 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.logo-type {
+    width: calc(120px * 0.8);
+    height: calc(32px * 0.8);
+    fill: $key-color--600;
+    transform: translateY(20%);
+    .night & {
+        fill: $key-color--400;
+    }
+}

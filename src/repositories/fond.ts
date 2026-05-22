@@ -1,61 +1,66 @@
-import { Fond } from "@/app/types/fond";
+import { supabase } from '@/lib/supabase';
+import type { Fond } from '@/app/types/fond';
 
-const FOND_KEY = "fonds";
-
-const getFonds = (): Fond[] => {
-    if (typeof window === "undefined") return [];
-
-    const saved = localStorage.getItem(FOND_KEY);
-    if (!saved) return [];
-
-    try {
-        return JSON.parse(saved);
-    } catch {
-        return [];
-    }
+type FondRow = {
+    gloss_id: string;
+    user_id: string;
+    created_at: string;
 };
 
-const saveFonds = (fonds: Fond[]) => {
-    localStorage.setItem(FOND_KEY, JSON.stringify(fonds));
-};
-
-export const toggleFond = (glossId: string, userId: string) => {
-    const fonds = getFonds();
-
-    const exists = fonds.find(
-        f => f.glossId === glossId && f.userId === userId
-    );
-
-    const updated = exists
-        ? fonds.filter(
-            f => !(f.glossId === glossId && f.userId === userId)
-            )
-            : [
-                ...fonds,
-                {
-                    glossId,
-                    userId,
-                    createdAt: new Date().toISOString(),
-                },
-            ];
-
-    saveFonds(updated);
-};
+const toFond = (row: FondRow): Fond => ({
+    glossId:   row.gloss_id,
+    userId:    row.user_id,
+    createdAt: row.created_at,
+});
 
 export const getAllFonds = async (): Promise<Fond[]> => {
-    return getFonds();
+    const { data, error } = await supabase.from('fonds').select('*');
+    if (error) throw error;
+    return (data as FondRow[]).map(toFond);
 };
 
 export const getFondsByUser = async (userId: string): Promise<Fond[]> => {
-    return getFonds().filter(f => f.userId === userId);
+    const { data, error } = await supabase
+        .from('fonds')
+        .select('*')
+        .eq('user_id', userId);
+    if (error) throw error;
+    return (data as FondRow[]).map(toFond);
 };
 
 export const getFondsByGloss = async (glossId: string): Promise<Fond[]> => {
-    return getFonds().filter(f => f.glossId === glossId);
+    const { data, error } = await supabase
+        .from('fonds')
+        .select('*')
+        .eq('gloss_id', glossId);
+    if (error) throw error;
+    return (data as FondRow[]).map(toFond);
 };
 
-export const isFonded = (glossId: string, userId: string): boolean => {
-    return getFonds().some(
-        f => f.glossId === glossId && f.userId === userId
-    );
+export const isFonded = async (glossId: string, userId: string): Promise<boolean> => {
+    const { data } = await supabase
+        .from('fonds')
+        .select('gloss_id')
+        .eq('gloss_id', glossId)
+        .eq('user_id', userId)
+        .maybeSingle();
+    return data !== null;
+};
+
+export const toggleFond = async (glossId: string, userId: string) => {
+    const fonded = await isFonded(glossId, userId);
+
+    if (fonded) {
+        const { error } = await supabase
+            .from('fonds')
+            .delete()
+            .eq('gloss_id', glossId)
+            .eq('user_id', userId);
+        if (error) throw error;
+    } else {
+        const { error } = await supabase
+            .from('fonds')
+            .insert({ gloss_id: glossId, user_id: userId });
+        if (error) throw error;
+    }
 };

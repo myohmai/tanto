@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
+import './page.scss';
+import { useEffect, useState } from "react";
+import { useSideMenu } from "@/app/context/SideMenuContext";
 
 import { HeadBar } from "@/app/components/bar/HeadBar";
 
@@ -11,8 +12,7 @@ import { getTurntables } from "@/repositories/turntable";
 import { type TurnTableData } from "@/app/types";
 
 export default function Page() {
-    const router = useRouter();
-    const params = useParams<{ roomId: string }>();
+    const { openSideMenu } = useSideMenu();
 
     const [turntableData, setTurntableData] =
             useState<TurnTableData[]>([]);
@@ -23,12 +23,12 @@ export default function Page() {
         });
     },[]);
     return (
-        <div className="feed">
-            <div className="fedd__sticky">
+        <div className="mood">
+            <div className="mood__sticky">
                 <HeadBar
                     onReload={() => {}}
                     onSearch={() => {}}
-                    onSideMenu={() => {}}
+                    onSideMenu={openSideMenu}
                 />
             </div>
             <MoodList

@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { ReplyGloss } from "@/app/components/post/PostGloss";
 
 import { getCurrentUserId } from "@/repositories/currentUser";
-import { getGlosses } from "@/repositories/gloss";
-import { getRooms } from "@/repositories/room";
-import { getSalons } from "@/repositories/salon";
-import { getUserRoomData } from "@/repositories/userRoom";
+import { getGlossById, postGloss } from "@/repositories/gloss";
+import { getRoomById } from "@/repositories/room";
+import { getSalonsByRoom } from "@/repositories/salon";
+import { getUserRoomByRoomId, getUserRoomsByUser } from "@/repositories/userRoom";
 
 import type { GlossData, RoomData, SalonData, UserRoomData } from "@/app/types";
 
@@ -25,39 +25,27 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
         useState<UserRoomData | null>(null);
 
     useEffect(() => {
-        Promise.all([
-            getRooms(),
-            getSalons(),
-            getGlosses(),
-            getUserRoomData(),
-            getCurrentUserId(),
-        ]).then(([rooms, salons, glosses, userRooms, currentUserId]) => {
-            const room = rooms.find((room) => room.roomId === roomId);
-            const salon = salons.find(
-                (salon) =>
-                    salon.roomId === roomId &&
-                    salon.salonId === salonId
-            );
-            const gloss = glosses.find((gloss) => gloss.glossId === glossId);
-            const replyToUser = gloss
-                ? userRooms.find(
-                    (userRoom) =>
-                        userRoom.userId === gloss.userId &&
-                        userRoom.roomId === gloss.roomId
-                )
-                : null;
-            const currentUserRoom = userRooms.find(
-                (userRoom) =>
-                    userRoom.userId === currentUserId &&
-                    userRoom.roomId === roomId
-            );
+        const run = async () => {
+            const currentUserId = await getCurrentUserId();
+            const [room, salons, gloss, currentUserRoom] = await Promise.all([
+                getRoomById(roomId),
+                getSalonsByRoom(roomId),
+                getGlossById(glossId),
+                getUserRoomByRoomId(roomId, currentUserId),
+            ]);
 
-            setRoomData(room ?? null);
-            setSalonData(salon ?? null);
-            setReplyToGloss(gloss ?? null);
+            const salon = salons.find(s => s.salonId === salonId) ?? null;
+            const replyToUser = gloss?.userId
+                ? await getUserRoomByRoomId(gloss.roomId, gloss.userId)
+                : null;
+
+            setRoomData(room);
+            setSalonData(salon);
+            setReplyToGloss(gloss);
             setReplyToUser(replyToUser ?? null);
             setCurrentUserRoom(currentUserRoom ?? null);
-        });
+        };
+        run();
     }, [roomId, salonId, glossId]);
 
     if (!roomData || !salonData || !replyToGloss || !currentUserRoom) return null;
@@ -67,36 +55,27 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
             replyTo={{
                 glossId: replyToGloss.glossId,
                 glossContent: replyToGloss.content,
-                iconUrl: replyToUser?.iconUrl,
+                iconUrl: replyToUser?.iconUrl ?? undefined,
                 subIcon: replyToUser?.subIcon,
-                userName: replyToUser?.userName ?? replyToGloss.userName,
+                userName: replyToUser?.userName ?? replyToGloss.userName ?? '',
             }}
             onCancel={() => router.back()}
-            iconUrl={currentUserRoom.iconUrl}
+            iconUrl={currentUserRoom.iconUrl ?? undefined}
             subIcon={currentUserRoom.subIcon}
             roomId={roomData.roomId}
             salonId={salonData.salonId ?? salonId}
             userId={currentUserRoom.userId}
             roomName={roomData.roomName}
             salonName={salonData.salonName}
-            userName={currentUserRoom.userName}
+            userName={currentUserRoom.userName ?? ''}
             onRoom={() => router.push(`/room/${roomId}`)}
             onSalon={() =>
                 router.push(`/room/${roomId}/salon/${salonId}`)
             }
             onSelectFile={() => {}}
-            onPost={(payload: GlossData) => {
-                const saved = localStorage.getItem("posted-glosses");
-                const postedGlosses: GlossData[] = saved ? JSON.parse(saved) : [];
-
-                localStorage.setItem(
-                    "posted-glosses",
-                    JSON.stringify([payload, ...postedGlosses])
-                );
-
-                router.push(
-                    `/room/${roomId}/salon/${salonId}/gloss/${glossId}`
-                );
+            onPost={async (payload: GlossData) => {
+                await postGloss(payload);
+                router.push(`/room/${roomId}/salon/${salonId}/gloss/${glossId}`);
             }}
             lang="ja"
         />

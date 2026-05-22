@@ -2,14 +2,16 @@
 import { SideNavBar } from "@/app/components/bar/SideNavBar";
 import { BottomNavBar } from "@/app/components/bar/BottomNavBar";
 import type { UserSubIcon } from "@/app/components/custom-icon/UserCustomIcon";
-import { getCurrentUserId } from "@/repositories/currentUser";
+import { supabase } from "@/lib/supabase";
+import { getCurrentUserIdOrNull } from "@/repositories/currentUser";
 import { getUserRoomsByUser } from "@/repositories/userRoom";
+import { SideMenuContext } from "@/app/context/SideMenuContext";
 
 import 'destyle.css'
 import './layout.scss';
 import "@/app/styles/globals.scss";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 type SideBarType =
@@ -39,40 +41,56 @@ export default function ResponsiveShell({ children }: { children: ReactNode }) {
   const [layoutMode, setLayoutMode] = useState<LayoutMode>("expanded");
   const [selected, setSelected] = useState<SideBarType>("Home");
   const [bottomSelected, setBottomSelected] = useState<BottomNavType>("Home");
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [, setCurrentUserId] = useState<string | null>(null);
   const [userRooms, setUserRooms] = useState<CurrentRoom[]>([]);
   const [currentRoom, setCurrentRoom] = useState<CurrentRoom | undefined>(undefined);
+  const [isMobileSideMenuOpen, setIsMobileSideMenuOpen] = useState(false);
+
+  const openSideMenu = useCallback(() => setIsMobileSideMenuOpen(true), []);
 
   useEffect(() => {
-  const load = async () => {
-    const uid = await getCurrentUserId();
-    const userRooms = await getUserRoomsByUser(uid);
+    const load = async () => {
+      const uid = await getCurrentUserIdOrNull();
+      if (!uid) {
+        router.push("/auth");
+        return;
+      }
 
-    setCurrentUserId(uid);
+      const userRooms = await getUserRoomsByUser(uid);
+      setCurrentUserId(uid);
 
-    setUserRooms(
-      userRooms.map((userRoom) => ({
-        roomId: userRoom.roomId,
-        iconUrl: userRoom.iconUrl ?? undefined,
-        subIcon: userRoom.subIcon ?? undefined,
-      }))
-    );
+      if (userRooms.length === 0 && !pathname?.startsWith("/onboarding")) {
+        router.push("/onboarding");
+        return;
+      }
 
-    const profileRoom = userRooms.find(
-      (userRoom) => userRoom.userId === uid
-    );
+      setUserRooms(
+        userRooms.map((userRoom) => ({
+          roomId: userRoom.roomId,
+          iconUrl: userRoom.iconUrl ?? undefined,
+          subIcon: userRoom.subIcon ?? undefined,
+        }))
+      );
 
-    if (profileRoom) {
-      setCurrentRoom({
-        roomId: profileRoom.roomId,
-        iconUrl: profileRoom.iconUrl ?? undefined,
-        subIcon: profileRoom.subIcon ?? undefined,
-      });
-    }
-  };
+      const profileRoom = userRooms.find((userRoom) => userRoom.userId === uid);
+      if (profileRoom) {
+        setCurrentRoom({
+          roomId: profileRoom.roomId,
+          iconUrl: profileRoom.iconUrl ?? undefined,
+          subIcon: profileRoom.subIcon ?? undefined,
+        });
+      }
+    };
 
-  load();
-}, []);
+    load();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") router.push("/auth");
+      if (event === "SIGNED_IN") load();
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
   useEffect(() => {
     const updateMode = () => {
       const width = window.innerWidth;
@@ -105,6 +123,12 @@ export default function ResponsiveShell({ children }: { children: ReactNode }) {
     } else if (pathname.startsWith("/dashboard")) {
       setSelected("Dashboard");
       setBottomSelected("Dashboard");
+    } else if (pathname.startsWith("/fond")) {
+      setSelected("Fond");
+    } else if (pathname.startsWith("/bookmark")) {
+      setSelected("Bookmark");
+    } else if (pathname.startsWith("/settings")) {
+      setSelected("Settings");
     }
 
     const roomMatch = pathname.match(/^\/room\/([^/]+)/);
@@ -133,36 +157,50 @@ export default function ResponsiveShell({ children }: { children: ReactNode }) {
       case "Dashboard":
         router.push("/dashboard");
         break;
+      case "Fond":
+        router.push("/fond");
+        break;
+      case "Bookmark":
+        router.push("/bookmark");
+        break;
+      case "Settings":
+        router.push("/settings");
+        break;
       default:
         break;
     }
   };
 
+  const isAuthPage = pathname?.startsWith("/auth");
+  const isOnboardingPage = pathname?.startsWith("/onboarding");
+  const isNoNavPage = isAuthPage || isOnboardingPage;
   const layoutClassName = `layout layout--${layoutMode}`;
 
   return (
     <html lang="ja">
       <body>
-        <div className={layoutClassName}>
-          {(layoutMode === "expanded" || layoutMode === "compact") && (
-            <div className="layout__side-nav-wrapper">
-              <SideNavBar
-                selected={selected}
-                onChange={(value) => {
-                  setSelected(value);
-                  navigateTo(value);
-                }}
-                onLogOut={() => {
-                  console.log("logout");
-                }}
-              />
-            </div>
-          )}
-          <main className="layout__main">
-            {children}
-          </main>
-          {layoutMode === "mobile" && (
-            <BottomNavBar
+        <SideMenuContext.Provider value={{ openSideMenu }}>
+          <div className={isNoNavPage ? "" : layoutClassName}>
+            {!isNoNavPage && (layoutMode === "expanded" || layoutMode === "compact") && (
+              <div className="layout__side-nav-wrapper">
+                <SideNavBar
+                  onRefresh={() => {}}
+                  selected={selected}
+                  onChange={(value) => {
+                    setSelected(value);
+                    navigateTo(value);
+                  }}
+                  onLogOut={async () => {
+                    await supabase.auth.signOut();
+                  }}
+                />
+              </div>
+            )}
+            <main className="layout__main">
+              {children}
+            </main>
+            {!isNoNavPage && layoutMode === "mobile" && (
+              <BottomNavBar
                 bottomSelectTab={bottomSelected}
                 onChange={(value) => {
                   setBottomSelected(value);
@@ -171,8 +209,32 @@ export default function ResponsiveShell({ children }: { children: ReactNode }) {
                 currentRoom={currentRoom}
               />
             )}
-          {(layoutMode === "expanded" || layoutMode === "compact") && <div className="layout__side-space" />}
-        </div>
+            {!isNoNavPage && (layoutMode === "expanded" || layoutMode === "compact") && <div className="layout__side-space" />}
+            {!isAuthPage && layoutMode === "mobile" && isMobileSideMenuOpen && (
+              <>
+                <div
+                  className="layout__drawer-overlay"
+                  onClick={() => setIsMobileSideMenuOpen(false)}
+                />
+                <div className="layout__drawer">
+                  <SideNavBar
+                    onRefresh={() => {}}
+                    selected={selected}
+                    onChange={(value) => {
+                      setSelected(value);
+                      navigateTo(value);
+                      setIsMobileSideMenuOpen(false);
+                    }}
+                    onLogOut={async () => {
+                      await supabase.auth.signOut();
+                      setIsMobileSideMenuOpen(false);
+                    }}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        </SideMenuContext.Provider>
       </body>
     </html>
   );

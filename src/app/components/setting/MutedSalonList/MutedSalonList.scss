@@ -1,0 +1,68 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.muted-salon-list {
+    width: 100%;
+    height: calc(100dvh - 56px);
+    padding: $spacing-xxl 0;
+
+    &__empty {
+        font: $font-400_regular_sm;
+        text-align: center;
+        padding: $spacing-xxl $spacing-lg;
+    }
+
+    &__items {
+        list-style: none;
+        width: 100%;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__salon {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: $icon-lg;
+        height: $icon-lg;
+    }
+
+    &__emoji {
+        font-size: $icon-lg;
+        line-height: 1;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xxs;
+    }
+
+    &__name {
+        font: $font-500_medium;
+    }
+
+    &__room {
+        font: $font-400_regular_sm;
+    }
+
+    &__unmute {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: $spacing-xs;
+    }
+}

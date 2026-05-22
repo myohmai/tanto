@@ -1,0 +1,18 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.mute-block-setting {
+    width: 100%;
+    height: calc(100dvh - 56px);
+    padding: $spacing-xxl 0;
+
+    &__section {
+        margin-top: $spacing-lg;
+    }
+
+    &__label {
+        font: $font-400_regular_sm;
+        padding: 0 $spacing-lg;
+        margin-bottom: $spacing-xs;
+    }
+}

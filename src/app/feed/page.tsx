@@ -1,6 +1,8 @@
 "use client";
+import './page.scss';
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSideMenu } from "@/app/context/SideMenuContext";
 
 import { HeadBar } from "@/app/components/bar/HeadBar";
 
@@ -26,6 +28,7 @@ import { GlossData, type RoomData, type UserRoomData, type Fond } from "@/app/ty
 
 export default function Page() {
     const router = useRouter();
+    const { openSideMenu } = useSideMenu();
     const [glossData, setGlossData] = useState<GlossData[]>([]);
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [users, setUsers] = useState<UserRoomData[]>([]);
@@ -100,9 +103,14 @@ export default function Page() {
             setFonds(fonds);
             setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
 
-            setEntities(getEntities());
-            setUserRoomEntities(getUserRoomEntitiesByUser(uid));
-            setUserDisInterests(getUserDisInterestsByUser(uid));
+            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
+                getEntities(),
+                getUserRoomEntitiesByUser(uid),
+                getUserDisInterestsByUser(uid),
+            ]);
+            setEntities(entities);
+            setUserRoomEntities(userRoomEntities);
+            setUserDisInterests(userDisInterests);
         };
 
         load();
@@ -140,16 +148,13 @@ export default function Page() {
 
     return (
         <div className="feed">
-            <pre>
-
-                {JSON.stringify(glossData, null, 2)}
-
-                </pre>
-            <HeadBar
-                onReload={() => {}}
-                onSearch={() => {}}
-                onSideMenu={() => {}}
-            />
+            <div className="feed__sticky">
+                <HeadBar
+                    onReload={() => {}}
+                    onSearch={() => {}}
+                    onSideMenu={openSideMenu}
+                />
+            </div>
             <GlossList
                 glosses={glossData}
                 scope="feed"

@@ -1,0 +1,14 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.turn-table-pending-list {
+    width: 100%;
+    overflow-y: auto;
+    &__loading,
+    &__empty {
+        width: 100%;
+        @include flex-center;
+        padding: $spacing-lg;
+        font: $font-400_regular_sm;
+    }
+}

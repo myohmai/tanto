@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { PostGloss } from "@/app/components/post/PostGloss";
 
 import { getCurrentUserId } from "@/repositories/currentUser";
+import { postGloss } from "@/repositories/gloss";
 import { getRooms } from "@/repositories/room";
 import { getSalons } from "@/repositories/salon";
 import { getUserRoomData } from "@/repositories/userRoom";
@@ -89,15 +90,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
                 router.push(`/room/${roomId}/salon/${salonId}`)
             }
             onSelectFile={() => {}}
-            onPost={(payload: GlossData) => {
-                const saved = localStorage.getItem("posted-glosses");
-                const postedGlosses: GlossData[] = saved ? JSON.parse(saved) : [];
-
-                localStorage.setItem(
-                    "posted-glosses",
-                    JSON.stringify([payload, ...postedGlosses])
-                );
-
+            onPost={async (payload: GlossData) => {
+                await postGloss(payload);
                 router.push(`/room/${roomId}/salon/${salonId}`);
             }}
             lang="ja"

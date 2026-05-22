@@ -1,2 +1,2 @@
 export { RoomCustomIcon } from "./RoomCustomIcon";
-export type { RoomCustomIconProps } from './RoomCustomIcon'
+export type { roomSubIcon } from './RoomCustomIcon'

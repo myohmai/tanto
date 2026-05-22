@@ -1,0 +1,21 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.setting-select {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+    &__icon {
+        fill: var(--accent-color-100)
+    }
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+    &__label {
+        font: $font-500_medium;
+    }
+}

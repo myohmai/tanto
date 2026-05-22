@@ -7,9 +7,10 @@ import { SalonTopBar } from "@/app/components/bar/SalonTopBar";
 import { TopicBox } from "@/app/components/post/TopicBox";
 
 import { getCurrentUserId } from "@/repositories/currentUser";
-import { getRooms } from "@/repositories/room";
-import { getSalons } from "@/repositories/salon";
-import { getUserRoomData } from "@/repositories/userRoom";
+import { getRoomById } from "@/repositories/room";
+import { getSalonsByRoom } from "@/repositories/salon";
+import { postTopic } from "@/repositories/topic";
+import { getUserRoomByRoomId } from "@/repositories/userRoom";
 
 import type { RoomData, SalonData, Topic, UserRoomData } from "@/app/types";
 
@@ -23,28 +24,20 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
         useState<UserRoomData | null>(null);
 
     useEffect(() => {
-        Promise.all([
-            getRooms(),
-            getSalons(),
-            getUserRoomData(),
-            getCurrentUserId(),
-        ]).then(([rooms, salons, userRooms, currentUserId]) => {
-            const room = rooms.find((room) => room.roomId === roomId);
-            const salon = salons.find(
-                (salon) =>
-                    salon.roomId === roomId &&
-                    salon.salonId === salonId
-            );
-            const currentUserRoom = userRooms.find(
-                (userRoom) =>
-                    userRoom.userId === currentUserId &&
-                    userRoom.roomId === roomId
-            );
+        const run = async () => {
+            const currentUserId = await getCurrentUserId();
+            const [room, salons, currentUserRoom] = await Promise.all([
+                getRoomById(roomId),
+                getSalonsByRoom(roomId),
+                getUserRoomByRoomId(roomId, currentUserId),
+            ]);
+            const salon = salons.find(s => s.salonId === salonId) ?? null;
 
-            setRoomData(room ?? null);
-            setSalonData(salon ?? null);
+            setRoomData(room);
+            setSalonData(salon);
             setCurrentUserRoom(currentUserRoom ?? null);
-        });
+        };
+        run();
     }, [roomId, salonId]);
 
     if (!roomData || !salonData || !currentUserRoom) return null;
@@ -72,15 +65,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
                 salonId={salonData.salonId ?? salonId}
                 userId={currentUserRoom.userId}
                 onSelectFile={() => {}}
-                onWhisper={(payload: Topic) => {
-                    const saved = localStorage.getItem("posted-topics");
-                    const postedTopics: Topic[] = saved ? JSON.parse(saved) : [];
-
-                    localStorage.setItem(
-                        "posted-topics",
-                        JSON.stringify([payload, ...postedTopics])
-                    );
-
+                onWhisper={async (payload: Topic) => {
+                    await postTopic(payload);
                     router.push(`/room/${roomId}/salon/${salonId}`);
                 }}
                 lang="ja"

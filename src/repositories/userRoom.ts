@@ -1,147 +1,123 @@
-// src/repositories/userRoom.ts
+import { supabase } from '@/lib/supabase';
+import type { UserRoomData } from '@/app/types/userRoomData';
 
-import type { UserRoomData } from "@/app/types/userRoomData";
+type UserRoomRow = {
+    user_id: string;
+    room_id: string;
+    room_name: string | null;
+    icon_url: string | null;
+    sub_icon: UserRoomData['subIcon'] | null;
+    user_name: string | null;
+};
 
-const KEY = "user-rooms";
+const toUserRoomData = (row: UserRoomRow): UserRoomData => ({
+    userId:   row.user_id,
+    roomId:   row.room_id,
+    roomName: row.room_name,
+    iconUrl:  row.icon_url,
+    subIcon:  row.sub_icon ?? undefined,
+    userName: row.user_name,
+});
 
-/* -----------------------------
-    base storage
------------------------------- */
+export const getUserRoomData = async (userId: string, roomId: string): Promise<UserRoomData[]> => {
+    const { data, error } = await supabase
+        .from('user_rooms')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('room_id', roomId);
+    if (error) throw error;
+    return (data as UserRoomRow[]).map(toUserRoomData);
+};
 
-const getUserRooms = (): UserRoomData[] => {
-    if (typeof window === "undefined") return [];
+export const getUserRoomByRoomId = async (roomId: string, userId: string): Promise<UserRoomData | undefined> => {
+    const { data } = await supabase
+        .from('user_rooms')
+        .select('*')
+        .eq('room_id', roomId)
+        .eq('user_id', userId)
+        .maybeSingle();
+    return data ? toUserRoomData(data as UserRoomRow) : undefined;
+};
 
-    const saved = localStorage.getItem(KEY);
-    if (!saved) return [];
+export const getUserRoomsByUser = async (userId: string): Promise<UserRoomData[]> => {
+    const { data, error } = await supabase
+        .from('user_rooms')
+        .select('*')
+        .eq('user_id', userId);
+    if (error) throw error;
+    return (data as UserRoomRow[]).map(toUserRoomData);
+};
 
-    try {
-        return JSON.parse(saved);
-    } catch {
-        return [];
+export const getUsersByRoomId = async (roomId: string): Promise<UserRoomData[]> => {
+    const { data, error } = await supabase
+        .from('user_rooms')
+        .select('*')
+        .eq('room_id', roomId);
+    if (error) throw error;
+    return (data as UserRoomRow[]).map(toUserRoomData);
+};
+
+export const getUserRoomsByRoomId = async (roomId: string): Promise<UserRoomData[]> => {
+    return getUsersByRoomId(roomId);
+};
+
+export const isJoined = async (roomId: string, userId: string): Promise<boolean> => {
+    const { data } = await supabase
+        .from('user_rooms')
+        .select('user_id')
+        .eq('room_id', roomId)
+        .eq('user_id', userId)
+        .maybeSingle();
+    return data !== null;
+};
+
+export const toggleJoinRoom = async (room: UserRoomData) => {
+    const joined = await isJoined(room.roomId, room.userId);
+
+    if (joined) {
+        const { error } = await supabase
+            .from('user_rooms')
+            .delete()
+            .eq('room_id', room.roomId)
+            .eq('user_id', room.userId);
+        if (error) throw error;
+    } else {
+        const { error } = await supabase.from('user_rooms').insert({
+            user_id:   room.userId,
+            room_id:   room.roomId,
+            room_name: room.roomName ?? null,
+            icon_url:  room.iconUrl ?? null,
+            sub_icon:  room.subIcon ?? null,
+            user_name: room.userName ?? null,
+        });
+        if (error) throw error;
     }
 };
 
-const saveUserRooms = (data: UserRoomData[]) => {
-    localStorage.setItem(KEY, JSON.stringify(data));
+export const leaveRoom = async (roomId: string, userId: string) => {
+    const { error } = await supabase
+        .from('user_rooms')
+        .delete()
+        .eq('room_id', roomId)
+        .eq('user_id', userId);
+    if (error) throw error;
 };
 
-/* -----------------------------
-    read API
------------------------------- */
-
-export const getUserRoomData = async (
-    userId: string,
-    roomId: string
-): Promise<UserRoomData[]> => {
-    const data = getUserRooms();
-
-    return data.filter(
-        (u) => u.userId === userId && u.roomId === roomId
-    );
-};
-
-export const getUserRoomByRoomId = async (
-    roomId: string,
-    userId: string
-): Promise<UserRoomData | undefined> => {
-    return getUserRooms().find(
-        (r) => r.roomId === roomId && r.userId === userId
-    );
-};
-
-export const getUserRoomsByUser = async (
-    userId: string
-): Promise<UserRoomData[]> => {
-    return getUserRooms().filter(
-        (u) => u.userId === userId
-    );
-};
-
-export const getUsersByRoomId = async (
-    roomId: string
-): Promise<UserRoomData[]> => {
-    return getUserRooms().filter(
-        (u) => u.roomId === roomId
-    );
-};
-
-export const getUserRoomsByRoomId = async (roomId: string) => {
-    return getUserRooms().filter(u => u.roomId === roomId);
-};
-/* -----------------------------
-    join / leave
------------------------------- */
-
-export const toggleJoinRoom = (room: UserRoomData) => {
-    const current = getUserRooms();
-
-    const exists = current.find(
-        (r) =>
-            r.roomId === room.roomId &&
-            r.userId === room.userId
-    );
-
-    const updated = exists
-        ? current.filter(
-                (r) =>
-                    !(
-                        r.roomId === room.roomId &&
-                        r.userId === room.userId
-                    )
-            )
-        : [...current, room];
-
-    saveUserRooms(updated);
-};
-
-export const leaveRoom = (roomId: string, userId: string) => {
-    const current = getUserRooms();
-
-    const updated = current.filter(
-        (r) => !(r.roomId === roomId && r.userId === userId)
-    );
-
-    saveUserRooms(updated);
-};
-
-/* -----------------------------
-    helpers
------------------------------- */
-
-export const isJoined = (
-    roomId: string,
-    userId: string
-): boolean => {
-    return getUserRooms().some(
-        (r) => r.roomId === roomId && r.userId === userId
-    );
-};
-
-/* -----------------------------
-    update
------------------------------- */
 export const updateUserRoom = async (payload: {
     userId: string;
     roomId: string;
     userName: string;
     iconUrl?: string;
-    subIcon?: any;
+    subIcon?: UserRoomData['subIcon'];
 }) => {
-    if (typeof window === "undefined") return;
-
-    const current = getUserRooms();
-
-    const updated = current.map((r) => {
-        if (r.userId === payload.userId && r.roomId === payload.roomId) {
-            return {
-                ...r,
-                userName: payload.userName,
-                iconUrl: payload.iconUrl,
-                subIcon: payload.subIcon,
-            };
-        }
-        return r;
-    });
-
-    saveUserRooms(updated);
+    const { error } = await supabase
+        .from('user_rooms')
+        .update({
+            user_name: payload.userName,
+            icon_url:  payload.iconUrl ?? null,
+            sub_icon:  payload.subIcon ?? null,
+        })
+        .eq('user_id', payload.userId)
+        .eq('room_id', payload.roomId);
+    if (error) throw error;
 };

@@ -7,6 +7,7 @@ import { SalonSettings } from "@/app/components/room/SalonSettings";
 
 import { getRooms } from "@/repositories/room";
 import { getSalons, deleteSalon, updateSalon} from "@/repositories/salon";
+import { getCurrentUserId } from "@/repositories/currentUser";
 
 import type { RoomData, SalonData} from "@/app/types";
 
@@ -18,6 +19,11 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
 
     const [roomData, setRoomData] = useState<RoomData | null>(null);
     const [salonData, setSalonData] = useState<SalonData | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        getCurrentUserId().then(setUserId);
+    }, []);
 
     useEffect(() => {
         Promise.all([
@@ -36,13 +42,16 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
         });
     }, [roomId, salonId]);
 
-    if (!roomData || !salonData ) return null;
+    if (!roomData || !salonData) return null;
+
+    const isHost = roomData.roomHost?.userId === userId;
 
     return (
         <SalonSettings
             salonData={salonData}
             roomName={roomData.roomName}
             roomIconUrl={roomData.roomIconUrl}
+            isHost={isHost}
             onCancel={() => router.back()}
             onChangeSalonData={(payload) => setSalonData(payload)}
             onDelete={async () => {

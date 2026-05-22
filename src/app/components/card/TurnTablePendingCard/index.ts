@@ -1,0 +1,1 @@
+export { TurnTablePendingCard } from './TurnTablePendingCard';

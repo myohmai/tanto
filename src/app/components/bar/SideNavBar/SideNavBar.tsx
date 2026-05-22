@@ -2,19 +2,26 @@ import { HomeIcon, RoomIcon, MoodIcon, SearchIcon, MessageIcon, AccountIcon, Fon
 import { LogOutButton } from '@/app/components/buttons/LogOutButton'
 
 import './SideNavBar.scss'
+import { LogoIcon } from '../../logo/icon';
+import { Logotype } from '../../logo/logotype';
 
 type SideBarType = 'Home' | 'Hallway' | 'Mood' | 'Search' | 'Message' | 'Dashboard' | 'Fond' | 'Bookmark' | 'Settings';
 
 type Props = {
     selected: SideBarType;
+    onRefresh: () => void;
     onChange: (value: SideBarType) => void;
     onLogOut: () => void;
 }
 
-export const SideNavBar = ({ selected, onChange, onLogOut }: Props) => {
+export const SideNavBar = ({ selected, onRefresh, onChange, onLogOut }: Props) => {
     return(
         <div className="sidebar bg-color-primary text-color-primary">
             <div className="sidebar__container stack-md">
+                <button type='button' className='sidebar__button inline-md' onClick={onRefresh}>
+                    <LogoIcon size='lg'/>
+                    <span className='sidebar__label'><Logotype /></span>
+                </button>
                 <button type='button' className='sidebar__button inline-md' onClick={() => onChange('Home')}>
                     <HomeIcon size='lg' variant={selected === "Home" ? "fill" : "line"} className='icon-color-primary'/>
                     <span className='sidebar__label'>Home</span>

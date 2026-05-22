@@ -1,0 +1,58 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.turn-table-pending-card {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--neutral-color-200);
+    .night & {
+        border-bottom: 1px solid var(--neutral-color-400);
+    }
+    &__thumbnail {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        max-height: 300px;
+        margin: auto;
+        border-radius: $radius-sm;
+    }
+    &__info {
+        width: 100%;
+        max-width: 300px;
+        margin: auto;
+    }
+    &__title {
+        font: $font-500_medium;
+        overflow-x: hidden;
+    }
+    &__artist {
+        font: $font-400_regular_sm;
+        overflow-x: hidden;
+    }
+    &__footer {
+        width: 100%;
+        max-width: 300px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    &__service {
+        display: inline-flex;
+        align-items: center;
+        font: $font-400_regular_sm;
+    }
+    &__vote-status {
+        font: $font-400_regular_sm;
+    }
+    &__voted {
+        width: 100%;
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+        font: $font-400_regular_sm;
+        padding: $spacing-sm 0;
+    }
+}

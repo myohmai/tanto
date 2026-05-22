@@ -1,4 +1,5 @@
 "use client";
+import './page.scss';
 import { HeadBar } from "@/app/components/bar/HeadBar";
 
 import { DashBoardTabBar, DashBoardTabType } from "@/app/components/bar/DashBoardTabBar";
@@ -29,10 +30,12 @@ import type { GlossData, RoomData, UserRoomData, Fond } from "@/app/types";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSideMenu } from "@/app/context/SideMenuContext";
 
 
 export default function Page() {
     const router = useRouter();
+    const { openSideMenu } = useSideMenu();
     const [selectedTab, setSelectedTab] = useState<DashBoardTabType>('My Gloss');
     const [glosses, setGlosses] = useState<GlossData[]>([]);
     const [rooms, setRooms] = useState<RoomData[]>([]);
@@ -97,9 +100,14 @@ export default function Page() {
             setFonds(fonds);
             setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
 
-            setEntities(getEntities());
-            setUserRoomEntities(getUserRoomEntitiesByUser(uid));
-            setUserDisInterests(getUserDisInterestsByUser(uid));
+            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
+                getEntities(),
+                getUserRoomEntitiesByUser(uid),
+                getUserDisInterestsByUser(uid),
+            ]);
+            setEntities(entities);
+            setUserRoomEntities(userRoomEntities);
+            setUserDisInterests(userDisInterests);
 
             const initialRoomId =
                 userRooms.find(r => r.userId === uid)?.roomId ??
@@ -124,7 +132,7 @@ export default function Page() {
         setGlosses(updatedGlosses);
     };
     const handleBlock = (targetUserId: string) => {
-        toggleBlock(targetUserId, "user_1");
+        toggleBlock({ userId: currentUserId ?? '', targetUserId });
 
         getBlocksByUser("user_1").then((blocks) => {
             setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
@@ -216,11 +224,13 @@ export default function Page() {
 
     return(
         <div className="dashboard">
-            <HeadBar
-                onReload={() => {}}
-                onSearch={() => {}}
-                onSideMenu={() => {}}
-            />
+            <div className="dashboard__sticky">
+                <HeadBar
+                    onReload={() => {}}
+                    onSearch={() => {}}
+                    onSideMenu={openSideMenu}
+                />
+            </div>
             {currentRoom && (
                 <DashboardUserNameBar
                     list={currentUserRooms}

@@ -1,0 +1,71 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.onboard-room-card {
+    width: 120px;
+    border-radius: $radius-md;
+    overflow: hidden;
+    border: 1px solid var(--neutral-color-200);
+    display: flex;
+    flex-direction: column;
+
+    &__banner {
+        position: relative;
+        width: 100%;
+        height: 56px;
+        flex-shrink: 0;
+    }
+
+    &__banner-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    &__banner-placeholder {
+        width: 100%;
+        height: 100%;
+        background: var(--neutral-color-200);
+    }
+
+    &__icon {
+        position: absolute;
+        bottom: -4px;
+        left: 8px;
+        width: 32px;
+        height: 32px;
+        border-radius: $radius-sm;
+    }
+
+    &__icon-img {
+        width: 32px;
+        height: 32px;
+    }
+
+    &__icon-placeholder {
+        width: 100%;
+        height: 100%;
+        background: var(--neutral-color-200);
+    }
+
+    &__body {
+        position: relative;
+        padding: 16px 8px 8px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__name {
+        font: $font-500_medium-sm;
+        line-height: 1.3;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    &__btn {
+        margin-left: auto;
+    }
+
+}

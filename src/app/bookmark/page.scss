@@ -1,0 +1,25 @@
+@use '@/app/styles/variables' as *;
+
+.bookmark-page {
+    position: relative;
+
+    &__sticky {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        @media screen and (min-width: 800px) {
+            display: none;
+        }
+    }
+
+    &__empty {
+        padding: $spacing-xl $spacing-lg;
+        text-align: center;
+        opacity: 0.5;
+        font-size: 14px;
+    }
+
+    @media screen and (min-width: 800px) {
+        padding-top: $spacing-lg;
+    }
+}

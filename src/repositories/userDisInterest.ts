@@ -1,34 +1,39 @@
-import type { UserDisInterest } from "@/app/types/entity";
+import { supabase } from '@/lib/supabase';
+import type { UserDisInterest } from '@/app/types/entity';
 
-const KEY = "user-dis-interests";
-
-const getAll = (): UserDisInterest[] => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem(KEY);
-    if (!saved) return [];
-    try {
-        return JSON.parse(saved);
-    } catch {
-        return [];
-    }
+type UserDisInterestRow = {
+    user_id: string;
+    entity_id: string;
+    created_at: string;
 };
 
-const saveAll = (data: UserDisInterest[]) => {
-    localStorage.setItem(KEY, JSON.stringify(data));
+const toUserDisInterest = (row: UserDisInterestRow): UserDisInterest => ({
+    userId:    row.user_id,
+    entityId:  row.entity_id,
+    createdAt: row.created_at,
+});
+
+export const getUserDisInterestsByUser = async (userId: string): Promise<UserDisInterest[]> => {
+    const { data, error } = await supabase
+        .from('user_dis_interests')
+        .select('*')
+        .eq('user_id', userId);
+    if (error) throw error;
+    return (data as UserDisInterestRow[]).map(toUserDisInterest);
 };
 
-export const addUserDisInterest = (userId: string, entityId: string) => {
-    const current = getAll();
-    const exists = current.some(d => d.userId === userId && d.entityId === entityId);
-    if (!exists) {
-        saveAll([...current, { userId, entityId, createdAt: new Date().toISOString() }]);
-    }
+export const addUserDisInterest = async (userId: string, entityId: string) => {
+    const { error } = await supabase
+        .from('user_dis_interests')
+        .upsert({ user_id: userId, entity_id: entityId }, { onConflict: 'user_id,entity_id' });
+    if (error) throw error;
 };
 
-export const removeUserDisInterest = (userId: string, entityId: string) => {
-    saveAll(getAll().filter(d => !(d.userId === userId && d.entityId === entityId)));
-};
-
-export const getUserDisInterestsByUser = (userId: string): UserDisInterest[] => {
-    return getAll().filter(d => d.userId === userId);
+export const removeUserDisInterest = async (userId: string, entityId: string) => {
+    const { error } = await supabase
+        .from('user_dis_interests')
+        .delete()
+        .eq('user_id', userId)
+        .eq('entity_id', entityId);
+    if (error) throw error;
 };

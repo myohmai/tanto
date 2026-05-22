@@ -6,10 +6,11 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { PostGloss } from "@/app/components/post/PostGloss";
 
 import { getCurrentUserId } from "@/repositories/currentUser";
-import { getRooms } from "@/repositories/room";
-import { getSalons } from "@/repositories/salon";
-import { getTopics } from "@/repositories/topic";
-import { getUserRoomData } from "@/repositories/userRoom";
+import { postGloss } from "@/repositories/gloss";
+import { getRoomById } from "@/repositories/room";
+import { getSalonsByRoom } from "@/repositories/salon";
+import { getTopicsBySalon } from "@/repositories/topic";
+import { getUserRoomByRoomId } from "@/repositories/userRoom";
 
 import type {
     GlossData,
@@ -34,36 +35,23 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
     useEffect(() => {
         if (!topicId) return;
 
-        Promise.all([
-            getRooms(),
-            getSalons(),
-            getTopics(),
-            getUserRoomData(),
-            getCurrentUserId(),
-        ]).then(([rooms, salons, topics, userRooms, currentUserId]) => {
-            const room = rooms.find((room) => room.roomId === roomId);
-            const salon = salons.find(
-                (salon) =>
-                    salon.roomId === roomId &&
-                    salon.salonId === salonId
-            );
-            const topic = topics.find(
-                (topic) =>
-                    topic.topicId === topicId &&
-                    topic.roomId === roomId &&
-                    topic.salonId === salonId
-            );
-            const currentUserRoom = userRooms.find(
-                (userRoom) =>
-                    userRoom.userId === currentUserId &&
-                    userRoom.roomId === roomId
-            );
+        const run = async () => {
+            const currentUserId = await getCurrentUserId();
+            const [room, salons, topics, currentUserRoom] = await Promise.all([
+                getRoomById(roomId),
+                getSalonsByRoom(roomId),
+                getTopicsBySalon(salonId),
+                getUserRoomByRoomId(roomId, currentUserId),
+            ]);
+            const salon = salons.find(s => s.salonId === salonId) ?? null;
+            const topic = topics.find(t => t.topicId === topicId) ?? null;
 
-            setRoomData(room ?? null);
-            setSalonData(salon ?? null);
-            setTopic(topic ?? null);
+            setRoomData(room);
+            setSalonData(salon);
+            setTopic(topic);
             setCurrentUserRoom(currentUserRoom ?? null);
-        });
+        };
+        run();
     }, [roomId, salonId, topicId]);
 
     if (!roomData || !salonData || !topic || !currentUserRoom) return null;
@@ -84,15 +72,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
                 router.push(`/room/${roomId}/salon/${salonId}`)
             }
             onSelectFile={() => {}}
-            onPost={(payload: GlossData) => {
-                const saved = localStorage.getItem("posted-glosses");
-                const postedGlosses: GlossData[] = saved ? JSON.parse(saved) : [];
-
-                localStorage.setItem(
-                    "posted-glosses",
-                    JSON.stringify([payload, ...postedGlosses])
-                );
-
+            onPost={async (payload: GlossData) => {
+                await postGloss(payload);
                 router.push(`/room/${roomId}/salon/${salonId}`);
             }}
             topic={topic}

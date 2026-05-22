@@ -8,7 +8,7 @@ import { getCurrentUserId } from "@/repositories/currentUser";
 import { toggleJoinRoom } from "@/repositories/userRoom";
 import { addUserRoomEntities } from "@/repositories/userRoomEntity";
 
-export const EnterRoomClient = ({ roomId }: { roomId: string }) => {
+export const EnterRoomClient = ({ roomId, returnTo }: { roomId: string; returnTo?: string }) => {
     const router = useRouter();
 
     const [room, setRoom] = useState<any>(null);
@@ -38,7 +38,7 @@ export const EnterRoomClient = ({ roomId }: { roomId: string }) => {
         await toggleJoinRoom(payload);
         addUserRoomEntities(payload.userId, roomId, room.room.entityIds ?? []);
 
-        router.push(`/room/${roomId}`);
+        router.push(returnTo ?? `/room/${roomId}`);
     };
 
     return (

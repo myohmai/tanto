@@ -27,12 +27,12 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
         <RoomSetting
             roomData={roomData}
             onChangeRoomData={setRoomData}
-            onSubmitRoomSetting={(data) => {
-                    saveRoom(data);
+            onSubmitRoomSetting={async (data) => {
+                    await saveRoom(data);
                     router.push(`/room/${roomId}`);
                 }}
-            onDeleteRoom={() => {
-                    deleteRoom(roomId);
+            onDeleteRoom={async () => {
+                    await deleteRoom(roomId);
                     router.push("/feed");
                 }}
             isPremium={false}

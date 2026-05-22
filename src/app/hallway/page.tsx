@@ -1,6 +1,8 @@
 "use client";
+import './page.scss';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSideMenu } from "@/app/context/SideMenuContext";
 import { HeadBar } from "@/app/components/bar/HeadBar";
 import { CreateOwnRoomButton } from "@/app/components/buttons/CreateOwnRoomButton";
 
@@ -18,6 +20,7 @@ import { type RoomData } from "@/app/types";
 
 export default function Page() {
     const router = useRouter();
+    const { openSideMenu } = useSideMenu();
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [glosses, setGlosses] = useState<any[]>([]);
     const [userRooms, setUserRooms] = useState<any[]>([]);
@@ -45,11 +48,13 @@ export default function Page() {
     
     return (
         <div className="hallway">
-            <HeadBar
-                onReload={() => {}}
-                onSearch={() => {}}
-                onSideMenu={() => {}}
-            />
+            <div className="hallway__sticky">
+                <HeadBar
+                    onReload={() => {}}
+                    onSearch={() => {}}
+                    onSideMenu={openSideMenu}
+                />
+            </div>
             <RoomList
                 rooms={enrichedRooms}
                 scope="feed"

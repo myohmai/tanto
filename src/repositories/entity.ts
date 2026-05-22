@@ -1,34 +1,43 @@
-import type { Entity } from "@/app/types/entity";
+import { supabase } from '@/lib/supabase';
+import type { Entity } from '@/app/types/entity';
 
-const KEY = "entities";
-
-const getAll = (): Entity[] => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem(KEY);
-    if (!saved) return [];
-    try {
-        return JSON.parse(saved);
-    } catch {
-        return [];
-    }
+type EntityRow = {
+    entity_id: string;
+    label: string;
+    entity_type: 'external' | 'tag';
+    canonical_entity_id: string | null;
+    parent_entity_id: string | null;
 };
 
-const saveAll = (data: Entity[]) => {
-    localStorage.setItem(KEY, JSON.stringify(data));
+const toEntity = (row: EntityRow): Entity => ({
+    entityId:          row.entity_id,
+    label:             row.label,
+    entityType:        row.entity_type,
+    canonicalEntityId: row.canonical_entity_id ?? undefined,
+    parentEntityId:    row.parent_entity_id ?? undefined,
+});
+
+export const getEntities = async (): Promise<Entity[]> => {
+    const { data, error } = await supabase.from('entities').select('*');
+    if (error) throw error;
+    return (data as EntityRow[]).map(toEntity);
 };
 
-export const getEntities = (): Entity[] => getAll();
-
-export const upsertEntity = (entity: Entity) => {
-    const current = getAll();
-    const exists = current.findIndex(e => e.entityId === entity.entityId);
-    const updated =
-        exists >= 0
-            ? current.map((e, i) => (i === exists ? entity : e))
-            : [...current, entity];
-    saveAll(updated);
+export const upsertEntity = async (entity: Entity) => {
+    const { error } = await supabase.from('entities').upsert({
+        entity_id:          entity.entityId,
+        label:              entity.label,
+        entity_type:        entity.entityType,
+        canonical_entity_id: entity.canonicalEntityId ?? null,
+        parent_entity_id:   entity.parentEntityId ?? null,
+    }, { onConflict: 'entity_id' });
+    if (error) throw error;
 };
 
-export const deleteEntity = (entityId: string) => {
-    saveAll(getAll().filter(e => e.entityId !== entityId));
+export const deleteEntity = async (entityId: string) => {
+    const { error } = await supabase
+        .from('entities')
+        .delete()
+        .eq('entity_id', entityId);
+    if (error) throw error;
 };

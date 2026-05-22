@@ -1,50 +1,55 @@
-import type { UserRoomEntity } from "@/app/types/entity";
+import { supabase } from '@/lib/supabase';
+import type { UserRoomEntity } from '@/app/types/entity';
 
-const KEY = "user-room-entities";
-
-const getAll = (): UserRoomEntity[] => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem(KEY);
-    if (!saved) return [];
-    try {
-        return JSON.parse(saved);
-    } catch {
-        return [];
-    }
+type UserRoomEntityRow = {
+    user_id: string;
+    room_id: string;
+    entity_id: string;
 };
 
-const saveAll = (data: UserRoomEntity[]) => {
-    localStorage.setItem(KEY, JSON.stringify(data));
+const toUserRoomEntity = (row: UserRoomEntityRow): UserRoomEntity => ({
+    userId:   row.user_id,
+    roomId:   row.room_id,
+    entityId: row.entity_id,
+});
+
+export const getUserRoomEntitiesByUser = async (userId: string): Promise<UserRoomEntity[]> => {
+    const { data, error } = await supabase
+        .from('user_room_entities')
+        .select('*')
+        .eq('user_id', userId);
+    if (error) throw error;
+    return (data as UserRoomEntityRow[]).map(toUserRoomEntity);
 };
 
-export const addUserRoomEntities = (
+export const getUserRoomEntitiesByRoom = async (roomId: string): Promise<UserRoomEntity[]> => {
+    const { data, error } = await supabase
+        .from('user_room_entities')
+        .select('*')
+        .eq('room_id', roomId);
+    if (error) throw error;
+    return (data as UserRoomEntityRow[]).map(toUserRoomEntity);
+};
+
+export const addUserRoomEntities = async (
     userId: string,
     roomId: string,
     entityIds: string[]
 ) => {
-    const current = getAll();
-    const newEntries = entityIds
-        .filter(entityId =>
-            !current.some(
-                e => e.userId === userId && e.roomId === roomId && e.entityId === entityId
-            )
-        )
-        .map(entityId => ({ userId, roomId, entityId }));
+    if (entityIds.length === 0) return;
 
-    if (newEntries.length > 0) {
-        saveAll([...current, ...newEntries]);
-    }
+    const rows = entityIds.map(entityId => ({ user_id: userId, room_id: roomId, entity_id: entityId }));
+    const { error } = await supabase
+        .from('user_room_entities')
+        .upsert(rows, { onConflict: 'user_id,room_id,entity_id' });
+    if (error) throw error;
 };
 
-export const removeUserRoomEntities = (userId: string, roomId: string) => {
-    const current = getAll();
-    saveAll(current.filter(e => !(e.userId === userId && e.roomId === roomId)));
-};
-
-export const getUserRoomEntitiesByUser = (userId: string): UserRoomEntity[] => {
-    return getAll().filter(e => e.userId === userId);
-};
-
-export const getUserRoomEntitiesByRoom = (roomId: string): UserRoomEntity[] => {
-    return getAll().filter(e => e.roomId === roomId);
+export const removeUserRoomEntities = async (userId: string, roomId: string) => {
+    const { error } = await supabase
+        .from('user_room_entities')
+        .delete()
+        .eq('user_id', userId)
+        .eq('room_id', roomId);
+    if (error) throw error;
 };
