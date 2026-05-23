@@ -6,12 +6,16 @@ import { useRef } from "react";
 type Props = {
     turntables: TurnTableData[];
     onRefresh?: () => void;
+    onDelete?: (id: string) => void;
+    onSeeAlso?: (turntableId: string) => void;
     isLoading?: boolean;
 };
 
 export const TurnTableMusicList = ({
     turntables,
     onRefresh,
+    onDelete,
+    onSeeAlso,
     isLoading
 }: Props) => {
     const musics = turntables.filter(
@@ -56,6 +60,8 @@ export const TurnTableMusicList = ({
                 <TurnTableMediaCard
                     key={music.id}
                     turntableData={music}
+                    hasSeeAlso={!!onSeeAlso}
+                    onSeeAlso={() => onSeeAlso?.(music.id)}
                     primaryService={
                         music.music?.service ?? "youtube"
                     }
@@ -69,6 +75,7 @@ export const TurnTableMusicList = ({
                     onPause={() => {}}
                     onMute={() => {}}
                     progress={0}
+                    onDelete={onDelete ? () => onDelete(music.id) : undefined}
                 />
             ))}
 

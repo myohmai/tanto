@@ -68,7 +68,7 @@ export const EnterTheRoom = ({
                 <EditUserProfile
                     UserIconUrl={user.iconUrl || roomMemberIni.iconUrl}
                     subIcon={user.subIcon || null}
-                    userName={user.userName}
+                    userName={user.userName ?? undefined}
                     roomInitialName={roomMemberIni.initialName}
                     onChangeUserIcon={(file) => {
                         setUser((prev) => ({

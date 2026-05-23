@@ -33,14 +33,27 @@
         display: flex;
         flex-direction: column;
     }
+    &__name-row {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+    }
     &__room-name {
         font: $font-600_semi-bold;
+    }
+    &__open-badge {
+        font: $font-500_medium_sm;
+        padding: 1px 6px;
+        border-radius: $radius-full;
+        background: var(--accent-color);
+        color: #fff;
+        flex: 0 0 auto;
     }
     &__count {
         font: $font-500_medium_sm;
     }
     &__posted_at {
-        font: $font-400_regular_xs;
+        font: $font-400_regular_sm;
     }
     &__arrow-wrapper {
         flex: 0 0 auto;

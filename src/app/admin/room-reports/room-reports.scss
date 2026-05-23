@@ -1,0 +1,149 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.room-reports {
+    &__header {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+    }
+
+    &__back {
+        font: $font-400_regular_sm;
+        color: var(--text-color-secondary);
+        text-align: left;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    &__sub {
+        font: $font-400_regular_sm;
+        color: var(--text-color-secondary);
+    }
+
+    &__empty {
+        font: $font-400_regular;
+        color: var(--text-color-secondary);
+        text-align: center;
+        padding: $spacing-xxl 0;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    &__item {
+        border-radius: $radius-md;
+        overflow: hidden;
+    }
+
+    &__item-main {
+        width: 100%;
+        padding: $spacing-md;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        background: transparent;
+        text-align: left;
+    }
+
+    &__room-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+
+    &__room-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: $radius-sm;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    &__room-name {
+        font: $font-600_semi-bold;
+    }
+
+    &__room-id {
+        font: $font-400_regular_xs;
+        color: var(--text-color-secondary);
+    }
+
+    &__count {
+        font: $font-700_bold;
+        color: $color-warning--500;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    &__detail {
+        padding: $spacing-sm $spacing-md $spacing-md;
+        border-top: 1px solid var(--border-color-primary);
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+
+    &__type-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+    }
+
+    &__type-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__type-badge {
+        font: $font-400_regular_xs;
+        padding: $spacing-xxs $spacing-sm;
+        border-radius: $radius-full;
+
+        &--offensive      { background: rgba($rose-color--300, 0.2); color: $rose-color--300; }
+        &--unverified     { background: rgba($antique-color--300, 0.2); color: $antique-color--300; }
+        &--inappropriate  { background: rgba($color-warning--500, 0.15); color: $color-warning--500; }
+        &--identifiable   { background: rgba($accent-color--300, 0.2); color: $accent-color--300; }
+        &--adult          { background: rgba($fond-color--300, 0.2); color: $fond-color--300; }
+    }
+
+    &__type-count {
+        font: $font-500_medium_sm;
+    }
+
+    &__actions {
+        display: flex;
+        gap: $spacing-sm;
+        justify-content: flex-end;
+    }
+
+    &__edit-btn {
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-full;
+        font: $font-400_regular_sm;
+        border: 1.5px solid $key-color--300;
+        color: $key-color--300;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    &__delete-btn {
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-full;
+        font: $font-400_regular_sm;
+        background: rgba($color-warning--500, 0.15);
+        color: $color-warning--500;
+        border: none;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}

@@ -99,6 +99,7 @@
     &__rule-wrapper {
         display: none;
         position: fixed;
+        z-index: 21;
         top: 50%;
         left: 50%;
         width: 80dvw;
@@ -129,7 +130,7 @@
         position: fixed;
         inset: 0;
         background: rgba(0,0,0,0.3);
-        z-index: 0;
+        z-index: 20;
     }
     &__tag {
         padding-left: $spacing-md;

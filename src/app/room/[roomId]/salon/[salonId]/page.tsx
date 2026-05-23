@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState, use } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import './page.scss'
 
@@ -20,6 +20,7 @@ import { getUserRoomData } from "@/repositories/userRoom";
 import { toggleFond,  getAllFonds } from "@/repositories/fond";
 import { toggleBlock, getBlocksByUser } from "@/repositories/block";
 import { toggleMute, getMutesByUser } from "@/repositories/mute";
+import { addGlossReport } from "@/repositories/gloss";
 
 import { canAccessRoom } from "@/app/logic/room/roomAccess";
 import { getEntities } from "@/repositories/entity";
@@ -64,7 +65,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
     : [];
     const users = [...hostUser, ...glossUsers];
     const handleFond = async (glossId: string) => {
-        await toggleFond(glossId, "currentUser");
+        if (!currentUserId) return;
+        await toggleFond(glossId, currentUserId);
 
         const [glosses, newFonds] = await Promise.all([
             getProcessedGlosses(),
@@ -74,23 +76,19 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
         setGlossData(glosses.filter(g => g.salonId === salonId));
         setFonds(newFonds);
     }
-    const handleReport = (glossId: string, report: Report) => {
+    const handleReport = async (glossId: string, report: Report) => {
+        await addGlossReport(glossId, { ...report, reporterId: currentUserId ?? report.reporterId });
         setGlossData(prev =>
             prev.map(gloss =>
                 gloss.glossId === glossId
-                    ? {
-                        ...gloss,
-                        reports: [
-                            ...(gloss.reports ?? []),
-                            report,
-                        ],
-                    }
+                    ? { ...gloss, reports: [...(gloss.reports ?? []), report] }
                     : gloss
             )
         );
     };
-    const handleBlock = async (userId: string) => {
-        await toggleBlock(userId, "currentUser");
+    const handleBlock = async (targetUserId: string) => {
+        if (!currentUserId) return;
+        await toggleBlock({ userId: currentUserId, targetUserId });
 
         const glosses = await getProcessedGlosses();
         setGlossData(glosses.filter(g => g.salonId === salonId));
@@ -144,21 +142,25 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
     }, []);
 
     useEffect(() => {
-        getBlocksByUser("currentUser").then((blocks) => {
-            setBlockedUserIds(
-                new Set(blocks.map(b => b.targetUserId))
-            );
+        getCurrentUserId().then((uid) => {
+            getBlocksByUser(uid).then((blocks) => {
+                setBlockedUserIds(
+                    new Set(blocks.map(b => b.targetUserId))
+                );
+            });
         });
     }, []);
     useEffect(() => {
-        getMutesByUser("currentUser").then((mutes) => {
-            setMutedSalonIds(
-                new Set(
-                    mutes
-                        .filter(m => m.salonId)
-                        .map(m => m.salonId!)
-                )
-            );
+        getCurrentUserId().then((uid) => {
+            getMutesByUser(uid).then((mutes) => {
+                setMutedSalonIds(
+                    new Set(
+                        mutes
+                            .filter(m => m.salonId)
+                            .map(m => m.salonId!)
+                    )
+                );
+            });
         });
     }, []);
 
@@ -210,12 +212,13 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
                         router.push(`/room/${roomId}/salon/${salonId}/edit`)
                     }
                     onMute={async () => {
+                            if (!currentUserId) return;
                             await toggleMute({
-                                userId: "currentUser",
+                                userId: currentUserId,
                                 salonId: salonId,
                             });
 
-                            const mutes = await getMutesByUser("currentUser");
+                            const mutes = await getMutesByUser(currentUserId);
 
                             setMutedSalonIds(
                                 new Set(

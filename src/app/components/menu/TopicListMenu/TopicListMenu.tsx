@@ -2,6 +2,7 @@
 import { BottomSheet } from "@/app/components/menu/BottomSheet";
 import { BottomMenuButton } from "@/app/components/menu/BottomMenuButton";
 import { UserBlockIcon } from "@/app/components/icons";
+import { useTranslations } from 'next-intl';
 
 import './TopicListMenu.scss'
 
@@ -13,9 +14,10 @@ type Props = {
 }
 
 export const TopicListMenu = ({ onBlock, isOpen, onClose, isBlocked }: Props) => {
+    const t = useTranslations('topicMenu');
     return(
         <BottomSheet isOpen={isOpen} onClose={onClose} contentClassName="topic-list-menu stack-md" >
-                <BottomMenuButton icon={<UserBlockIcon />} label={isBlocked ? "Unblock this user" : "Block this user"} onClick={onBlock} />
+            <BottomMenuButton icon={<UserBlockIcon />} label={isBlocked ? t('unblock') : t('block')} onClick={onBlock} />
         </BottomSheet>
     )
 }

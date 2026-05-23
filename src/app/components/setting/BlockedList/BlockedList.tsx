@@ -6,6 +6,7 @@ import { UserCustomIcon } from '@/app/components/custom-icon/UserCustomIcon';
 import { UserBlockIcon, CancelIcon } from '@/app/components/icons';
 import { getBlocksWithRoom, toggleBlock, type BlockWithRoom } from '@/repositories/block';
 import { getCurrentUserId } from '@/repositories/currentUser';
+import { useTranslations } from 'next-intl';
 
 import './BlockedList.scss';
 
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export const BlockedList = ({ onBack }: Props) => {
+    const t = useTranslations('settings');
     const [blocks, setBlocks] = useState<BlockWithRoom[]>([]);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
@@ -36,14 +38,14 @@ export const BlockedList = ({ onBack }: Props) => {
     return (
         <div className="blocked-list bg-color-primary">
             <SettingTopBar
-                title="Blocked Users"
+                title={t('blockedUsers')}
                 icon={<UserBlockIcon className="icon-color-primary" />}
                 onBack={onBack}
             />
 
             {blocks.length === 0 ? (
                 <div className="blocked-list__empty text-color-secondary">
-                    No blocked users
+                    {t('noBlockedUsers')}
                 </div>
             ) : (
                 <ul className="blocked-list__items">
@@ -74,7 +76,7 @@ export const BlockedList = ({ onBack }: Props) => {
                                     type="button"
                                     className="blocked-list__unblock"
                                     onClick={() => handleUnblock(block.targetUserId)}
-                                    aria-label="Unblock"
+                                    aria-label={t('blockedUsers')}
                                 >
                                     <CancelIcon className="icon-color-secondary" />
                                 </button>

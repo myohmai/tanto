@@ -57,7 +57,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
     };
 
     const handleBlock = async (targetUserId: string) => {
-        await toggleBlock(targetUserId, userId);
+        await toggleBlock({ userId, targetUserId });
         const blocks = await getBlocksByUser(userId);
         setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
     };

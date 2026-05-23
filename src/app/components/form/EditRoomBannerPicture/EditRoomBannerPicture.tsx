@@ -12,7 +12,7 @@ export const EditRoomBannerPicture = ({ bannerImageUrl, onChangeBanner }: Props 
     const [preview, setPreview] = useState<string | null>(null);
     return (
         <div className="edit-room-banner">
-            <img src={preview || bannerImageUrl || "images/default.png" } alt="Room banner" />
+            <img src={preview || bannerImageUrl || "/images/default.png" } alt="Room banner" />
             <AddBannerPictureButton
                 onSelectFile={(file) => {
                     setPreview(URL.createObjectURL(file));

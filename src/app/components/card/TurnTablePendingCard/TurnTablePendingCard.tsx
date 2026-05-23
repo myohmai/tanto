@@ -1,5 +1,5 @@
 import { TurnTableAcceptation } from '@/app/components/buttons/TurnTableAcceptation';
-import { LocationIcon } from '@/app/components/icons';
+import { LocationIcon, TrashIcon } from '@/app/components/icons';
 import type { SongRequestWithVotes } from '@/app/types/songRequest';
 import './TurnTablePendingCard.scss';
 
@@ -8,9 +8,10 @@ type Props = {
     hasVoted: boolean;
     onAccept: () => void;
     onReject: () => void;
+    onDelete?: () => void;
 };
 
-export const TurnTablePendingCard = ({ request, hasVoted, onAccept, onReject }: Props) => {
+export const TurnTablePendingCard = ({ request, hasVoted, onAccept, onReject, onDelete }: Props) => {
     const { type, metadata, votes, activeMembers } = request;
     const approveCount = votes.filter(v => v.approved).length;
     const totalVotes = votes.length;
@@ -49,10 +50,20 @@ export const TurnTablePendingCard = ({ request, hasVoted, onAccept, onReject }: 
                     <span>{approveCount}/{totalVotes} votes · {voteRate}%</span>
                 </div>
             </div>
-            {!hasVoted && (
+            {(request.status === 'rejected' || request.status === 'timeout') ? (
+                <div className="turn-table-pending-card__failed inline-xs">
+                    <span className="text-color-secondary">
+                        {request.status === 'rejected' ? 'Rejected' : 'Timed out'}
+                    </span>
+                    {onDelete && (
+                        <button type="button" onClick={onDelete} className="icon-color-secondary">
+                            <TrashIcon />
+                        </button>
+                    )}
+                </div>
+            ) : !hasVoted ? (
                 <TurnTableAcceptation onAccept={onAccept} onReject={onReject} />
-            )}
-            {hasVoted && (
+            ) : (
                 <div className="turn-table-pending-card__voted text-color-secondary">Voted</div>
             )}
         </div>

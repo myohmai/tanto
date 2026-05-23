@@ -1,0 +1,114 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.admin-reports {
+    &__header {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+    }
+
+    &__back {
+        font: $font-400_regular_sm;
+        color: var(--text-color-secondary);
+        text-align: left;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    &__filters {
+        display: flex;
+        gap: $spacing-sm;
+        flex-wrap: wrap;
+    }
+
+    &__filter-btn {
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-full;
+        font: $font-400_regular_sm;
+        border: 1.5px solid var(--border-color-primary);
+        color: var(--text-color-secondary);
+        background: transparent;
+        cursor: pointer;
+
+        &.active {
+            border-color: $key-color--300;
+            color: $key-color--300;
+            background: rgba($key-color--300, 0.1);
+        }
+    }
+
+    &__empty {
+        font: $font-400_regular;
+        color: var(--text-color-secondary);
+        text-align: center;
+        padding: $spacing-xxl 0;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    &__item {
+        padding: $spacing-md;
+        border-radius: $radius-md;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    &__item-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__type {
+        font: $font-500_medium_sm;
+        padding: $spacing-xxs $spacing-sm;
+        border-radius: $radius-full;
+
+        &--bug      { background: rgba($rose-color--300, 0.2); color: $rose-color--300; }
+        &--deletion { background: rgba($color-warning--500, 0.15); color: $color-warning--500; }
+        &--open_room { background: rgba($key-color--300, 0.15); color: $key-color--300; }
+    }
+
+    &__status {
+        font: $font-400_regular_xs;
+
+        &--pending  { color: $color-warning--500; }
+        &--reviewed { color: $key-color--300; }
+        &--resolved { color: $color-success--500; }
+    }
+
+    &__title {
+        font: $font-600_semi-bold;
+    }
+
+    &__body {
+        font: $font-400_regular_sm;
+        color: var(--text-color-secondary);
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    &__item-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__date {
+        font: $font-400_regular_xs;
+        color: var(--text-color-secondary);
+    }
+
+    &__action-btn {
+        font: $font-400_regular_sm;
+        color: $key-color--300;
+        background: transparent;
+        cursor: pointer;
+    }
+}

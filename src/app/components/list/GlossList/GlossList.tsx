@@ -121,9 +121,6 @@ export const GlossList = ({
                     iconUrl: undefined,
                     subIcon: undefined,
                 };
-                console.log("user prop", user);
-            console.log("safeUsers", safeUsers.length);
-
                 const notifResult = notifications?.[gloss.glossId];
 
                 return(
@@ -165,7 +162,7 @@ export const GlossList = ({
             )}
             {glosses.length === 0 && !isLoading && (
                 <div className="gloss-list__empty">
-                    <div>No posts yet</div>
+                    <div>No glosses yet</div>
 
                     {onRefresh && (
                         <button

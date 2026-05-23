@@ -3,6 +3,7 @@ import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
 import { UserSubIcon } from "@/app/components/custom-icon/UserCustomIcon"
 import { EditUserProfile } from "@/app/components/form/EditUserProfile";
+import { useTranslations } from 'next-intl';
 
 import './EnterTheRoom.scss'
 
@@ -36,6 +37,7 @@ export const EditUserName = ({
     onChangeUserData,
     onEnter
 }: Props) => {
+    const t = useTranslations();
 
     const handleEnter = () => {
         if (!user.userName?.trim()) return;
@@ -50,9 +52,9 @@ export const EditUserName = ({
                 <RoomCustomIcon roomIconUrl={roomIconUrl} className="enter-the-room__icon" />
                 <div className="enter-the-room__room-name">{roomName}</div>
                 <div className="enter-the-room__information">
-                    <span className="enter-the-room__information--title">Edit User Profile</span><br/>
+                    <span className="enter-the-room__information--title">{t('user.editProfile')}</span><br/>
                 </div>
-                <div className="enter-the-room__title">How should you appear in this Room?</div>
+                <div className="enter-the-room__title">{t('user.appearInRoom')}</div>
                 <EditUserProfile
                     UserIconUrl={user.iconUrl || roomMemberIni.iconUrl}
                     subIcon={user.subIcon || null}
@@ -78,7 +80,7 @@ export const EditUserName = ({
                     }}
                     />
                 <SubmitButton
-                    label="Edit"
+                    label={t('common.edit')}
                     onClick={handleEnter}
                 />
             </div>

@@ -21,8 +21,9 @@ type RoomRow = {
     host_snapshot: RoomData['roomHost'] | null;
     host_create_salon: boolean;
     entity_ids: string[];
+    is_open_room: boolean;
+    member_count: number;
     room_reports: { reporter_id: string; type: string; created_at: string }[];
-    room_stats: { member_count: number; gloss_count: number; recent_gloss_count: number }[];
 };
 
 const toRoomData = (row: RoomRow): RoomData => ({
@@ -43,20 +44,20 @@ const toRoomData = (row: RoomRow): RoomData => ({
     roomHost:         row.host_snapshot ?? undefined,
     hostCreateSalon:  row.host_create_salon,
     entityIds:        row.entity_ids,
+    isOpenRoom:       row.is_open_room,
     reports:          (row.room_reports ?? []).map(r => ({
         reporterId: r.reporter_id,
         type:       r.type as Report['type'],
         createdAt:  new Date(r.created_at).getTime(),
     })),
-    roomMemberCount:    row.room_stats?.[0]?.member_count ?? 0,
-    glossCount:         row.room_stats?.[0]?.gloss_count ?? 0,
-    recentGlossCount:   row.room_stats?.[0]?.recent_gloss_count ?? 0,
+    roomMemberCount:  row.member_count ?? 0,
+    glossCount:       0,
+    recentGlossCount: 0,
 });
 
 const ROOM_SELECT = `
     *,
-    room_reports(reporter_id, type, created_at),
-    room_stats(member_count, gloss_count, recent_gloss_count)
+    room_reports(reporter_id, type, created_at)
 `;
 
 export const getRooms = async (): Promise<RoomData[]> => {
@@ -64,6 +65,17 @@ export const getRooms = async (): Promise<RoomData[]> => {
         .from('rooms')
         .select(ROOM_SELECT)
         .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return (data as RoomRow[]).map(toRoomData);
+};
+
+export const getRoomsByIds = async (roomIds: string[]): Promise<RoomData[]> => {
+    if (roomIds.length === 0) return [];
+    const { data, error } = await supabase
+        .from('rooms')
+        .select(ROOM_SELECT)
+        .in('room_id', roomIds);
 
     if (error) throw error;
     return (data as RoomRow[]).map(toRoomData);
@@ -100,11 +112,25 @@ export const saveRoom = async (room: RoomData) => {
         host_snapshot:      room.roomHost ?? null,
         host_create_salon:  room.hostCreateSalon,
         entity_ids:         room.entityIds,
+        is_open_room:       room.isOpenRoom,
     };
 
     const { error } = await supabase
         .from('rooms')
         .upsert(payload, { onConflict: 'room_id' });
+
+    if (error) throw error;
+};
+
+export const addRoomReport = async (roomId: string, report: Report): Promise<void> => {
+    const { error } = await supabase
+        .from('room_reports')
+        .insert({
+            room_id: roomId,
+            reporter_id: report.reporterId,
+            type: report.type,
+            created_at: new Date(report.createdAt).toISOString(),
+        });
 
     if (error) throw error;
 };

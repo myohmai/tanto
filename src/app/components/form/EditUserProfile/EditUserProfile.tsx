@@ -1,7 +1,9 @@
+'use client';
 import { UserCustomIcon, UserSubIcon } from "@/app/components/custom-icon/UserCustomIcon"
 import { EditIconButton } from "@/app/components/buttons/EditIconButton"
 import { EditSubIconButton } from "@/app/components/buttons/EditSubIconButton"
 import { ChooseSubIcon } from "@/app/components/menu/ChooseSubIcon"
+import { useTranslations } from "next-intl"
 
 import { useState } from "react"
 
@@ -17,7 +19,7 @@ type Props = {
     onChangeName?: (value: string) => void;
 } 
 
-export const EditUserProfile = ({ 
+export const EditUserProfile = ({
     UserIconUrl,
     subIcon,
     roomInitialName,
@@ -26,6 +28,9 @@ export const EditUserProfile = ({
     onSubIcon,
     onChangeName
 }: Props ) => {
+    const tr = useTranslations('room');
+    const tc = useTranslations('common');
+    const tu = useTranslations('user');
     const [preview, setPreview] = useState<string | null >(null);
     const [isOpen, setIsOpen] = useState(false);
     const [subIconPreview, setSubIconPreview] = useState<UserSubIcon | null>(null)
@@ -48,20 +53,20 @@ export const EditUserProfile = ({
             <div className="edit-user-profile__name stack-sm">
                 <div className="input-box">
                     <div className="input-box__container">
-                        <div className="input-box__label">Your Name In This Room</div>
+                        <div className="input-box__label">{tr('yourNameInRoom')}</div>
                         <input
                             type="text"
                             className="input-box__text-box"
                             maxLength={30}
                             value={userName ?? ""}
-                            placeholder={userName || roomInitialName || "Your Name"}
+                            placeholder={userName || roomInitialName || tu('namePlaceholder')}
                             onChange={(e) => {
                                 const value = e.target.value;
 
                                 if (value.length === 0) {
-                                    setNameError("Name is required");
+                                    setNameError(tc('required'));
                                 } else if (value.length > 30) {
-                                    setNameError("Max 30 characters");
+                                    setNameError(tc('maxChars'));
                                 } else {
                                     setNameError(null);
                                 }
@@ -71,7 +76,7 @@ export const EditUserProfile = ({
                         />
                         { nameError && <div className="input-box__error">{nameError}</div> }
                     </div>
-                    <div className="edit-user-profile__name-info text-color-secondary ">Your identity can vary across Rooms.</div>
+                    <div className="edit-user-profile__name-info text-color-secondary ">{tu('identityVaries')}</div>
                 </div>
             </div>
             <ChooseSubIcon

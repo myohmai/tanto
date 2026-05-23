@@ -238,7 +238,7 @@ export const Gloss = ({
                             />)}
                         <div className="gloss__name inline-xs"><span>{glossData.userName}</span><span className="gloss__date">{formatPostedAt(glossData.postedAt, lang)}</span></div>
                     </div>
-                    {notification && (<Notification type={notification.type} lang={lang}/>)}
+                    {notification && (<Notification type={notification.type} />)}
                     <div className="gloss__content">{renderTextWithLinks(glossData.content)}</div>
                     {source && source.length > 0 && (<Media source={source} type={type} lang={lang!} />)}
                     {url && (

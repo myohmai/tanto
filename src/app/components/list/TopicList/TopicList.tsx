@@ -78,7 +78,7 @@ export const TopicList = ({
         )}
         {topics.length === 0 && !isLoading && (
             <div className="topic-list__empty">
-                <div>No posts yet</div>
+                <div>No topics yet</div>
 
                 {onRefresh && (
                     <button

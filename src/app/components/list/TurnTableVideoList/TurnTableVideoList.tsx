@@ -6,12 +6,16 @@ import { useRef } from "react";
 type Props = {
     turntables: TurnTableData[];
     onRefresh?: () => void;
+    onDelete?: (id: string) => void;
+    onSeeAlso?: (turntableId: string) => void;
     isLoading?: boolean;
 };
 
 export const TurnTableVideoList = ({
     turntables,
     onRefresh,
+    onDelete,
+    onSeeAlso,
     isLoading
 }: Props) => {
     const videos = turntables.filter(
@@ -56,8 +60,9 @@ export const TurnTableVideoList = ({
                 <TurnTableVideoCard
                     key={video.id}
                     turntableData={video}
-                    hasSeeAlso={false}
-                    onSeeAlso={() => {}}
+                    hasSeeAlso={!!onSeeAlso}
+                    onSeeAlso={() => onSeeAlso?.(video.id)}
+                    onDelete={onDelete ? () => onDelete(video.id) : undefined}
                 />
             ))}
 

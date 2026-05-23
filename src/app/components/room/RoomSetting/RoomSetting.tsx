@@ -12,8 +12,7 @@ import { ChooseSubIcon } from "@/app/components/menu/ChooseSubIcon";
 import { PulldownArrow } from "@/app/components/buttons/PulldownArrow";
 import { DeleteButton } from "@/app/components/buttons/DeleteButton";
 import { RoomData } from "@/app/types/room";
-
-
+import { useTranslations } from "next-intl";
 
 import { useState, useRef } from "react";
 
@@ -34,9 +33,13 @@ export const RoomSetting = ({
     onDeleteRoom,
     isPremium
 }: Props) => {
+    const t = useTranslations('room');
+    const tCommon = useTranslations('common');
+    const tCert = useTranslations('certification');
+
     const INFO_MAX_LENGTH = 280;
     const RULE_MAX_LENGTH = 1000;
-    
+
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const [isSubIconOpen, setIsSubIconOpen] = useState(false);
     const roomRuleRef = useRef<HTMLTextAreaElement | null>(null);
@@ -51,13 +54,13 @@ export const RoomSetting = ({
         };
 
     const visibilityLabel = {
-            public: "Public",
-            private: "Private",
+            public: t('visibility.public'),
+            private: t('visibility.private'),
         };
 
-        const entryLabel = {
-            keyword: "Keyword",
-            quiz: "Quiz",
+    const entryLabel = {
+            keyword: t('keyword'),
+            quiz: t('quiz'),
         };
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -132,11 +135,11 @@ export const RoomSetting = ({
                 </div>
                 <div className="input-box">
                     <div className="input-box__container">
-                        <div className="input-box__label">Roomname</div>
+                        <div className="input-box__label">{t('roomName')}</div>
                         <input
                             type="text"
                             className="input-box__text-box"
-                            placeholder="RoomName"
+                            placeholder={t('roomName')}
                             value={roomData.roomName}
                             maxLength={30}
                             onChange={(e) => {
@@ -148,26 +151,20 @@ export const RoomSetting = ({
                         />
                     </div>
                     {isSubmitted && isRoomNameOver && (
-                        <div className="input-box__error">
-                            Please enter within 30 characters
-                        </div>
+                        <div className="input-box__error">{tCommon('maxChars')}</div>
                     )}
                     {isSubmitted && isRoomNameEmpty && (
-                        <div className="input-box__error">
-                            This field is required
-                        </div>
+                        <div className="input-box__error">{tCommon('required')}</div>
                     )}
                 </div>
                 <div className="input-box">
                     <div className="input-box__container">
-                        <div className="input-box__label">
-                            Room information
-                        </div>
+                        <div className="input-box__label">{t('info')}</div>
                         <textarea
-                                name="room-information" 
+                                name="room-information"
                                 id="room-info"
                                 className="input-box__text-area"
-                                placeholder="Room information"
+                                placeholder={t('info')}
                                 value={roomData.roomInformation}
                                 maxLength={INFO_MAX_LENGTH}
                                 ref={textareaRef}
@@ -190,9 +187,7 @@ export const RoomSetting = ({
                         </div>
                     </div>
                     {isSubmitted && isRoomInfoEmpty && (
-                        <div className="input-box__error">
-                            This field is required
-                        </div>
+                        <div className="input-box__error">{tCommon('required')}</div>
                     )}
                 </div>
                 <TagInputBox
@@ -206,7 +201,7 @@ export const RoomSetting = ({
                     }
                 />
                 <div className="room-setting__initial">
-                    <div className="input-box__label">Room Member's Initial Icon</div>
+                    <div className="input-box__label">{t('memberInitialIcon')}</div>
                     <div className="room-setting__initial-icon-wrapper">
                         <UserCustomIcon iconUrl={roomData.roomMemberIni.iconUrl} />
                         <EditIconButton
@@ -225,7 +220,7 @@ export const RoomSetting = ({
                     </div>
                     <div className="input-box">
                         <div className="input-box__container">
-                            <div className="input-box__label">Room Member’s Initial name</div>
+                            <div className="input-box__label">{t('memberInitialName')}</div>
                             <input
                                 type="text"
                                 className="input-box__text-box"
@@ -243,15 +238,13 @@ export const RoomSetting = ({
                                 }}
                             />
                             {isSubmitted && isRoomMemberIniOver && (
-                                <div className="input-box__error">
-                                    Please enter within 30 characters
-                                </div>
+                                <div className="input-box__error">{tCommon('maxChars')}</div>
                             )}
                         </div>
                     </div>
                 </div>
                 <div className="room-setting__host">
-                    <div className="input-box__label">Room Host's Initial Icon</div>
+                    <div className="input-box__label">{t('hostInitialIcon')}</div>
                     <div className="room-setting__initial-icon-wrapper">
                         <UserCustomIcon iconUrl={roomData.roomHost?.iconUrl || roomData.roomMemberIni.iconUrl} subIcon={roomData.roomHost?.subIcon} />
                         <EditIconButton
@@ -273,7 +266,7 @@ export const RoomSetting = ({
                     </div>
                     <div className="input-box">
                         <div className="input-box__container">
-                            <div className="input-box__label">Room Host's Initial name</div>
+                            <div className="input-box__label">{t('hostInitialName')}</div>
                             <input
                                 type="text"
                                 className="input-box__text-box"
@@ -293,9 +286,7 @@ export const RoomSetting = ({
                                 }}
                             />
                             {isSubmitted && isRoomHostOver && (
-                                <div className="input-box__error">
-                                    Please enter within 30 characters
-                                </div>
+                                <div className="input-box__error">{tCommon('maxChars')}</div>
                             )}
                         </div>
                         <ChooseSubIcon
@@ -317,14 +308,12 @@ export const RoomSetting = ({
                     </div>
                     <div className="input-box">
                         <div className="input-box__container">
-                            <div className="input-box__label">
-                                Room Rules
-                            </div>
+                            <div className="input-box__label">{t('rules')}</div>
                             <textarea
-                                    name="room-rules" 
+                                    name="room-rules"
                                     id="room-rules"
                                     className="input-box__text-area"
-                                    placeholder="Room Rules"
+                                    placeholder={t('rules')}
                                     value={roomData.roomRule}
                                     maxLength={RULE_MAX_LENGTH}
                                     ref={roomRuleRef}
@@ -349,7 +338,7 @@ export const RoomSetting = ({
                     </div>
                 </div>
                 <div className="room-setting__visibility">
-                    <div className="input-box__label">Visibility settings</div>
+                    <div className="input-box__label">{t('visibilitySettings')}</div>
                     <div 
                         className="room-setting__pulldown bg-color-secondary padding-sm-md"
                         onClick={() => {
@@ -372,7 +361,7 @@ export const RoomSetting = ({
                                             setIsVisibilityOpen(false);
                                         }
                                     }
-                                    >Public</button>
+                                    >{t('visibility.public')}</button>
                                 <button
                                     type="button"
                                     className="room-setting__pulldown-button"
@@ -389,9 +378,9 @@ export const RoomSetting = ({
                                         }
                                     }
                                     disabled={!isPremium}
-                                    >Private
+                                    >{t('visibility.private')}
                                     {!isPremium && (
-                                        <span className="not-premium text-color-secondary">Coming Soon</span>
+                                        <span className="not-premium text-color-secondary">{tCommon('comingSoon')}</span>
                                     )}
                                     </button>
                             </div>
@@ -403,7 +392,7 @@ export const RoomSetting = ({
                 </div>
                 {roomData.roomVisibility === "private" && (
                 <div className="room-setting__entry-way">
-                    <div className="input-box__label">Entry settings</div>
+                    <div className="input-box__label">{t('entrySettings')}</div>
                     <div
                         className="room-setting__pulldown bg-color-secondary padding-sm-md"
                         onClick={() => {
@@ -426,7 +415,7 @@ export const RoomSetting = ({
                                             setIsEntryOpen(false);
                                         }
                                     }
-                                    >Keyword</button>
+                                    >{t('keyword')}</button>
                                 <button
                                     type="button"
                                     className="room-setting__pulldown-button"
@@ -441,7 +430,7 @@ export const RoomSetting = ({
                                             setIsEntryOpen(false);
                                         }
                                     }
-                                    >Quiz
+                                    >{t('quiz')}
                                     </button>
                             </div>
                             :
@@ -454,11 +443,11 @@ export const RoomSetting = ({
                         <div className="room-setting__keyword">
                             <div className="input-box">
                                 <div className="input-box__container">
-                                    <div className="input-box__label">Room Entry Keyword</div>
+                                    <div className="input-box__label">{t('entryKeyword')}</div>
                                     <input
                                         type="text"
                                         className="input-box__text-box"
-                                        placeholder="Room Keyword"
+                                        placeholder={t('entryKeyword')}
                                         value={roomData.roomKeyWord}
                                         maxLength={30}
                                         onChange={(e) => {
@@ -470,16 +459,14 @@ export const RoomSetting = ({
                                         />
                                 </div>
                                 {isSubmitted && isKeyWordEmpty && (
-                                    <div className="input-box__error">
-                                        This field is required
-                                    </div>
+                                    <div className="input-box__error">{tCommon('required')}</div>
                                 )}
                             </div>
                         </div>
                         <div className="room-setting__keyword">
                             <div className="input-box">
                                 <div className="input-box__container">
-                                    <div className="input-box__label">Keyword Hint</div>
+                                    <div className="input-box__label">{t('keywordHint')}</div>
                                     <input
                                         type="text"
                                         className="input-box__text-box"
@@ -495,9 +482,7 @@ export const RoomSetting = ({
                                         />
                                 </div>
                                 {isSubmitted && isKeyWordHinEmpty && (
-                                    <div className="input-box__error">
-                                        This field is required
-                                    </div>
+                                    <div className="input-box__error">{tCommon('required')}</div>
                                 )}
                             </div>
                         </div>
@@ -516,7 +501,7 @@ export const RoomSetting = ({
                         />
                         <div className="input-box">
                             <div className="input-box__container">
-                                <div className="input-box__label">Passing Threshold</div>
+                                <div className="input-box__label">{tCert('passingThreshold')}</div>
                                 <input
                                     type="number"
                                     className="input-box__text-box"
@@ -532,12 +517,10 @@ export const RoomSetting = ({
                                     />
                             </div>
                             <div className="room-setting__quiz-score-range text-color-secondary">
-                                Recommended Range: {recommendedRange[roomData.roomQuiz?.length || 1]}
+                                {t('recommendedRange')}: {recommendedRange[roomData.roomQuiz?.length || 1]}
                             </div>
                             {isSubmitted && isScoreEmpty && (
-                                <div className="input-box__error">
-                                    This field is required
-                                </div>
+                                <div className="input-box__error">{tCommon('required')}</div>
                             )}
                         </div>
                     </div>
@@ -554,13 +537,13 @@ export const RoomSetting = ({
                         });
                     }}
                 ><CheckBoxIcon variant={roomData.hostCreateSalon ? "active" : "inactive" } className="room-setting__salon-icon"/></button>
-                Only host can create salons
+                {t('hostCreateSalons')}
             </div>
             <SubmitButton
-                label="Change Room Setting"
+                label={t('changeSettings')}
                 onClick={handleRoomSet}
             />
-            <DeleteButton label="Delete This Room" onClick={onDeleteRoom} />
+            <DeleteButton label={t('deleteRoom')} onClick={onDeleteRoom} />
             </div>
         </div>
     )

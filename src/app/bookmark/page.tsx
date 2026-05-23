@@ -64,8 +64,6 @@ export default function Page() {
         <div className="bookmark-page">
             <div className="bookmark-page__sticky">
                 <HeadBar
-                    onReload={() => {}}
-                    onSearch={() => {}}
                     onSideMenu={openSideMenu}
                 />
             </div>

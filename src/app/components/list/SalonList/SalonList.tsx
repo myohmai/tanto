@@ -75,7 +75,7 @@ export const SalonList = ({
             )}
             {salons.length === 0 && !isLoading && (
                 <div className="salon-list__empty">
-                    <div>No posts yet</div>
+                    <div>No salons yet</div>
 
                     {onRefresh && (
                         <button

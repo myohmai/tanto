@@ -7,6 +7,7 @@ type Props = {
     currentUserId: string;
     onAccept: (requestId: string) => void;
     onReject: (requestId: string) => void;
+    onDelete?: (requestId: string) => void;
     isLoading?: boolean;
 };
 
@@ -15,6 +16,7 @@ export const TurnTablePendingList = ({
     currentUserId,
     onAccept,
     onReject,
+    onDelete,
     isLoading,
 }: Props) => {
     if (isLoading) {
@@ -34,6 +36,7 @@ export const TurnTablePendingList = ({
                     hasVoted={req.votes.some(v => v.userId === currentUserId)}
                     onAccept={() => onAccept(req.id)}
                     onReject={() => onReject(req.id)}
+                    onDelete={onDelete ? () => onDelete(req.id) : undefined}
                 />
             ))}
         </div>

@@ -1,4 +1,5 @@
 import { RoomCard } from "@/app/components/card/RoomCard";
+import { getRoomSubIcon } from "@/app/logic/room/roomSubIcon";
 
 import type { RoomData, UserRoomData } from "@/app/types";
 
@@ -70,7 +71,8 @@ export const RoomList = ({
                     <RoomCard
                         key={room.roomId}
                         room={{
-                            iconUrl: room.roomIconUrl
+                            iconUrl: room.roomIconUrl,
+                            subIcon: getRoomSubIcon(room, rooms),
                         }}
                         user={{
                             iconUrl: displayUser?.iconUrl ?? undefined,
@@ -84,6 +86,7 @@ export const RoomList = ({
                         glossCount={room.glossCount}
                         latestImages={room.latestImages}
                         isInDashboard={scope === 'dashboard'}
+                        isOpenRoom={room.isOpenRoom}
                     />
                 );
             })}
@@ -95,7 +98,7 @@ export const RoomList = ({
             )}
             {rooms.length === 0 && !isLoading && (
                 <div className="room-list__empty">
-                    <div>No posts yet</div>
+                    <div>No rooms yet</div>
 
                     {onRefresh && (
                         <button

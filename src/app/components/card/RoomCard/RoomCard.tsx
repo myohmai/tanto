@@ -22,6 +22,7 @@ type Props = {
     glossCount: number | undefined;
     latestImages?: string[];
     isInDashboard: boolean;
+    isOpenRoom?: boolean;
 }
 
 export const RoomCard = ({
@@ -34,7 +35,8 @@ export const RoomCard = ({
     latestPostedAt,
     glossCount,
     latestImages,
-    isInDashboard
+    isInDashboard,
+    isOpenRoom,
 }: Props ) => {
      // Date caluculate
 
@@ -92,7 +94,10 @@ export const RoomCard = ({
                 <div className="room-card__room-info inline-sm">
                     <RoomCustomIcon roomIconUrl={room.iconUrl} subIcon={room.subIcon} className="room-card__room-icon" />
                     <div className="room-card__room-info-container stack-xs">
-                        <span className="room-card__room-name">{roomName}</span>
+                        <div className="room-card__name-row">
+                            <span className="room-card__room-name">{roomName}</span>
+                            {isOpenRoom && <span className="room-card__open-badge">OPEN</span>}
+                        </div>
                         <div className="room-card__inner-container inline-sm">
                             <span className="room-card__count">
                                 {glossCount !== undefined ? formatGlossCount(glossCount) : '0'} Glosses

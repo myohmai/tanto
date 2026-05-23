@@ -1,2 +1,2 @@
 export { Notification } from "./Notification";
-export type { NotificationType, NotificationMessage } from "./Notification";
+export type { NotificationType } from "./Notification";

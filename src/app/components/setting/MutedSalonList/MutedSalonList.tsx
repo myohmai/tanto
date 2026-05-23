@@ -5,6 +5,7 @@ import { SettingTopBar } from '@/app/components/setting/SettingTopBar';
 import { MuteIcon, CancelIcon, FondIcon } from '@/app/components/icons';
 import { getMutedSalons, deleteMuteById, type MutedSalon } from '@/repositories/mute';
 import { getCurrentUserId } from '@/repositories/currentUser';
+import { useTranslations } from 'next-intl';
 
 import './MutedSalonList.scss';
 
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export const MutedSalonList = ({ onBack }: Props) => {
+    const t = useTranslations('settings');
     const [mutes, setMutes] = useState<MutedSalon[]>([]);
 
     useEffect(() => {
@@ -32,14 +34,14 @@ export const MutedSalonList = ({ onBack }: Props) => {
     return (
         <div className="muted-salon-list bg-color-primary">
             <SettingTopBar
-                title="Muted Salons"
+                title={t('mutedSalons')}
                 icon={<MuteIcon className="icon-color-primary" />}
                 onBack={onBack}
             />
 
             {mutes.length === 0 ? (
                 <div className="muted-salon-list__empty text-color-secondary">
-                    No muted salons
+                    {t('noMutedSalons')}
                 </div>
             ) : (
                 <ul className="muted-salon-list__items">
@@ -74,7 +76,7 @@ export const MutedSalonList = ({ onBack }: Props) => {
                                 type="button"
                                 className="muted-salon-list__unmute"
                                 onClick={() => handleUnmute(mute.id)}
-                                aria-label="Unmute"
+                                aria-label={t('mutedSalons')}
                             >
                                 <CancelIcon className="icon-color-secondary" />
                             </button>

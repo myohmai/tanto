@@ -10,7 +10,7 @@ import { GlossList } from "@/app/components/list/GlossList";
 import { getRooms } from "@/repositories/room";
 import { getGlossesByIds } from "@/repositories/gloss";
 import { getFondsByUser, toggleFond, getAllFonds } from "@/repositories/fond";
-import { getUserRoomData } from "@/repositories/userRoom";
+import { getUserRoomsByUser } from "@/repositories/userRoom";
 import { toggleBlock, getBlocksByUser } from "@/repositories/block";
 import { getCurrentUserId } from "@/repositories/currentUser";
 import { canAccessRoom } from "@/app/logic/room/roomAccess";
@@ -47,19 +47,24 @@ export default function Page() {
             const uid = await getCurrentUserId();
             setUserId(uid);
 
-            const [glosses, rooms, users, fonds, blocks] = await Promise.all([
+            const [glosses, rooms, users, fonds] = await Promise.all([
                 loadFondedGlosses(uid),
                 getRooms(),
-                getUserRoomData(uid, ""),
+                getUserRoomsByUser(uid),
                 getAllFonds(),
-                getBlocksByUser(uid),
             ]);
 
             setGlossData(glosses);
             setRooms(rooms);
             setUsers(users);
             setFonds(fonds);
-            setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
+
+            try {
+                const blocks = await getBlocksByUser(uid);
+                setBlockedUserIds(new Set(blocks.map((b: { targetUserId: string }) => b.targetUserId)));
+            } catch {
+                // blocks column may not exist yet
+            }
 
             const [entities, userRoomEntities, userDisInterests] = await Promise.all([
                 getEntities(),
@@ -83,7 +88,7 @@ export default function Page() {
     };
 
     const handleBlock = async (targetUserId: string) => {
-        await toggleBlock(targetUserId, userId);
+        await toggleBlock({ userId, targetUserId });
         const glosses = await loadFondedGlosses(userId);
         setGlossData(glosses);
     };
@@ -131,8 +136,6 @@ export default function Page() {
         <div className="fond-page">
             <div className="fond-page__sticky">
                 <HeadBar
-                    onReload={() => {}}
-                    onSearch={() => {}}
                     onSideMenu={openSideMenu}
                 />
             </div>

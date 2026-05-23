@@ -35,12 +35,20 @@
         left: 8px;
         width: 32px;
         height: 32px;
-        border-radius: $radius-sm;
-    }
+        border-radius: $radius-full;
+        
 
-    &__icon-img {
-        width: 32px;
-        height: 32px;
+        .custom-icon__wrapper,
+        .custom-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: $radius-full;
+            border: none;
+        }
+
+        .custom-icon img {
+            border-radius: $radius-full;
+        }
     }
 
     &__icon-placeholder {

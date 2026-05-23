@@ -3,6 +3,7 @@ import { BottomSheet } from "@/app/components/menu/BottomSheet";
 import { LinkIcon } from "@/app/components/icons";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
 
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 import './MediaEmbedForm.scss'
@@ -14,6 +15,7 @@ type Props = {
 }
 
 export const MediaEmbedForm = ({ onSubmit, isOpen, onClose } : Props) => {
+    const t = useTranslations('media');
     const [value, setValue] = useState('')
     const [error,setError] = useState('')
 
@@ -44,13 +46,13 @@ export const MediaEmbedForm = ({ onSubmit, isOpen, onClose } : Props) => {
             <div className="media-embed-form__container stack-md">
                 <div className="media-embed-form__title inline-sm text-color-primary">
                     <LinkIcon className="media-embed-form__icon icon-color-primary" />
-                    <span>Add URL</span>
+                    <span>{t('addUrl')}</span>
                 </div>
                 <div className="input-box">
                     <input
                         type="url"
                         required
-                        placeholder="https://" 
+                        placeholder="https://"
                         className="media-embed-form__text-area padding-sm-md text-color-primary bg-color-primary"
                         value={value}
                         onChange={(e) => {
@@ -62,8 +64,7 @@ export const MediaEmbedForm = ({ onSubmit, isOpen, onClose } : Props) => {
                                 return
                             }
                             if (!validUrl(next)) {
-                                // setError('Please enter a valid URL')
-                                setError('Only YouTube / Apple Music / Spotify links allowed')
+                                setError(t('urlNotAllowed'))
                                 return
                             }
                             setError('')
@@ -73,7 +74,7 @@ export const MediaEmbedForm = ({ onSubmit, isOpen, onClose } : Props) => {
                 </div>
             </div>
             <SubmitButton
-                label="Submit"
+                label={t('submit')}
                 onClick={() => {
                     if (!value || error) return;
                     onSubmit(value);

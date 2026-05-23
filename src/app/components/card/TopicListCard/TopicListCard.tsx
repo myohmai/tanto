@@ -36,7 +36,7 @@ export const TopicListCard = ({
     const [isOpen, setIsOpen] = useState(false);
         // Date caluculate
 
-    const formatPostedAt = (postedAt: string, lang: 'ja' | 'en' = 'ja') => {
+    const formatPostedAt = (postedAt: string, lang: Lang = 'ja') => {
         const now = new Date();
         const date = new Date(postedAt);
         const diffMs = now.getTime() - date.getTime();
@@ -46,28 +46,32 @@ export const TopicListCard = ({
         const day = 24 * hour;
 
         if (diffMs < minute) {
-            return lang === 'ja' ? '今' : 'now';
+            return lang === 'ja' ? '今' : lang === 'ko' ? '지금' : 'now';
         }
 
         if (diffMs < hour) {
             const mins = Math.floor(diffMs / minute);
-            return lang === 'ja' ? `${mins}分前` : `${mins}m ago`;
+            return lang === 'ja' ? `${mins}分前` : lang === 'ko' ? `${mins}분 전` : `${mins}m ago`;
         }
 
         if (diffMs < day) {
             const hours = Math.floor(diffMs / hour);
-            return lang === 'ja' ? `${hours}時間前` : `${hours}h ago`;
+            return lang === 'ja' ? `${hours}時間前` : lang === 'ko' ? `${hours}시간 전` : `${hours}h ago`;
         }
 
         if (diffMs < day * 7) {
             const days = Math.floor(diffMs / day);
             return lang === 'ja'
-            ? days === 1 ? '1日前' : `${days}日前`
-            : days === 1 ? '1 day ago' : `${days} days ago`;
+                ? `${days}日前`
+                : lang === 'ko'
+                ? `${days}일 전`
+                : days === 1 ? '1 day ago' : `${days} days ago`;
         }
 
         return lang === 'ja'
             ? date.toLocaleDateString('ja-JP')
+            : lang === 'ko'
+            ? date.toLocaleDateString('ko-KR')
             : date.toLocaleDateString('en-US');
     };
     return (

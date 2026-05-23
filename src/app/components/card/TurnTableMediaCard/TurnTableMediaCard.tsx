@@ -1,6 +1,6 @@
 import { MediaPlayButton } from "@/app/components/buttons/MediaPlayButton";
 import { MediaSound } from "@/app/components/buttons/MediaSound";
-import { LocationIcon } from "@/app/components/icons";
+import { LocationIcon, TrashIcon } from "@/app/components/icons";
 import { PulldownArrow } from "@/app/components/buttons/PulldownArrow";
 import { SeeAlso } from "@/app/components/media/SeeAlso";
 
@@ -15,6 +15,7 @@ type Props = {
     turntableData: TurnTableData;
     hasSeeAlso?: Boolean;
     onSeeAlso?: () => void;
+    onDelete?: () => void;
     primaryService: MusicService;
     service: {
         onYoutube: () => void;
@@ -32,6 +33,7 @@ export const TurnTableMediaCard = ({
     turntableData,
     hasSeeAlso,
     onSeeAlso,
+    onDelete,
     primaryService,
     service,
     isPaused,
@@ -44,7 +46,9 @@ export const TurnTableMediaCard = ({
     const [isOpen, setIsOpen] = useState(false)
     return(
         <div className="turn-table-media-card bg-color-primary padding-lg stack-sm">
-            <img src={turntableData.music?.cover} className="turn-table-media-card__cover" />
+            {turntableData.music?.cover && (
+                <img src={turntableData.music.cover} className="turn-table-media-card__cover" />
+            )}
             <div className="turn-table-media-card__info text-color-primary stack-xs">
                 <div className="turn-table-media-card__song-name">{turntableData.music?.title}</div>
                 <div className="turn-table-media-card__artist-name">{turntableData.music?.artist}</div>
@@ -80,6 +84,11 @@ export const TurnTableMediaCard = ({
                     </div>
                 </div>
                 {hasSeeAlso && (<SeeAlso onClick={onSeeAlso!} />)}
+                    {onDelete && (
+                        <button type="button" onClick={onDelete} className="icon-color-secondary">
+                            <TrashIcon />
+                        </button>
+                    )}
             </div>
         </div>
     )

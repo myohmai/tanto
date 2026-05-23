@@ -20,10 +20,8 @@ export const OnboardRoomCard = ({ roomName, iconUrl, subIcon, bannerUrl, joined,
                     : <div className="onboard-room-card__banner-placeholder" />
                 }
                 <div className="onboard-room-card__icon">
-                    {iconUrl
-                        ? <RoomCustomIcon roomIconUrl={iconUrl} subIcon={subIcon} className="onboard-room-card__icon-img" />
-                        : <div className="onboard-room-card__icon-placeholder" />
-                    }
+                    <RoomCustomIcon roomIconUrl={iconUrl} subIcon={subIcon} />
+    
                 </div>
             </div>
             <div className="onboard-room-card__body">

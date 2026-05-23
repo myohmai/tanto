@@ -108,3 +108,25 @@ export const submitVote = async (requestId: string, userId: string, approved: bo
 
     if (error) throw error;
 };
+
+export const getMyFailedSongRequests = async (roomId: string, userId: string): Promise<SongRequest[]> => {
+    const { data, error } = await supabase
+        .from('song_requests')
+        .select('*')
+        .eq('room_id', roomId)
+        .eq('requested_by', userId)
+        .in('status', ['rejected', 'timeout'])
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return (data as SongRequestRow[]).map(toSongRequest);
+};
+
+export const deleteSongRequest = async (id: string): Promise<void> => {
+    const { error } = await supabase
+        .from('song_requests')
+        .delete()
+        .eq('id', id);
+
+    if (error) throw error;
+};

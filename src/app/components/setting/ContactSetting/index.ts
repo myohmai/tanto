@@ -1,0 +1,1 @@
+export { ContactSetting } from './ContactSetting';

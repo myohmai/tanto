@@ -6,6 +6,7 @@ import { RoomCustomIcon } from '@/app/components/custom-icon/RoomCustomIcon';
 import { RoomMuteIcon, CancelIcon } from '@/app/components/icons';
 import { getMutedRooms, deleteMuteById, type MutedRoom } from '@/repositories/mute';
 import { getCurrentUserId } from '@/repositories/currentUser';
+import { useTranslations } from 'next-intl';
 
 import './MutedRoomList.scss';
 
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export const MutedRoomList = ({ onBack }: Props) => {
+    const t = useTranslations('settings');
     const [mutes, setMutes] = useState<MutedRoom[]>([]);
 
     useEffect(() => {
@@ -33,14 +35,14 @@ export const MutedRoomList = ({ onBack }: Props) => {
     return (
         <div className="muted-room-list bg-color-primary">
             <SettingTopBar
-                title="Muted Rooms"
+                title={t('mutedRooms')}
                 icon={<RoomMuteIcon className="icon-color-primary" />}
                 onBack={onBack}
             />
 
             {mutes.length === 0 ? (
                 <div className="muted-room-list__empty text-color-secondary">
-                    No muted rooms
+                    {t('noMutedRooms')}
                 </div>
             ) : (
                 <ul className="muted-room-list__items">
@@ -59,7 +61,7 @@ export const MutedRoomList = ({ onBack }: Props) => {
                                 type="button"
                                 className="muted-room-list__unmute"
                                 onClick={() => handleUnmute(mute.id)}
-                                aria-label="Unmute"
+                                aria-label={t('mutedRooms')}
                             >
                                 <CancelIcon className="icon-color-secondary" />
                             </button>

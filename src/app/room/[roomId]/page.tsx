@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, use, useMemo } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import './page.scss'
 
@@ -12,29 +12,26 @@ import { RoomTabBar, TabType } from "@/app/components/bar/RoomTabBar";
 import { GlossList } from "@/app/components/list/GlossList";
 import { SalonList } from "@/app/components/list/SalonList";
 
-import { TurnTableMusicList } from "@/app/components/list/TurnTableMusicList";
 import { TurnTableVideoList } from "@/app/components/list/TurnTableVideoList/TurnTableVideoList";
 
-import {
-    TurnTableMediaTab,
-    TurnTableMediaType,
-} from "@/app/components/bar/TurnTableMediaTab";
 
 import { CreateSalonButton } from "@/app/components/buttons/CreateSalonButton";
 import { AddTurnTableButton } from "@/app/components/buttons/AddTurnTableButton";
+import { AddTurnTable } from "@/app/components/menu/AddTurnTable/AddTurnTable";
 import { CertificationBar } from "@/app/components/bar/CertificationBar";
 
-import { getRooms } from "@/repositories/room";
-import { getTurntables } from "@/repositories/turntable";
+import { getRoomById, addRoomReport, getRooms } from "@/repositories/room";
+import { getRoomSubIcon } from "@/app/logic/room/roomSubIcon";
+import { addGlossReport } from "@/repositories/gloss";
+import { getTurntablesByRoom, addTurntable, deleteTurntable } from "@/repositories/turntable";
 import { getSalons } from "@/repositories/salon";
 import { getProcessedGlosses } from "@/app/logic/gloss/calcGloss";
-import { getUserRoomData, getUserRoomsByUser, getUsersByRoomId } from "@/repositories/userRoom";
+import { getUserRoomData } from "@/repositories/userRoom";
 import { toggleFond,  getAllFonds } from "@/repositories/fond";
 import { toggleBlock, getBlocksByUser } from "@/repositories/block";
 import { toggleMute, getMutesByUser  } from "@/repositories/mute";
 import { getCurrentUserId } from "@/repositories/currentUser";
 
-import { calcRoomMeta } from "@/app/logic/room/calcMeta";
 import { calcSalonMeta } from "@/app/logic/salon/calcMeta";
 
 import { canAccessRoom } from "@/app/logic/room/roomAccess";
@@ -47,6 +44,8 @@ import { getEntities } from "@/repositories/entity";
 import { getUserDisInterestsByUser } from "@/repositories/userDisInterest";
 import { calcNotification, type NotificationResult } from "@/app/logic/report/calcNotification";
 import { getPendingCount } from "@/repositories/songRequest";
+import { isAdmin } from "@/lib/adminAuth";
+import { useTranslations } from 'next-intl';
 
 import type { Entity, UserRoomEntity, UserDisInterest } from "@/app/types/entity";
 import type { Report } from "@/app/types/report";
@@ -56,12 +55,16 @@ import { GlossData, SalonData, type RoomData, type TurnTableData, type UserRoomD
 export default function Page({ params }: { params: Promise<{ roomId: string }> }) {
     const { roomId } = use(params);
     const router = useRouter();
+    const t = useTranslations('room');
     const [userId, setUserId] = useState<string | null>(null);
+    const [isAdminUser, setIsAdminUser] = useState(false);
     useEffect(() => {
         getCurrentUserId().then(setUserId);
+        isAdmin().then(setIsAdminUser);
     }, []);
     
     const [roomData, setRoomData] = useState<RoomData | null>(null);
+    const [allRooms, setAllRooms] = useState<RoomData[]>([]);
 
     const [turntableData, setTurntableData] =
         useState<TurnTableData[]>([]);
@@ -71,8 +74,6 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
     const [glossData, setGlossData] = useState<GlossData[]>([]);
     const [glossUsers, setGlossUsers] = useState<UserRoomData[]>([]);
 
-    const [allRooms, setAllRooms] = useState<RoomData[]>([]);
-    const [userRooms, setUserRooms] = useState<UserRoomData[]>([]);
 
     const [fonds, setFonds] = useState<Fond[]>([]);
     const [entities, setEntities] = useState<Entity[]>([]);
@@ -104,8 +105,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
     const [selectedTab, setSelectedTab] =
         useState<TabType>("Gloss");
 
-    const [selectMediaTab, setSelectMediaTab] =
-        useState<TurnTableMediaType>("Music");
+    const [isAddTurnTableOpen, setIsAddTurnTableOpen] = useState(false);
         
 
     const isPressed = (glossId: string) =>
@@ -113,20 +113,21 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
             f => f.glossId === glossId && f.userId === userId
         );
 
-    const handleReport = (glossId: string, report: Report) => {
+    const handleReport = async (glossId: string, report: Report) => {
+        await addGlossReport(glossId, { ...report, reporterId: userId ?? report.reporterId });
         setGlossData(prev =>
             prev.map(gloss =>
                 gloss.glossId === glossId
-                    ? {
-                        ...gloss,
-                        reports: [
-                            ...(gloss.reports ?? []),
-                            report,
-                        ],
-                    }
+                    ? { ...gloss, reports: [...(gloss.reports ?? []), report] }
                     : gloss
             )
         );
+    };
+
+    const handleRoomReport = async (report: Report) => {
+        if (!roomData) return;
+        await addRoomReport(roomId, report);
+        setRoomData(prev => prev ? { ...prev, reports: [...prev.reports, report] } : prev);
     };
     const handleBlock = async (targetId: string) => {
         if (!userId) return;
@@ -161,21 +162,24 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
         }
     };
     useEffect(() => {
-        getRooms().then((rooms) => {
-            const room = rooms.find((room) => room.roomId === roomId);
-            setRoomData(room ?? null);
+        getRoomById(roomId).then((room) => {
+            setRoomData(room);
+        }).catch((e) => {
+            console.error('Failed to load room:', e);
         });
     }, [roomId]);
 
     useEffect(() => {
-        getTurntables().then((turntables) => {
-            setTurntableData(turntables.filter((turntable) => turntable.roomId === roomId));
-        });
+        getRooms().then(setAllRooms);
+    }, []);
+
+    useEffect(() => {
+        getTurntablesByRoom(roomId).then(setTurntableData);
     }, [roomId]);
 
     useEffect(() => {
         if (!roomData || roomData.roomHost) return;
-        getPendingCount(roomId).then(setPendingCount);
+        getPendingCount(roomId).then(setPendingCount).catch(() => {});
     }, [roomId, roomData]);
 
     useEffect(() => {
@@ -212,26 +216,6 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
         isJoined(roomId, userId).then(setIsEntered);
     }, [roomId, userId, roomData]);
 
-    useEffect(() => {
-        const load = async () => {
-            const uid = await getCurrentUserId();
-
-            const [rooms, glosses, userRooms] = await Promise.all([
-                getRooms(),
-                getProcessedGlosses(),
-                getUserRoomsByUser(uid),
-            ]);
-
-            const enriched = calcRoomMeta(rooms, glosses, userRooms);
-
-            setAllRooms(enriched);
-
-            const current = enriched.find(r => r.roomId === roomId);
-            setRoomData(current ?? null);
-        };
-
-        load();
-    }, [roomId]);
 
     useEffect(() => {
         const load = async () => {
@@ -301,6 +285,19 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
         load();
     }, [userId]);
 
+    const roomNotification = useMemo((): NotificationResult | null => {
+        if (!roomData?.reports?.length) return null;
+        return calcNotification({
+            reports: roomData.reports,
+            roomId: roomData.roomId,
+            authorId: roomData.roomHost?.userId ?? "",
+            roomEntityIds: roomData.entityIds,
+            entities,
+            userRoomEntities,
+            userDisInterests,
+        });
+    }, [roomData, entities, userRoomEntities, userDisInterests]);
+
     const glossNotifications = useMemo((): Record<string, NotificationResult | null> => {
         if (!roomData) return {};
         return Object.fromEntries(
@@ -341,10 +338,12 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
         <div className="room-top">
                 <RoomInfo
                     roomData={roomData}
-                    subIcon={undefined}
+                    subIcon={getRoomSubIcon(roomData, allRooms)}
                     onSearch={() => {}}
                     onEdit={
-                        () => router.push(`/room/${roomId}/edit`)
+                        () => roomData.isOpenRoom
+                            ? router.push(`/admin/room/${roomId}/edit`)
+                            : router.push(`/room/${roomId}/edit`)
                     }
                     onEnter={handleEnter}
                     isEntered={isEntered}
@@ -358,7 +357,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                         const glosses = await getProcessedGlosses();
                         setGlossData(glosses.filter(g => g.roomId === roomId));
                     }}
-                    onSelect={() => {}}
+                    onSelect={handleRoomReport}
+                    notification={roomNotification}
                     isOwn={roomData?.roomHost?.userId === userId}
                     isMuted={mutedRoomIds.has(roomId)}
                 />
@@ -382,7 +382,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
 
             {roomData.roomVisibility === "private" && !isEntered ? (
                 <div className="room-top__private text-color-secondary">
-                    This room is private
+                    {t('privateMessage')}
                 </div>
             ) : (
                 <>
@@ -394,7 +394,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                                 user={users}
                                 room={{
                                     iconUrl: roomData.roomIconUrl,
-                                    subIcon: undefined,
+                                    subIcon: getRoomSubIcon(roomData, allRooms),
                                 }}
                                 action={{
                                     onRoom: (glossData) => router.push(`/room/${glossData.roomId}`),
@@ -443,7 +443,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                                 salons={salonData}
                                 onClick={(salon) =>
                                     router.push(`/room/${roomData.roomId}/salon/${salon.salonId}`)}/>
-                            {isEntered && (!roomData.hostCreateSalon || roomData.roomHost?.userId === userId) && (
+                            {isEntered && (roomData.isOpenRoom || !roomData.hostCreateSalon || roomData.roomHost?.userId === userId) && (
                                 <CreateSalonButton
                                     onClick={() => router.push(`/room/${roomId}/salon/new`)}
                                 />
@@ -460,26 +460,30 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                                 />
                             )}
 
-                            <TurnTableMediaTab
-                                selectedTab={selectMediaTab}
-                                onChange={(value) => setSelectMediaTab(value)}
+                            <TurnTableVideoList
+                                turntables={turntableData}
+                                onSeeAlso={(id) => router.push(`/turntable/${id}/rooms`)}
+                                onDelete={(roomData?.roomHost?.userId === userId || (roomData?.isOpenRoom && isAdminUser)) ? async (id) => {
+                                    await deleteTurntable(id);
+                                    setTurntableData(prev => prev.filter(t => t.id !== id));
+                                    router.refresh();
+                                } : undefined}
                             />
 
-                            {selectMediaTab === "Music" && (
-                                <TurnTableMusicList
-                                    turntables={turntableData}
-                                />
-                            )}
-
-                            {selectMediaTab === "Video" && (
-                                <TurnTableVideoList
-                                    turntables={turntableData}
-                                />
-                            )}
-
                             {isEntered && (!roomData.roomHost || roomData.roomHost.userId === userId) && (
-                                <AddTurnTableButton onClick={() => {}} />
+                                <AddTurnTableButton onClick={() => setIsAddTurnTableOpen(true)} />
                             )}
+
+                            <AddTurnTable
+                                roomId={roomId}
+                                isOpen={isAddTurnTableOpen}
+                                onClose={() => setIsAddTurnTableOpen(false)}
+                                onSubmit={async (data) => {
+                                    await addTurntable(data);
+                                    setIsAddTurnTableOpen(false);
+                                    getTurntablesByRoom(roomId).then(setTurntableData);
+                                }}
+                            />
                         </div>
                     )}
                 </>

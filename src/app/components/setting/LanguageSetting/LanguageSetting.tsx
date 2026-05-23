@@ -1,5 +1,10 @@
+"use client";
+
 import { SettingTopBar } from "@/app/components/setting/SettingTopBar";
 import { SettingSelect } from "@/app/components/setting/SettingSelect";
+import { setLocale } from "@/app/actions/locale";
+import { useLocale, useTranslations } from "next-intl";
+import type { Locale } from "@/i18n/request";
 
 import { useState } from "react";
 
@@ -7,37 +12,42 @@ import './LanguageSetting.scss'
 
 type Props = {
     onBack: () => void;
-    onTheme: (value: string) => void;
 }
 
-export const LanguageSetting = ({ onBack, onTheme }: Props) => {
-    const [selected, setSelected] = useState<string | null>(null);
+const LOCALES: { value: Locale; label: string }[] = [
+    { value: "en", label: "English" },
+    { value: "ja", label: "日本語" },
+    { value: "ko", label: "한국어" },
+];
 
-    const select = (value: string) => {
-        setSelected(value);
-        onTheme(value);
+export const LanguageSetting = ({ onBack }: Props) => {
+    const t = useTranslations("language");
+    const currentLocale = useLocale() as Locale;
+    const [selected, setSelected] = useState<Locale>(currentLocale);
+
+    const handleSelect = async (locale: Locale) => {
+        setSelected(locale);
+        await setLocale(locale);
+        window.location.reload();
     };
 
     return (
         <div className="language-setting bg-color-primary">
             <SettingTopBar
-                title="Language"
+                title={t("label")}
                 onBack={onBack}
             />
             <div className="language-setting__wrapper">
-                <SettingSelect
-                    label="English"
-                    value="English"
-                    isSelected={selected === 'English'}
-                    onSelect={() => select('English')}
-                />
-                <SettingSelect
-                    label="Japanese"
-                    value="Japanese"
-                    isSelected={selected === 'Japanese'}
-                    onSelect={() => select('Japanese')}
-                />
+                {LOCALES.map(({ value, label }) => (
+                    <SettingSelect
+                        key={value}
+                        label={label}
+                        value={value}
+                        isSelected={selected === value}
+                        onSelect={() => handleSelect(value)}
+                    />
+                ))}
             </div>
         </div>
-    )
-}
+    );
+};

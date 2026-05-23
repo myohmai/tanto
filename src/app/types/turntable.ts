@@ -17,7 +17,7 @@ export type TurnTableData = {
     music?: {
         title: string;
         artist: string;
-        cover: string;
+        cover: string | null;
         service: MusicService;
         url: string;
     };

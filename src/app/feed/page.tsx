@@ -10,13 +10,14 @@ import { GlossList } from "@/app/components/list/GlossList";
 
 import { getRooms } from "@/repositories/room";
 import { getProcessedGlosses } from "@/app/logic/gloss/calcGloss";
-import { getUserRoomData } from "@/repositories/userRoom";
+import { getUserRoomsByUser } from "@/repositories/userRoom";
 import { toggleFond,  getAllFonds } from "@/repositories/fond";
 import { toggleBlock, getBlocksByUser } from "@/repositories/block";
 import { getMutesByUser } from "@/repositories/mute";
 import { getCurrentUserId } from "@/repositories/currentUser";
 
 import { canAccessRoom } from "@/app/logic/room/roomAccess";
+import { getRoomSubIcon } from "@/app/logic/room/roomSubIcon";
 import { getEntities } from "@/repositories/entity";
 import { getUserRoomEntitiesByUser } from "@/repositories/userRoomEntity";
 import { getUserDisInterestsByUser } from "@/repositories/userDisInterest";
@@ -60,7 +61,7 @@ export default function Page() {
         });
     };
     const handleBlock = async (targetUserId: string) => {
-        await toggleBlock(targetUserId, userId);
+        await toggleBlock({ userId, targetUserId });
 
         const glosses = await getProcessedGlosses();
         setGlossData(glosses);
@@ -85,7 +86,7 @@ export default function Page() {
                     getProcessedGlosses(),
                     getMutesByUser(uid),
                     getRooms(),
-                    getUserRoomData(uid, ""),
+                    getUserRoomsByUser(uid),
                     getAllFonds(),
                     getBlocksByUser(uid),
                 ]);
@@ -150,8 +151,6 @@ export default function Page() {
         <div className="feed">
             <div className="feed__sticky">
                 <HeadBar
-                    onReload={() => {}}
-                    onSearch={() => {}}
                     onSideMenu={openSideMenu}
                 />
             </div>
@@ -162,7 +161,7 @@ export default function Page() {
                 room={rooms.map((room) => ({
                     roomId: room.roomId,
                     iconUrl: room.roomIconUrl,
-                    subIcon: undefined,
+                    subIcon: getRoomSubIcon(room, rooms),
                 }))}
                 action={{
                             onRoom: (glossData) => router.push(`/room/${glossData.roomId}`),

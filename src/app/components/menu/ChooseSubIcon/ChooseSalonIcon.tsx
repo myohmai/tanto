@@ -1,9 +1,9 @@
 'use client';
 
-import { FondIcon, BiasColor } from '@/app/components/icons'
+import { FondIcon } from '@/app/components/icons'
 import { SubmitButton } from '@/app/components/buttons/SubmitButton'
 import { BottomSheet } from '@/app/components/menu/BottomSheet' 
-import { SalonIcon } from '@/app/components/card/SalonCard';
+import type { SalonIcon } from '@/app/types/salon';
 
 import { useState } from 'react';
 

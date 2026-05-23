@@ -57,3 +57,34 @@ export const deleteTurntable = async (id: string) => {
 
     if (error) throw error;
 };
+
+export const getTurntableById = async (id: string): Promise<TurnTableData | null> => {
+    const { data, error } = await supabase
+        .from('turntables')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) return null;
+    return toTurnTableData(data as TurntableRow);
+};
+
+export const getRoomIdsByVideoId = async (videoId: string): Promise<string[]> => {
+    const { data, error } = await supabase
+        .from('turntables')
+        .select('room_id')
+        .filter('video->>videoId', 'eq', videoId);
+
+    if (error) throw error;
+    return [...new Set((data as { room_id: string }[]).map(r => r.room_id))];
+};
+
+export const getRoomIdsByMusicUrl = async (url: string): Promise<string[]> => {
+    const { data, error } = await supabase
+        .from('turntables')
+        .select('room_id')
+        .filter('music->>url', 'eq', url);
+
+    if (error) throw error;
+    return [...new Set((data as { room_id: string }[]).map(r => r.room_id))];
+};

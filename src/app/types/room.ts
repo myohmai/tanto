@@ -41,6 +41,7 @@ export type RoomData = {
     hostCreateSalon: boolean;
 
     entityIds: string[];
+    isOpenRoom: boolean;
 
     reports: Report[]
 

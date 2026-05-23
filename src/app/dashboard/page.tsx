@@ -121,7 +121,7 @@ export default function Page() {
     }, []);
 
     const handleFond = async (glossId: string) => {
-        await toggleFond(glossId, "currentUser");
+        await toggleFond(glossId, currentUserId ?? await getCurrentUserId());
 
         const [updatedGlosses, newFonds] = await Promise.all([
             getProcessedGlosses(),
@@ -226,8 +226,6 @@ export default function Page() {
         <div className="dashboard">
             <div className="dashboard__sticky">
                 <HeadBar
-                    onReload={() => {}}
-                    onSearch={() => {}}
                     onSideMenu={openSideMenu}
                 />
             </div>

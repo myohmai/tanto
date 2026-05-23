@@ -1,7 +1,9 @@
+'use client';
 import { SettingTopBar } from "@/app/components/setting/SettingTopBar";
 import { AccountIcon } from "@/app/components/icons";
 import { SettingListSecondary } from "@/app/components/setting/SettingListSecondary";
 import { DeleteButton } from "@/app/components/buttons/DeleteButton";
+import { useTranslations } from 'next-intl';
 
 import './AcountSetting.scss'
 
@@ -10,7 +12,7 @@ type Props = {
     onEmail: () => void;
     recentEmail: string;
     onPassword: () => void;
-    onConnected: ()=> void;
+    onConnected: () => void;
     connectedAccount: string;
     onLangage: () => void;
     recentLangage: string;
@@ -18,39 +20,38 @@ type Props = {
 }
 
 export const AccountSetting = ({ onBack, onEmail, recentEmail, onPassword, onConnected, connectedAccount, onLangage, recentLangage, onDelete }: Props) => {
+    const t = useTranslations('settings');
     return (
         <div className="account-setting bg-color-primary">
             <div className="account-setting__wrapper">
                 <SettingTopBar
-                    title="Account"
+                    title={t('account')}
                     icon={<AccountIcon className="icon-color-primary" />}
                     onBack={onBack}
                 />
                 <SettingListSecondary
-                    title="Email"
+                    title={t('email')}
                     text={recentEmail}
                     onClick={onEmail}
                 />
                 <SettingListSecondary
-                    title="Password"
+                    title={t('password')}
                     onClick={onPassword}
                 />
                 <SettingListSecondary
-                    title="Connected"
+                    title={t('connected')}
                     text={connectedAccount}
                     onClick={onConnected}
                 />
                 <SettingListSecondary
-                    title="Language"
+                    title={t('language')}
                     text={recentLangage}
                     onClick={onLangage}
                 />
-
             </div>
             <div className="account-setting__delete">
-                <DeleteButton label="Delete Account" onClick={onDelete} />
+                <DeleteButton label={t('deleteAccount')} onClick={onDelete} />
             </div>
         </div>
-    )
+    );
 }
-    

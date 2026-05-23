@@ -1,17 +1,19 @@
 import { RoomCustomIcon, RoomCustomIconProps } from "@/app/components/custom-icon/RoomCustomIcon";
-import { FondLevel } from "@/app/components/icons"; 
+import { FondLevel } from "@/app/components/icons";
 import { RoomUtilityContainer } from "@/app/components/container/RoomUtilityContainer";
 import { RoomEnterButton  } from "@/app/components/buttons/RoomEnterButton";
 import { TagChip } from "@/app/components/tag/TagChip";
 import { HostIcon, LockIcon, CancelIcon } from "@/app/components/icons";
 import { RoomMenu } from "@/app/components/menu/RoomMenu";
 import { ReportMenu } from "@/app/components/menu/ReportMenu";
+import { Notification } from "@/app/components/evaluation/Notification";
 import type { Report,ReportType } from "@/app/types/report";
-
+import type { NotificationResult } from "@/app/logic/report/calcNotification";
 
 import type { RoomData } from "@/app/types/room";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from 'next-intl';
 
 import './RoomInfo.scss'
 
@@ -28,12 +30,14 @@ type RoomInfoProps = {
     onShare: () => void;
     onMute: () => void;
     onSelect: (reason: Report) => void;
+    notification?: NotificationResult | null;
     isEntered: boolean;
     isOwn?: boolean;
     isMuted: boolean;
 }
 
-export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare, onMute, onSelect, isEntered, isOwn, isMuted }: RoomInfoProps) => {
+export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare, onMute, onSelect, notification, isEntered, isOwn, isMuted }: RoomInfoProps) => {
+    const t = useTranslations('room');
     const [expanded, setExpanded] = useState(false);
     const [overflow, setOverflow] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -91,9 +95,10 @@ export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare
                 <RoomEnterButton isInRoom={false} isEntered={isEntered} onClick={onEnter} className="room-info__enter-button" />
                 <div className="room-info__name inline-sm">
                     <span className="room-info__name--name">{roomData.roomName}</span>
-                    {roomData.roomVisibility === "public" ? <HostIcon size="sm" className="room-info__name--icon icon-color-secondary" /> : ""}
-                    {roomData.roomVisibility === "private" ? <><HostIcon size="sm" className="room-info__name--icon icon-color-secondary" /><LockIcon size="sm" className="room-info__name--icon icon-color-secondary" /></> : ""}
+                    {!roomData.isOpenRoom && roomData.roomVisibility === "public" && <HostIcon size="sm" className="room-info__name--icon icon-color-secondary" />}
+                    {!roomData.isOpenRoom && roomData.roomVisibility === "private" && <><HostIcon size="sm" className="room-info__name--icon icon-color-secondary" /><LockIcon size="sm" className="room-info__name--icon icon-color-secondary" /></>}
                 </div>
+                {notification && <Notification type={notification.notificationType} />}
                 <div className="room-info__information-wrap">
                     <div ref={ref} className={`room-info__information ${expanded ? "is-open" : ""}`}>{roomData.roomInformation}</div>
                     {overflow && !expanded && (<div className="room-info__information--more bg-color-primary">...<button onClick={() => setExpanded(true)}>more</button></div>)}
@@ -107,7 +112,7 @@ export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare
                         className="room-info__rule-button bg-color-secondary padding-xs-md"
                         onClick={() => setRuleOpen(true)}
                     >
-                        Room Rules
+                        {t('rules')}
                     </button>
                     <div className={`room-info__rule-wrapper bg-color-secondary ${ruleOpen ? "is-open" : ""}`}>
                         <button
@@ -125,7 +130,7 @@ export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare
                         <TagChip key={tag} label={tag} />
                     ))}
                 </div>
-                <div className="room-info__members">{formatMemberCount(roomData.roomMemberCount)} gathering here</div>
+                <div className="room-info__members">{formatMemberCount(roomData.roomMemberCount)} {t('gathering')}</div>
             </div>
             <RoomMenu onShare={onShare} onMute={onMute} onReport={() => setReportOpen(true)} onClose={() => setMenuOpen(false)} isOpen={menuOpen} isOwn={isOwn} isMuted={isMuted} />
             <ReportMenu onSelect={handleReport} isOpen={reportOpen} onClose={() => setReportOpen(false)} />

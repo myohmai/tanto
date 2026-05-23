@@ -1,4 +1,4 @@
-import { LocationIcon } from "@/app/components/icons";
+import { LocationIcon, TrashIcon } from "@/app/components/icons";
 import { SeeAlso } from "@/app/components/media/SeeAlso";
 
 import type { TurnTableData } from '@/app/types/turntable';
@@ -10,12 +10,14 @@ type Props = {
     turntableData: TurnTableData;
     hasSeeAlso?: Boolean;
     onSeeAlso?: () => void;
+    onDelete?: () => void;
 }
 
 export const TurnTableVideoCard = ({
     turntableData,
     hasSeeAlso,
     onSeeAlso,
+    onDelete,
 }: Props ) => {
     return(
         <div className="turn-table-video-card bg-color-primary padding-lg stack-sm">
@@ -35,7 +37,14 @@ export const TurnTableVideoCard = ({
                     <LocationIcon className="icon-color-secondary" />
                     <span>YouTube</span>
                 </div>
-                {hasSeeAlso && (<SeeAlso onClick={onSeeAlso!} />)}
+                <div className="turn-table-video-card__actions inline-xs">
+                    {hasSeeAlso && (<SeeAlso onClick={onSeeAlso!} />)}
+                    {onDelete && (
+                        <button type="button" onClick={onDelete} className="icon-color-secondary">
+                            <TrashIcon />
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     )

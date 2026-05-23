@@ -12,6 +12,7 @@ import { nanoid } from "nanoid";
 
 import './TopicBox.scss'
 import { useState, useRef } from "react";
+import { useTranslations } from 'next-intl';
 
 
 type Props = {
@@ -31,6 +32,8 @@ export const TopicBox = ({
     roomId,
     lang
 }: Props ) => {
+    const t = useTranslations('topic');
+    const tGloss = useTranslations('gloss');
     const [previews, setPreview] = useState<MediaItem[]>([]);
     const [mediaType, setMediaType] = useState<MediaLabelType | null>(null);
     const [isLabelOpen, setIsLabelOpen] = useState(false);
@@ -65,7 +68,7 @@ export const TopicBox = ({
 
             topicContent,
 
-            media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
+            media: previews.length > 0 && mediaType ? { source: previews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
 
             postedAt: new Date().toISOString(),
@@ -76,14 +79,14 @@ export const TopicBox = ({
     return(
         <div className="topic-box padding-md stack-lg bg-color-primary text-color-primary">
             <div className="topic-box__input-area-wrapper stack-sm">
-                <div className="topic-box__title">What do you think about this topic ? </div>
-                <div className="topic-box__info">This message is anonymous, but it may be quoted and made public.</div>
+                <div className="topic-box__title">{t('title')}</div>
+                <div className="topic-box__info">{t('anonymous')}</div>
                 <div className="topic-box__input-area padding-md">
                     <textarea
                         ref={textareaRef}
                         id="topic-content"
                         name="content"
-                        placeholder="How are you doing?"
+                        placeholder={t('placeholder')}
                         maxLength={MAX_LENGTH}
                         value={topicContent}
                         className="topic-box__text"
@@ -125,7 +128,7 @@ export const TopicBox = ({
                 onClick={handlePost}
                 disabled={topicContent.trim().length === 0}
                 className="topic-box__whisper padding-sm-md"
-                >Whisper</button>
+                >{tGloss('whisper')}</button>
             <SelectMediaLabel
                 isOpen={isLabelOpen}
                 onClose={() => setIsLabelOpen(false)}

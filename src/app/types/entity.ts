@@ -1,4 +1,5 @@
 export type EntityType = 'external' | 'tag';
+export type ExternalService = 'spotify' | 'youtube' | 'appleMusic';
 
 export type Entity = {
     entityId: string;
@@ -6,6 +7,9 @@ export type Entity = {
     entityType: EntityType;
     canonicalEntityId?: string;
     parentEntityId?: string;
+    externalService?: ExternalService;
+    externalId?: string;
+    thumbnailUrl?: string;
 };
 
 export type UserRoomEntity = {

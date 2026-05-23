@@ -2,10 +2,8 @@ import { EyeIcon } from "@/app/components/icons";
 
 import './PasswordArea.scss'
 
-type PasswordLabel = "Password" | "Confirm"
-
 type Props = {
-    label: PasswordLabel;
+    label: string;
     error?: string;
     isVisible: boolean;
     onVisible: () => void;

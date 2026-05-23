@@ -1,0 +1,105 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.contact-setting {
+    width: 100%;
+    min-height: calc(100dvh - 56px);
+    display: flex;
+    flex-direction: column;
+
+    &__form,
+    &__sent {
+        padding: $spacing-lg;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+    }
+
+    &__sent {
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    &__sent-message {
+        font: $font-500_medium;
+    }
+
+    &__type-group {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    &__types {
+        display: flex;
+        gap: $spacing-sm;
+        flex-wrap: wrap;
+    }
+
+    &__type-btn {
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-full;
+        font: $font-400_regular_sm;
+        border: 1.5px solid var(--border-color-primary);
+        color: var(--text-color-secondary);
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &.active {
+            border-color: $key-color--300;
+            color: $key-color--300;
+            background: rgba($key-color--300, 0.1);
+        }
+    }
+
+    &__field {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+    }
+
+    &__label {
+        font: $font-400_regular_sm;
+    }
+
+    &__input {
+        width: 100%;
+        padding: $spacing-sm $spacing-md;
+        border-radius: $radius-sm;
+        font: $font-400_regular;
+        border: none;
+        outline: none;
+
+        &::placeholder {
+            color: var(--text-color-tertiary);
+        }
+    }
+
+    &__textarea {
+        width: 100%;
+        padding: $spacing-sm $spacing-md;
+        border-radius: $radius-sm;
+        font: $font-400_regular;
+        border: none;
+        outline: none;
+        resize: none;
+        line-height: 1.6;
+
+        &::placeholder {
+            color: var(--text-color-tertiary);
+        }
+    }
+
+    &__count {
+        font: $font-400_regular_xs;
+        text-align: right;
+    }
+
+    &__error {
+        font: $font-400_regular_sm;
+        color: $color-warning--500;
+    }
+}

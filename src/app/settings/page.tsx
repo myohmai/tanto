@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
+import { applyTheme, getSavedTheme } from '@/lib/theme';
 
 import { SettingTop }        from '@/app/components/setting/SettingTop';
 import { AccountSetting }    from '@/app/components/setting/AccountSetting';
@@ -14,19 +16,20 @@ import { MuteBlockSetting }  from '@/app/components/setting/MuteBlockSetting';
 import { MutedRoomList }     from '@/app/components/setting/MutedRoomList';
 import { MutedSalonList }    from '@/app/components/setting/MutedSalonList';
 import { BlockedList }       from '@/app/components/setting/BlockedList';
+import { ContactSetting }    from '@/app/components/setting/ContactSetting';
 
 type SettingView =
     | 'top'
     | 'account' | 'email' | 'password' | 'language'
     | 'theme'
-    | 'muteBlock' | 'mutedRooms' | 'mutedSalons' | 'blockedUsers';
+    | 'muteBlock' | 'mutedRooms' | 'mutedSalons' | 'blockedUsers'
+    | 'contact';
 
 export default function SettingsPage() {
     const router = useRouter();
+    const locale = useLocale();
     const [view, setView] = useState<SettingView>('top');
     const [email, setEmail] = useState('');
-    const [language, setLanguage] = useState('English');
-
     useEffect(() => {
         supabase.auth.getUser().then(({ data }) => {
             setEmail(data.user?.email ?? '');
@@ -50,7 +53,7 @@ export default function SettingsPage() {
     };
 
     const handleTheme = (value: string) => {
-        document.documentElement.classList.toggle('night', value === 'dark');
+        applyTheme(value);
     };
 
     return (
@@ -61,6 +64,7 @@ export default function SettingsPage() {
                     onAccount={() => setView('account')}
                     onTheme={() => setView('theme')}
                     onMute={() => setView('muteBlock')}
+                    onContact={() => setView('contact')}
                     onLogout={handleLogout}
                 />
             )}
@@ -74,7 +78,7 @@ export default function SettingsPage() {
                     onConnected={() => {}}
                     connectedAccount=""
                     onLangage={() => setView('language')}
-                    recentLangage={language}
+                    recentLangage={locale}
                     onDelete={() => {}}
                 />
             )}
@@ -97,10 +101,6 @@ export default function SettingsPage() {
             {view === 'language' && (
                 <LanguageSetting
                     onBack={() => setView('account')}
-                    onTheme={(value) => {
-                        setLanguage(value);
-                        setView('account');
-                    }}
                 />
             )}
 
@@ -108,6 +108,7 @@ export default function SettingsPage() {
                 <ThemeSetting
                     onBack={() => setView('top')}
                     onTheme={handleTheme}
+                    initialTheme={getSavedTheme()}
                 />
             )}
 
@@ -123,6 +124,7 @@ export default function SettingsPage() {
             {view === 'mutedRooms'   && <MutedRoomList  onBack={() => setView('muteBlock')} />}
             {view === 'mutedSalons'  && <MutedSalonList onBack={() => setView('muteBlock')} />}
             {view === 'blockedUsers' && <BlockedList    onBack={() => setView('muteBlock')} />}
+            {view === 'contact'      && <ContactSetting onBack={() => setView('top')} />}
         </div>
     );
 }

@@ -96,6 +96,7 @@ export const postGloss = async (gloss: Omit<GlossData, 'fondCount' | 'replyCount
         revaluation:        gloss.revaluation ?? null,
         posted_at:          gloss.postedAt,
         reply_to_gloss_id:  gloss.replyToGlossId ?? null,
+        user_name:          gloss.userName ?? null,
     });
 
     if (error) throw error;
@@ -120,4 +121,30 @@ export const deleteGloss = async (glossId: string) => {
         .eq('gloss_id', glossId);
 
     if (error) throw error;
+};
+
+export const addGlossReport = async (glossId: string, report: Report): Promise<void> => {
+    const { error } = await supabase
+        .from('gloss_reports')
+        .insert({
+            gloss_id: glossId,
+            reporter_id: report.reporterId,
+            type: report.type,
+            created_at: new Date(report.createdAt).toISOString(),
+        });
+
+    if (error) throw error;
+};
+
+export const getReportedGlosses = async (): Promise<GlossData[]> => {
+    const { data, error } = await supabase
+        .from('gloss_feed')
+        .select('*')
+        .not('reports', 'eq', '[]')
+        .order('posted_at', { ascending: false });
+
+    if (error) throw error;
+    return (data as GlossRow[])
+        .map(toGlossData)
+        .filter(g => (g.reports?.length ?? 0) > 0);
 };

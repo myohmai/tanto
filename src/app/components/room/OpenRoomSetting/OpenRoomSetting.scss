@@ -1,0 +1,113 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.open-room-setting {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &__wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 56px $spacing-md $spacing-xxl;
+    }
+
+    &__icon-row {
+        position: absolute;
+        top: -8px;
+        display: flex;
+        align-items: flex-end;
+        gap: $spacing-lg;
+    }
+
+    &__room-icon {
+        flex: 0 0 auto;
+    }
+
+    &__title {
+        font: $font-700_bold;
+    }
+
+    &__section-label {
+        font: $font-600_semi-bold;
+        margin-bottom: $spacing-xs;
+    }
+
+    &__selected-entity {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        padding: $spacing-sm $spacing-md;
+        border-radius: $radius-md;
+        border: 1px solid var(--accent-color);
+        background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+    }
+
+    &__entity-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: $radius-sm;
+        object-fit: cover;
+        flex: 0 0 auto;
+    }
+
+    &__entity-thumb-placeholder {
+        width: 48px;
+        height: 48px;
+        border-radius: $radius-sm;
+        background: var(--neutral-color-200);
+        flex: 0 0 auto;
+    }
+
+    &__entity-info {
+        flex: 1 1 auto;
+    }
+
+    &__entity-name {
+        font: $font-600_semi-bold;
+    }
+
+    &__entity-service {
+        font: $font-400_regular_xs;
+        color: var(--text-color-secondary);
+        text-transform: capitalize;
+    }
+
+    &__clear-btn {
+        font: $font-400_regular_xs;
+        color: var(--text-color-secondary);
+        padding: $spacing-xs;
+    }
+
+    &__delete-area {
+        padding-top: $spacing-lg;
+        border-top: 1px solid var(--neutral-color-200);
+    }
+
+    &__delete-btn {
+        font: $font-400_regular_sm;
+        color: var(--error-color);
+    }
+
+    &__confirm-row {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        flex-wrap: wrap;
+    }
+
+    &__delete-confirm-btn {
+        font: $font-500_medium_sm;
+        color: #fff;
+        background: var(--error-color);
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-md;
+    }
+
+    &__cancel-btn {
+        font: $font-400_regular_sm;
+        color: var(--text-color-secondary);
+    }
+}

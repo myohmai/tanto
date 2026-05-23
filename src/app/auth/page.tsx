@@ -2,16 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
+import { SubmitButton } from "@/app/components/buttons/SubmitButton/SubmitButton";
 import "./auth.scss";
+import { Logotype } from "../components/logo/logotype";
+
+const TERMS_URL = 'https://www.notion.so/369df9d71ebe80949262dfcd29df09bd';
+const PRIVACY_URL = 'https://www.notion.so/369df9d71ebe80a5b9bdd359d085d43e';
 
 type Mode = "login" | "signup";
 
 export default function AuthPage() {
     const router = useRouter();
+    const t = useTranslations('auth');
     const [mode, setMode] = useState<Mode>("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [agreed, setAgreed] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [done, setDone] = useState(false);
@@ -25,8 +33,7 @@ export default function AuthPage() {
         });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         setError("");
         setLoading(true);
 
@@ -41,7 +48,7 @@ export default function AuthPage() {
                 setDone(true);
             }
         } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : "エラーが発生しました");
+            setError(err instanceof Error ? err.message : t('error'));
         } finally {
             setLoading(false);
         }
@@ -49,13 +56,11 @@ export default function AuthPage() {
 
     if (done) {
         return (
-            <div className="auth-page">
+            <div className="auth-page bg-color-primary text-color-primary">
                 <div className="auth-page__card">
-                    <p className="auth-page__message">
-                        確認メールを送りました。メールのリンクをクリックしてログインしてください。
-                    </p>
+                    <p className="auth-page__message">{t('confirmEmailSent')}</p>
                     <button className="auth-page__toggle" onClick={() => { setDone(false); setMode("login"); }}>
-                        ログインへ戻る
+                        {t('backToLogin')}
                     </button>
                 </div>
             </div>
@@ -63,15 +68,16 @@ export default function AuthPage() {
     }
 
     return (
-        <div className="auth-page">
+        <div className="auth-page bg-color-primary text-color-primary">
             <div className="auth-page__card">
-                <h1 className="auth-page__title">TanTo</h1>
+                <div className="auth-page__title-container"><Logotype className="auth-page__title" /></div>
 
-                <form className="auth-page__form" onSubmit={handleSubmit}>
+
+                <form className="auth-page__form" onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
                     <input
                         className="auth-page__input"
                         type="email"
-                        placeholder="メールアドレス"
+                        placeholder={t('emailPlaceholder')}
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         required
@@ -80,7 +86,7 @@ export default function AuthPage() {
                     <input
                         className="auth-page__input"
                         type="password"
-                        placeholder="パスワード（6文字以上）"
+                        placeholder={t('passwordPlaceholder')}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         required
@@ -89,28 +95,40 @@ export default function AuthPage() {
 
                     {error && <p className="auth-page__error">{error}</p>}
 
-                    <button
-                        className="auth-page__submit"
-                        type="submit"
-                        disabled={loading}
-                    >
-                        {loading ? "..." : mode === "login" ? "ログイン" : "アカウント作成"}
-                    </button>
+                    {mode === 'signup' && (
+                        <label className="auth-page__agree">
+                            <input
+                                type="checkbox"
+                                checked={agreed}
+                                onChange={e => setAgreed(e.target.checked)}
+                            />
+                            <span className="auth-page__agree-text">
+                                {t('agreePrefix') ? <>{t('agreePrefix')}{' '}</> : null}
+                                <a href={TERMS_URL} target="_blank" rel="noopener noreferrer">{t('terms')}</a>
+                                {' '}{t('agreeMid')}{' '}
+                                <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer">{t('privacy')}</a>
+                                {t('agreeSuffix')}
+                            </span>
+                        </label>
+                    )}
+
+                    <SubmitButton
+                        label={loading ? "..." : mode === "login" ? t('login') : t('signup')}
+                        onClick={handleSubmit}
+                        disabled={loading || (mode === 'signup' && !agreed)}
+                    />
                 </form>
 
-                <button
-                    className="auth-page__google"
-                    type="button"
+                <SubmitButton
+                    label={t('googleLogin')}
                     onClick={handleGoogleLogin}
-                >
-                    Googleでログイン
-                </button>
+                />
 
                 <button
                     className="auth-page__toggle"
-                    onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); }}
+                    onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(""); setAgreed(false); }}
                 >
-                    {mode === "login" ? "アカウントをお持ちでない方はこちら" : "ログインへ戻る"}
+                    {mode === "login" ? t('noAccount') : t('backToLogin')}
                 </button>
             </div>
         </div>

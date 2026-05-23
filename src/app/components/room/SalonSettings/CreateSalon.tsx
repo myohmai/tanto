@@ -1,8 +1,10 @@
+"use client";
 import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { EditSalonIconButton } from "@/app/components/buttons/EditSalonIconButton";
 import { ChooseSalonIcon } from "@/app/components/menu/ChooseSubIcon";
 import { FondIcon, CheckBoxIcon } from "@/app/components/icons";
 import { SalonData } from "@/app/types/salon";
+import { useTranslations } from "next-intl";
 
 import { nanoid } from "nanoid";
 
@@ -28,6 +30,8 @@ export const CreateSalon = ({
     onSubmit,
     onCancel
 }: Props) => {
+    const t = useTranslations("salon");
+    const tCommon = useTranslations("common");
     const [salonId] = useState(() => nanoid());
     const [salonData, setSalonData] = useState<SalonData>({
         salonId,
@@ -45,10 +49,10 @@ export const CreateSalon = ({
     return(
         <div className="salon-settings bg-color-primary text-color-primary">
             <div className="salon-settings__title padding-sm-lg">
-                <button type="button" onClick={onCancel} className="salon-settings__cancel">Cancel</button>
-                <span>New Salon</span>
+                <button type="button" onClick={onCancel} className="salon-settings__cancel">{tCommon("cancel")}</button>
+                <span>{t("new")}</span>
             </div>
-            
+
             <div className="salon-settings__room-name">
                 <RoomCustomIcon roomIconUrl={roomIconUrl} />
                 <span>{roomName}</span>
@@ -70,10 +74,10 @@ export const CreateSalon = ({
             </div>
             <div className="input-box">
                 <div className="input-box__container">
-                    <div className="input-box__label">Salon Name</div>
+                    <div className="input-box__label">{t("name")}</div>
                     <input
                         className="input-box__text-box"
-                        placeholder="Salon Name"
+                        placeholder={t("namePlaceholder")}
                         value={salonData.salonName}
                         maxLength={30}
                         onChange={(e) => {
@@ -98,12 +102,12 @@ export const CreateSalon = ({
                     >
                         <CheckBoxIcon variant={salonData.isTopicBox ? "active" : "inactive"} className="salon-settings__check-icon"/>
                     </button>
-                    Set up a TopicBox
+                    {t("topicBox")}
                 </div>
             )}
                 <SubmitButton
-                    label="Create Salon"
-                    disabled={isSalonNameEmpty} 
+                    label={t("create")}
+                    disabled={isSalonNameEmpty}
                     onClick={handleSubmit}
                 />
         </div>

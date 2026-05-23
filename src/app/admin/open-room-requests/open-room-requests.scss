@@ -1,0 +1,137 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.open-room-req {
+    &__header {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+    }
+
+    &__back {
+        font: $font-400_regular_sm;
+        color: var(--text-color-secondary);
+        text-align: left;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    &__tabs {
+        display: flex;
+        gap: $spacing-sm;
+        border-bottom: 1px solid var(--border-color-primary);
+        padding-bottom: $spacing-sm;
+    }
+
+    &__tab {
+        padding: $spacing-xs $spacing-md;
+        font: $font-500_medium_sm;
+        color: var(--text-color-secondary);
+        background: transparent;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -$spacing-sm - 1px;
+
+        &.active {
+            color: $key-color--300;
+            border-bottom-color: $key-color--300;
+        }
+    }
+
+    &__empty {
+        font: $font-400_regular;
+        color: var(--text-color-secondary);
+        text-align: center;
+        padding: $spacing-xxl 0;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    &__item {
+        padding: $spacing-md;
+        border-radius: $radius-md;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    &__item-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: $spacing-sm;
+    }
+
+    &__title {
+        font: $font-600_semi-bold;
+        flex: 1;
+    }
+
+    &__status {
+        font: $font-400_regular_xs;
+        white-space: nowrap;
+
+        &--pending  { color: $color-warning--500; }
+        &--reviewed { color: $key-color--300; }
+        &--resolved { color: $color-success--500; }
+    }
+
+    &__body {
+        font: $font-400_regular_sm;
+        color: var(--text-color-secondary);
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    &__item-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__date {
+        font: $font-400_regular_xs;
+        color: var(--text-color-secondary);
+    }
+
+    &__action-btn {
+        font: $font-400_regular_sm;
+        color: $key-color--300;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    &__room {
+        padding: $spacing-md;
+        border-radius: $radius-md;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__room-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+    }
+
+    &__room-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: $radius-sm;
+        object-fit: cover;
+    }
+
+    &__room-name {
+        font: $font-600_semi-bold;
+    }
+
+    &__room-members {
+        font: $font-400_regular_xs;
+        color: var(--text-color-secondary);
+    }
+}

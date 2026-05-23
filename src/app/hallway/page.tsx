@@ -29,29 +29,33 @@ export default function Page() {
     const enrichedRooms = calcRoomMeta(rooms, glosses, userRooms);
 
     useEffect(() => {
-    const load = async () => {
-        const uid = await getCurrentUserId();
+        const load = async () => {
+            const roomsData = await getRooms();
+            setRooms(roomsData);
 
-        const [roomsData, glossData, userRoomData] = await Promise.all([
-            getRooms(),
-            getProcessedGlosses(),
-            getUserRoomsByUser(uid),
-        ]);
+            try {
+                const glossData = await getProcessedGlosses();
+                setGlosses(glossData);
+            } catch (e) {
+                console.error('hallway gloss load error:', e);
+            }
 
-        setRooms(roomsData);
-        setGlosses(glossData);
-        setUserRooms(userRoomData);
-    };
+            try {
+                const uid = await getCurrentUserId();
+                const userRoomData = await getUserRoomsByUser(uid);
+                setUserRooms(userRoomData);
+            } catch {
+                // user_rooms が取れなくても room 一覧は表示する
+            }
+        };
 
-    load();
-}, []);
+        load().catch((e) => console.error('hallway load error:', e));
+    }, []);
     
     return (
         <div className="hallway">
             <div className="hallway__sticky">
                 <HeadBar
-                    onReload={() => {}}
-                    onSearch={() => {}}
                     onSideMenu={openSideMenu}
                 />
             </div>

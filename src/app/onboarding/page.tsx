@@ -2,15 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { getRooms } from "@/repositories/room";
 import { getCurrentUserId } from "@/repositories/currentUser";
 import { isJoined } from "@/repositories/userRoom";
 import { OnboardRoomCard } from "@/app/components/card/OnboardRoomCard/OnboardRoomCard";
 import type { RoomData } from "@/app/types/room";
+import { getRoomSubIcon } from "@/app/logic/room/roomSubIcon";
 import "./page.scss";
+import { SubmitButton } from "../components/buttons/SubmitButton";
 
 export default function OnboardingPage() {
     const router = useRouter();
+    const t = useTranslations('onboarding');
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [joinedIds, setJoinedIds] = useState<Set<string>>(new Set());
     const [loading, setLoading] = useState(true);
@@ -44,12 +48,10 @@ export default function OnboardingPage() {
     };
 
     return (
-        <div className="onboarding">
+        <div className="onboarding bg-color-primary text-color-primary">
             <div className="onboarding__inner">
-                <h1 className="onboarding__title">TanTo へようこそ</h1>
-                <p className="onboarding__description">
-                    気になる Room に参加しましょう。参加しなくても見るだけで OK です。
-                </p>
+                <h1 className="onboarding__title">{t('title')}</h1>
+                <p className="onboarding__description">{t('description')}</p>
 
                 {loading ? (
                     <div className="onboarding__loading">読み込み中...</div>
@@ -60,6 +62,7 @@ export default function OnboardingPage() {
                                 key={room.roomId}
                                 roomName={room.roomName}
                                 iconUrl={room.roomIconUrl}
+                                subIcon={getRoomSubIcon(room, rooms)}
                                 bannerUrl={room.roomBannerUrl}
                                 joined={joinedIds.has(room.roomId)}
                                 onToggle={() => handleCardToggle(room)}
@@ -67,10 +70,7 @@ export default function OnboardingPage() {
                         ))}
                     </div>
                 )}
-
-                <button className="onboarding__start" onClick={() => router.push("/feed")}>
-                    {joinedIds.size > 0 ? "はじめる" : "スキップ"}
-                </button>
+                <SubmitButton label={joinedIds.size > 0 ? t('start') : t('skip')} onClick={() => router.push("/feed")} />
             </div>
         </div>
     );

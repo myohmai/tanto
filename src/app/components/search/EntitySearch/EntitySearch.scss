@@ -1,0 +1,132 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.entity-search {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    &__service-tabs {
+        display: flex;
+        gap: $spacing-xs;
+    }
+
+    &__tab {
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-full;
+        font: $font-500_medium_sm;
+        border: 1px solid var(--neutral-color-300);
+        color: var(--text-color-secondary);
+        background: transparent;
+
+        &--active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+    }
+
+    &__input-row {
+        display: flex;
+        gap: $spacing-xs;
+    }
+
+    &__input {
+        flex: 1 1 auto;
+        padding: $spacing-sm $spacing-md;
+        border-radius: $radius-md;
+        border: 1px solid var(--neutral-color-300);
+        font: $font-400_regular;
+        background: var(--bg-color-secondary);
+        color: var(--text-color-primary);
+    }
+
+    &__search-btn {
+        padding: $spacing-sm $spacing-lg;
+        border-radius: $radius-md;
+        background: var(--accent-color);
+        color: #fff;
+        font: $font-500_medium_sm;
+    }
+
+    &__results {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+        max-height: 320px;
+        overflow-y: auto;
+    }
+
+    &__result-item {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        padding: $spacing-sm $spacing-md;
+        border-radius: $radius-md;
+        border: 1px solid var(--neutral-color-200);
+        background: var(--bg-color-secondary);
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+
+        &:hover {
+            border-color: var(--accent-color);
+        }
+
+        &--selected {
+            border-color: var(--accent-color);
+            background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+        }
+    }
+
+    &__thumbnail {
+        width: 40px;
+        height: 40px;
+        border-radius: $radius-sm;
+        object-fit: cover;
+        flex: 0 0 auto;
+        background: var(--neutral-color-200);
+    }
+
+    &__thumbnail-placeholder {
+        width: 40px;
+        height: 40px;
+        border-radius: $radius-sm;
+        background: var(--neutral-color-200);
+        flex: 0 0 auto;
+    }
+
+    &__result-info {
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
+    &__result-name {
+        font: $font-500_medium_sm;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__result-sub {
+        font: $font-400_regular_xs;
+        color: var(--text-color-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__error {
+        font: $font-400_regular_sm;
+        color: var(--error-color);
+    }
+
+    &__not-configured {
+        font: $font-400_regular_sm;
+        color: var(--text-color-secondary);
+        padding: $spacing-sm;
+        border-radius: $radius-md;
+        background: var(--bg-color-secondary);
+    }
+}

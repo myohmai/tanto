@@ -6,3 +6,4 @@ export * from "./userRoomData";
 export * from "./topic";
 export * from "./fond";
 export * from "./entity";
+export * from "./contact";

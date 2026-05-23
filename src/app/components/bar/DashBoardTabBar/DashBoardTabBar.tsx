@@ -1,4 +1,6 @@
+"use client";
 import { TabButton } from '@/app/components/buttons/TabButton';
+import { useTranslations } from 'next-intl';
 
 import './DashBoardTabBar.scss';
 
@@ -10,11 +12,12 @@ type Props = {
 }
 
 export const DashBoardTabBar = ({ selectedTab, onChange }: Props) => {
+    const t = useTranslations('dashboard');
     return(
         <div className='dash-board-tab-bar'>
-            <TabButton label="My Gloss" isSelected={selectedTab === 'My Gloss'} onSelect={() => onChange('My Gloss')} />
-            <TabButton label="Joined Room" isSelected={selectedTab === 'Joined Room'} onSelect={() => onChange('Joined Room')} />
-            <TabButton label="Owned Room" isSelected={selectedTab === 'Owned Room'} onSelect={() => onChange('Owned Room')}  />
+            <TabButton label={t('myGloss')} isSelected={selectedTab === 'My Gloss'} onSelect={() => onChange('My Gloss')} />
+            <TabButton label={t('joinedRoom')} isSelected={selectedTab === 'Joined Room'} onSelect={() => onChange('Joined Room')} />
+            <TabButton label={t('ownedRoom')} isSelected={selectedTab === 'Owned Room'} onSelect={() => onChange('Owned Room')}  />
         </div>
     )
 }

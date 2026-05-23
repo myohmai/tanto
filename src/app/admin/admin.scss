@@ -1,0 +1,41 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.admin-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: $spacing-xl $spacing-md;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+
+    &__title {
+        font: $font-700_bold;
+    }
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    &__menu-item {
+        width: 100%;
+        padding: $spacing-md $spacing-lg;
+        border-radius: $radius-md;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-xs;
+        text-align: left;
+    }
+
+    &__menu-label {
+        font: $font-600_semi-bold;
+    }
+
+    &__menu-sub {
+        font: $font-400_regular_xs;
+        color: var(--text-color-secondary);
+    }
+}

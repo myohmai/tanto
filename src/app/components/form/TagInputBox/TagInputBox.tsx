@@ -1,4 +1,6 @@
+"use client";
 import { TagInputChip } from "@/app/components/tag/TagInputChip";
+import { useTranslations } from 'next-intl';
 
 import { useState } from "react";
 
@@ -9,6 +11,7 @@ type Props = {
 }
 
 export const TagInputBox = ({ onChange }: Props ) => {
+    const t = useTranslations('room');
     const [tags, setTags] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState("");
     
@@ -43,7 +46,7 @@ export const TagInputBox = ({ onChange }: Props ) => {
     };
     return (
         <div className="input-box__container bg-color-primary">
-            <div className="input-box__label">Room Tag</div>
+            <div className="input-box__label">{t('roomTag')}</div>
             <div className="tag-input-box">
                 {tags.map((tag, index) => (
                     <TagInputChip
@@ -58,7 +61,7 @@ export const TagInputBox = ({ onChange }: Props ) => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Enter tag"
+                placeholder={t('tagPlaceholder')}
                 />
             </div>
         </div>

@@ -3,6 +3,7 @@
 import { SettingTopBar } from '@/app/components/setting/SettingTopBar';
 import { SettingList } from '@/app/components/setting/SettingList';
 import { ProhibitedIcon, RoomMuteIcon, MuteIcon, UserBlockIcon } from '@/app/components/icons';
+import { useTranslations } from 'next-intl';
 
 import './MuteBlockSetting.scss';
 
@@ -14,30 +15,31 @@ type Props = {
 };
 
 export const MuteBlockSetting = ({ onBack, onMutedRooms, onMutedSalons, onBlockedUsers }: Props) => {
+    const t = useTranslations('settings');
     return (
         <div className="mute-block-setting bg-color-primary">
             <SettingTopBar
-                title="Mute / Block"
+                title={t('muteBlock')}
                 icon={<ProhibitedIcon className="icon-color-primary" />}
                 onBack={onBack}
             />
             <div className="mute-block-setting__section">
-                <div className="mute-block-setting__label text-color-secondary">Mute</div>
+                <div className="mute-block-setting__label text-color-secondary">{t('mute')}</div>
                 <SettingList
-                    title="Muted Rooms"
+                    title={t('mutedRooms')}
                     icon={<RoomMuteIcon className="icon-color-primary" />}
                     onClick={onMutedRooms}
                 />
                 <SettingList
-                    title="Muted Salons"
+                    title={t('mutedSalons')}
                     icon={<MuteIcon className="icon-color-primary" />}
                     onClick={onMutedSalons}
                 />
             </div>
             <div className="mute-block-setting__section">
-                <div className="mute-block-setting__label text-color-secondary">Block</div>
+                <div className="mute-block-setting__label text-color-secondary">{t('block')}</div>
                 <SettingList
-                    title="Blocked Users"
+                    title={t('blockedUsers')}
                     icon={<UserBlockIcon className="icon-color-primary" />}
                     onClick={onBlockedUsers}
                 />

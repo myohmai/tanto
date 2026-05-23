@@ -16,6 +16,7 @@ import { nanoid } from "nanoid";
 
 import './PostGloss.scss'
 import { useState, useRef } from "react";
+import { useTranslations } from 'next-intl';
 
 
 
@@ -67,6 +68,7 @@ export const PostGloss = ({
     topic,
     lang
 }: Props) => {
+    const t = useTranslations('gloss');
     const [draft] = useState<GlossData | null>(() => getPostDraft());
     const [previews, setPreview] = useState<MediaItem[]>(
         () => draft?.media?.source ?? []
@@ -165,7 +167,7 @@ export const PostGloss = ({
                         ref={textareaRef}
                         id="post-content"
                         name="content"
-                        placeholder="How are you doing?"
+                        placeholder={t('placeholder')}
                         maxLength={MAX_LENGTH}
                         value={content}
                         className="post-gloss__text"

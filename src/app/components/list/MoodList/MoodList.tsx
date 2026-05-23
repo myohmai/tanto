@@ -8,12 +8,14 @@ type Props = {
     turntables: TurnTableData[];
     onRefresh?: () => void;
     isLoading?: boolean;
+    onSeeAlso?: (turntableId: string) => void;
 };
 
 export const MoodList = ({
     turntables,
     onRefresh,
-    isLoading
+    isLoading,
+    onSeeAlso,
 }: Props) => {
 
     const startY = useRef<number | null>(null);
@@ -55,12 +57,14 @@ export const MoodList = ({
                 {turntable.type === 'video' && (
                     <TurnTableVideoCard
                     turntableData={turntable}
-                    hasSeeAlso={false}
-                    onSeeAlso={() => {}}
+                    hasSeeAlso={!!onSeeAlso}
+                    onSeeAlso={() => onSeeAlso?.(turntable.id)}
                 />)}
                 {turntable.type === 'music' && (
                         <TurnTableMediaCard
                         turntableData={turntable}
+                        hasSeeAlso={!!onSeeAlso}
+                        onSeeAlso={() => onSeeAlso?.(turntable.id)}
                         primaryService={
                             turntable.music?.service ?? "youtube"
                         }
