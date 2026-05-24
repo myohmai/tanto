@@ -55,7 +55,7 @@ export function ResponsiveShell({ children }: { children: ReactNode }) {
       const userRooms = await getUserRoomsByUser(uid);
       setCurrentUserId(uid);
 
-      if (userRooms.length === 0 && !pathname?.startsWith("/onboarding")) {
+      if (userRooms.length === 0 && !pathname?.startsWith("/onboarding") && !pathname?.startsWith("/admin")) {
         router.push("/onboarding");
         return;
       }
