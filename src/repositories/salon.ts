@@ -41,6 +41,7 @@ export const getSalonsByRoom = async (roomId: string): Promise<SalonData[]> => {
 
 export const createSalon = async (salon: SalonData) => {
     const { error } = await supabase.from('salons').insert({
+        salon_id:    salon.salonId,
         room_id:     salon.roomId,
         salon_name:  salon.salonName,
         salon_icon:  salon.salonIcon,

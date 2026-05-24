@@ -14,7 +14,7 @@ import { GlossList } from "@/app/components/list/GlossList";
 import { AddGlossButton } from "@/app/components/buttons/AddGlossButton";
 
 import { getRooms } from "@/repositories/room";
-import { getSalons } from "@/repositories/salon";
+import { getSalons, updateSalon } from "@/repositories/salon";
 import { getProcessedGlosses } from "@/app/logic/gloss/calcGloss";
 import { getUserRoomData } from "@/repositories/userRoom";
 import { toggleFond,  getAllFonds } from "@/repositories/fond";
@@ -207,7 +207,12 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
                     onBack={() => router.back()}
                     onRoom={() => router.push(`/room/${roomId}`)}
                     onSalon={() => router.refresh()}
-                    onPin={() => {}}
+                    onPin={async () => {
+                        if (!salonData) return;
+                        const updated = { ...salonData, isPinned: !salonData.isPinned };
+                        await updateSalon(updated);
+                        setSalonData(updated);
+                    }}
                     onEdit={() =>
                         router.push(`/room/${roomId}/salon/${salonId}/edit`)
                     }
