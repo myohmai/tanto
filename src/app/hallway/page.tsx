@@ -26,7 +26,13 @@ export default function Page() {
     const [userRooms, setUserRooms] = useState<any[]>([]);
     
 
-    const enrichedRooms = calcRoomMeta(rooms, glosses, userRooms);
+    const enrichedRooms = calcRoomMeta(rooms, glosses, userRooms)
+        .sort((a, b) => {
+            if (!a.latestPostedAt && !b.latestPostedAt) return 0;
+            if (!a.latestPostedAt) return 1;
+            if (!b.latestPostedAt) return -1;
+            return new Date(b.latestPostedAt).getTime() - new Date(a.latestPostedAt).getTime();
+        });
 
     useEffect(() => {
         const load = async () => {
