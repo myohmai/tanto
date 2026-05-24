@@ -36,7 +36,7 @@ export const CreateOpenRoom = ({ onCreateOpenRoom }: Props) => {
     const handleSelectCandidate = (c: EntityCandidate) => {
         setCandidate(c);
         if (!roomName) setRoomName(c.label);
-        if (!roomInfo) setRoomInfo(`${c.label}の公式ファンルームです。`);
+        if (!roomInfo) setRoomInfo(`${c.label}のOpen Roomです。`);
         // アイコンは未カスタムなら entity thumbnail で上書き
         if (!roomIconUrl || roomIconUrl === candidate?.thumbnailUrl) {
             setRoomIconUrl(c.thumbnailUrl ?? null);
