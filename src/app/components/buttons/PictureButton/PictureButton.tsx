@@ -21,7 +21,7 @@ export const PictureButton = ({ onSelectFile }: Props) => {
         <>
             <input
             type="file"
-            accept="image/png, image/jpeg"
+            accept="image/png, image/jpeg, video/mp4, video/quicktime, video/webm"
             multiple
             ref={inputRef}
             onChange={handleFileChange}

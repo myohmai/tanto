@@ -33,6 +33,7 @@ type Props = {
     onRoom: () => void;
     onSalon?: () => void;
     onSelectFile: (file: File[]) => void;
+    onUploadFile?: (file: File) => Promise<string>;
     onPost: (payload: GlossData) => void;
     topic?: Topic;
     lang: "en" | "ja";
@@ -64,6 +65,7 @@ export const PostGloss = ({
     onRoom,
     onSalon,
     onSelectFile,
+    onUploadFile,
     onPost,
     topic,
     lang
@@ -81,34 +83,50 @@ export const PostGloss = ({
     const [isEmbedOpen, setIsEmbedOpen] = useState(false)
     const [content, setContent] = useState(() => draft?.content ?? "");
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+    const uploadPromises = useRef<Map<string, Promise<string>>>(new Map());
     const MAX_LENGTH = 280;
 
     const handleSelectFile = (files: File[]) => {
-        const newItems: MediaItem[] = files.map((file) => ({
-            type: file.type.startsWith("video") ? "video" : "image",
-            url: URL.createObjectURL(file),
-        }));
-
+        const newItems: MediaItem[] = files.map((file) => {
+            const blobUrl = URL.createObjectURL(file);
+            if (onUploadFile) {
+                uploadPromises.current.set(blobUrl, onUploadFile(file));
+            }
+            return {
+                type: file.type.startsWith("video") ? "video" : "image",
+                url: blobUrl,
+            };
+        });
         setPreview((prev) => [...prev, ...newItems]);
         onSelectFile(files);
-
     };
 
-    const handlePost = () => {
+    const handlePost = async () => {
         if (content.trim().length === 0) return;
         if (previews.length > 0 && !mediaType) {
             setIsLabelOpen(true);
             return;
         }
+
+        let resolvedPreviews = previews;
+        if (onUploadFile && uploadPromises.current.size > 0) {
+            resolvedPreviews = await Promise.all(
+                previews.map(async (item) => {
+                    const promise = uploadPromises.current.get(item.url);
+                    return promise ? { ...item, url: await promise } : item;
+                })
+            );
+        }
+
         const payload: GlossData = {
             glossId: nanoid(),
-            
+
             roomId,
             salonId,
             userId,
 
             content,
-            media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
+            media: resolvedPreviews.length > 0 ? { source: resolvedPreviews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
             reports: [],
             topic,
@@ -190,7 +208,8 @@ export const PostGloss = ({
                                 setPreview((prev) => {
                                     const target = prev[index];
                                     if (target) {
-                                    URL.revokeObjectURL(target.url);
+                                        uploadPromises.current.delete(target.url);
+                                        URL.revokeObjectURL(target.url);
                                     }
                                     return prev.filter((_, i) => i !== index);
                                 });

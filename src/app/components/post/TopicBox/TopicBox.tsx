@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl';
 
 type Props = {
     onSelectFile: (file: File[]) => void;
+    onUploadFile?: (file: File) => Promise<string>;
     onWhisper: (payload: Topic) => void;
     userId: string;
     salonId: string;
@@ -26,6 +27,7 @@ type Props = {
 
 export const TopicBox = ({
     onSelectFile,
+    onUploadFile,
     onWhisper,
     userId,
     salonId,
@@ -41,24 +43,41 @@ export const TopicBox = ({
     const [isEmbedOpen, setIsEmbedOpen] = useState(false)
     const [topicContent, setTopicContent] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+    const uploadPromises = useRef<Map<string, Promise<string>>>(new Map());
     const MAX_LENGTH = 280;
 
     const handleSelectFile = (files: File[]) => {
-        const newItems: MediaItem[] = files.map((file) => ({
-            type: file.type.startsWith("video") ? "video" : "image",
-            url: URL.createObjectURL(file),
-        }));
-
+        const newItems: MediaItem[] = files.map((file) => {
+            const blobUrl = URL.createObjectURL(file);
+            if (onUploadFile) {
+                uploadPromises.current.set(blobUrl, onUploadFile(file));
+            }
+            return {
+                type: file.type.startsWith("video") ? "video" : "image",
+                url: blobUrl,
+            };
+        });
         setPreview((prev) => [...prev, ...newItems]);
         onSelectFile(files);
-
     };
-    const handlePost = () => {
+
+    const handlePost = async () => {
         if (topicContent.trim().length === 0) return;
         if (previews.length > 0 && !mediaType) {
             setIsLabelOpen(true);
             return;
         }
+
+        let resolvedPreviews = previews;
+        if (onUploadFile && uploadPromises.current.size > 0) {
+            resolvedPreviews = await Promise.all(
+                previews.map(async (item) => {
+                    const promise = uploadPromises.current.get(item.url);
+                    return promise ? { ...item, url: await promise } : item;
+                })
+            );
+        }
+
         const payload: Topic = {
             topicId: nanoid(),
 
@@ -68,11 +87,10 @@ export const TopicBox = ({
 
             topicContent,
 
-            media: previews.length > 0 && mediaType ? { source: previews, type: mediaType } : undefined,
+            media: resolvedPreviews.length > 0 && mediaType ? { source: resolvedPreviews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
 
             postedAt: new Date().toISOString(),
-            
         };
         onWhisper(payload);
     };
@@ -109,7 +127,8 @@ export const TopicBox = ({
                                 setPreview((prev) => {
                                     const target = prev[index];
                                     if (target) {
-                                    URL.revokeObjectURL(target.url);
+                                        uploadPromises.current.delete(target.url);
+                                        URL.revokeObjectURL(target.url);
                                     }
                                     return prev.filter((_, i) => i !== index);
                                 });

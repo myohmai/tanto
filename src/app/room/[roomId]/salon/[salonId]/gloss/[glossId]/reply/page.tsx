@@ -7,6 +7,7 @@ import { ReplyGloss } from "@/app/components/post/PostGloss";
 
 import { getCurrentUserId } from "@/repositories/currentUser";
 import { getGlossById, postGloss } from "@/repositories/gloss";
+import { uploadGlossMedia } from "@/repositories/storage";
 import { getRoomById } from "@/repositories/room";
 import { getSalonsByRoom } from "@/repositories/salon";
 import { getUserRoomByRoomId, getUserRoomsByUser } from "@/repositories/userRoom";
@@ -73,6 +74,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
                 router.push(`/room/${roomId}/salon/${salonId}`)
             }
             onSelectFile={() => {}}
+            onUploadFile={uploadGlossMedia}
             onPost={async (payload: GlossData) => {
                 await postGloss(payload);
                 router.push(`/room/${roomId}/salon/${salonId}/gloss/${glossId}`);

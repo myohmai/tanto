@@ -8,6 +8,7 @@ import { TopicBox } from "@/app/components/post/TopicBox";
 
 import { getCurrentUserId } from "@/repositories/currentUser";
 import { getRoomById } from "@/repositories/room";
+import { uploadGlossMedia } from "@/repositories/storage";
 import { getSalonsByRoom } from "@/repositories/salon";
 import { postTopic } from "@/repositories/topic";
 import { getUserRoomByRoomId } from "@/repositories/userRoom";
@@ -65,6 +66,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
                 salonId={salonData.salonId ?? salonId}
                 userId={currentUserRoom.userId}
                 onSelectFile={() => {}}
+                onUploadFile={uploadGlossMedia}
                 onWhisper={async (payload: Topic) => {
                     await postTopic(payload);
                     router.push(`/room/${roomId}/salon/${salonId}`);
