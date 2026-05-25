@@ -73,6 +73,9 @@
         .night &::before {
             background-color: var(--neutral-color-500);
         }
+        @media screen and (max-width: 800px){
+            bottom: calc(72px + 56px);
+        }
     }
     &__error {
         position: absolute;
