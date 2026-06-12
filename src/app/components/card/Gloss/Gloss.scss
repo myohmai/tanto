@@ -59,4 +59,11 @@
     &__action {
         display: inline-flex;
     }
+    &__download-button {
+        background-color: $key-color--400;
+        color: #FFF;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $radius-sm;
+        font: $font-400_regular;
+    }
 }

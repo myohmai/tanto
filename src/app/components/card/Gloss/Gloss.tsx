@@ -290,7 +290,6 @@ export const Gloss = ({
                             revaluation.onNo(glossData.glossId)
                         }}
                     />}
-                   
                 </div>
                 <div className="gloss__action inline-md">
                     <FondButton
