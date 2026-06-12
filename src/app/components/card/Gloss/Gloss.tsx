@@ -18,6 +18,7 @@ import type { GlossData } from "@/app/types/gloss";
 import type { Report,ReportType } from "@/app/types/report";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 import './Gloss.scss'
 
@@ -90,8 +91,19 @@ export const Gloss = ({
 
     const [isShowToast, setIsShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const t = useTranslations('gloss');
 
-    
+    const handleDownload = async (url: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = objectUrl;
+        a.download = url.split('/').pop() ?? 'download';
+        a.click();
+        URL.revokeObjectURL(objectUrl);
+    };
 
     const handleShare = async () => {
     const url = `${window.location.origin}/gloss/${glossData.glossId}`;
@@ -258,6 +270,15 @@ export const Gloss = ({
                             e.stopPropagation()
                             onTopicSeeAlso
                         }} />)}
+                    {glossData.downloadUrl && (
+                        <button
+                            type="button"
+                            className="gloss__download-button"
+                            onClick={(e) => handleDownload(glossData.downloadUrl!, e)}
+                        >
+                            {t('download')}
+                        </button>
+                    )}
                     {revaluation && <Revaluation
                         lang={lang}
                         onYes={(e) => {
@@ -269,6 +290,7 @@ export const Gloss = ({
                             revaluation.onNo(glossData.glossId)
                         }}
                     />}
+                   
                 </div>
                 <div className="gloss__action inline-md">
                     <FondButton
@@ -281,18 +303,6 @@ export const Gloss = ({
                         action.onReply(glossData);
                     }}
                     replyCount={glossData.replyCount} />
-                    {glossData.downloadUrl && (
-                        <button
-                            type="button"
-                            className="gloss__download-button"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                window.open(glossData.downloadUrl, '_blank', 'noopener,noreferrer');
-                            }}
-                        >
-                            ダウンロード
-                        </button>
-                    )}
                 </div>
             </div> 
             <GlossMenu  
