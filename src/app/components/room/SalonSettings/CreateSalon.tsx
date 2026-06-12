@@ -6,7 +6,6 @@ import { FondIcon, CheckBoxIcon } from "@/app/components/icons";
 import { SalonData } from "@/app/types/salon";
 import { useTranslations } from "next-intl";
 
-import { nanoid } from "nanoid";
 
 import { useState } from "react";
 
@@ -32,7 +31,7 @@ export const CreateSalon = ({
 }: Props) => {
     const t = useTranslations("salon");
     const tCommon = useTranslations("common");
-    const [salonId] = useState(() => nanoid());
+    const [salonId] = useState(() => crypto.randomUUID());
     const [salonData, setSalonData] = useState<SalonData>({
         salonId,
         roomId: roomId,
