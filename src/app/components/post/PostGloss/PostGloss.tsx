@@ -35,6 +35,7 @@ type Props = {
     onSelectFile: (file: File[]) => void;
     onUploadFile?: (file: File) => Promise<string>;
     onPost: (payload: GlossData) => void;
+    onUploadDownload?: (file: File) => Promise<string>;
     topic?: Topic;
     lang: "en" | "ja";
     isAdmin?: boolean;
@@ -68,6 +69,7 @@ export const PostGloss = ({
     onSelectFile,
     onUploadFile,
     onPost,
+    onUploadDownload,
     topic,
     lang,
     isAdmin
@@ -85,6 +87,8 @@ export const PostGloss = ({
     const [isEmbedOpen, setIsEmbedOpen] = useState(false)
     const [content, setContent] = useState(() => draft?.content ?? "");
     const [downloadUrl, setDownloadUrl] = useState(() => draft?.downloadUrl ?? "");
+    const [downloadFileName, setDownloadFileName] = useState<string | null>(null);
+    const downloadUploadPromise = useRef<Promise<string> | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const uploadPromises = useRef<Map<string, Promise<string>>>(new Map());
     const MAX_LENGTH = 280;
@@ -121,6 +125,10 @@ export const PostGloss = ({
             );
         }
 
+        const resolvedDownloadUrl = downloadUploadPromise.current
+            ? await downloadUploadPromise.current
+            : downloadUrl || undefined;
+
         const payload: GlossData = {
             glossId: nanoid(),
 
@@ -131,7 +139,7 @@ export const PostGloss = ({
             content,
             media: resolvedPreviews.length > 0 ? { source: resolvedPreviews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
-            downloadUrl: downloadUrl || undefined,
+            downloadUrl: resolvedDownloadUrl,
             reports: [],
             topic,
             postedAt: new Date().toISOString(),
@@ -224,13 +232,22 @@ export const PostGloss = ({
                     {embedUrl && ( <MediaEmbed url={embedUrl} />)}
                     {topic?.topicContent && (<TopicContent topic={topic} lang={lang}/>)}
                     {isAdmin && (
-                        <input
-                            type="url"
-                            placeholder="ダウンロードURL（任意）"
-                            value={downloadUrl}
-                            onChange={(e) => setDownloadUrl(e.target.value)}
-                            className="post-gloss__download-url"
-                        />
+                        <label className="post-gloss__download-label">
+                            <span className="post-gloss__download-hint">
+                                {downloadFileName ?? "素材をアップロード（PDF / PNG）"}
+                            </span>
+                            <input
+                                type="file"
+                                accept=".pdf,.png,application/pdf,image/png"
+                                className="post-gloss__download-input"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file || !onUploadDownload) return;
+                                    setDownloadFileName(file.name);
+                                    downloadUploadPromise.current = onUploadDownload(file);
+                                }}
+                            />
+                        </label>
                     )}
                 </div>
             </div>

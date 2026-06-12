@@ -7,7 +7,7 @@ import { PostGloss } from "@/app/components/post/PostGloss";
 
 import { getCurrentUserId } from "@/repositories/currentUser";
 import { postGloss } from "@/repositories/gloss";
-import { uploadGlossMedia } from "@/repositories/storage";
+import { uploadGlossMedia, uploadGlossDownload } from "@/repositories/storage";
 import { getRooms } from "@/repositories/room";
 import { getSalons } from "@/repositories/salon";
 import { getUserRoomData } from "@/repositories/userRoom";
@@ -96,6 +96,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
             }
             onSelectFile={() => {}}
             onUploadFile={uploadGlossMedia}
+            onUploadDownload={uploadGlossDownload}
             isAdmin={adminFlag}
             onPost={async (payload: GlossData) => {
                 await postGloss(payload);
