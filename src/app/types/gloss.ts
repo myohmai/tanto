@@ -38,4 +38,6 @@ export type GlossData = {
     fondCount: number;
 
     replyToGlossId?: string;
+
+    downloadUrl?: string;
 }

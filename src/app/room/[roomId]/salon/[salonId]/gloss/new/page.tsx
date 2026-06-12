@@ -11,6 +11,7 @@ import { uploadGlossMedia } from "@/repositories/storage";
 import { getRooms } from "@/repositories/room";
 import { getSalons } from "@/repositories/salon";
 import { getUserRoomData } from "@/repositories/userRoom";
+import { isAdmin } from "@/lib/adminAuth";
 
 import type { GlossData, RoomData, SalonData, UserRoomData } from "@/app/types";
 
@@ -22,14 +23,17 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
     const [salonData, setSalonData] = useState<SalonData | null>(null);
     const [currentUserRoom, setCurrentUserRoom] =
         useState<UserRoomData | null>(null);
+    const [adminFlag, setAdminFlag] = useState(false);
 
     useEffect(() => {
     const run = async () => {
-        const [rooms, salons, currentUserId] = await Promise.all([
+        const [rooms, salons, currentUserId, admin] = await Promise.all([
             getRooms(),
             getSalons(),
             getCurrentUserId(),
+            isAdmin(),
         ]);
+        setAdminFlag(admin);
 
         const userRooms = await getUserRoomData(currentUserId, roomId);
 
@@ -92,6 +96,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
             }
             onSelectFile={() => {}}
             onUploadFile={uploadGlossMedia}
+            isAdmin={adminFlag}
             onPost={async (payload: GlossData) => {
                 await postGloss(payload);
                 router.push(`/room/${roomId}/salon/${salonId}`);

@@ -14,6 +14,7 @@ type GlossRow = {
     topic_id: string | null;
     posted_at: string;
     reply_to_gloss_id: string | null;
+    download_url: string | null;
     room_name: string | null;
     salon_name: string | null;
     user_name: string | null;
@@ -33,6 +34,7 @@ const toGlossData = (row: GlossRow): GlossData => ({
     revaluation:     row.revaluation ?? undefined,
     postedAt:        row.posted_at,
     replyToGlossId:  row.reply_to_gloss_id ?? undefined,
+    downloadUrl:     row.download_url ?? undefined,
     roomName:        row.room_name ?? '',
     salonName:       row.salon_name ?? undefined,
     userName:        row.user_name,
@@ -96,6 +98,7 @@ export const postGloss = async (gloss: Omit<GlossData, 'fondCount' | 'replyCount
         revaluation:        gloss.revaluation ?? null,
         posted_at:          gloss.postedAt,
         reply_to_gloss_id:  gloss.replyToGlossId ?? null,
+        download_url:       gloss.downloadUrl ?? null,
         user_name:          gloss.userName ?? null,
     });
 

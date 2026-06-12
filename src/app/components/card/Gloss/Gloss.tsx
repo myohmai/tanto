@@ -279,8 +279,20 @@ export const Gloss = ({
                         onClick={(e) => {
                         e.stopPropagation();
                         action.onReply(glossData);
-                    }} 
+                    }}
                     replyCount={glossData.replyCount} />
+                    {glossData.downloadUrl && (
+                        <button
+                            type="button"
+                            className="gloss__download-button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(glossData.downloadUrl, '_blank', 'noopener,noreferrer');
+                            }}
+                        >
+                            ダウンロード
+                        </button>
+                    )}
                 </div>
             </div> 
             <GlossMenu  

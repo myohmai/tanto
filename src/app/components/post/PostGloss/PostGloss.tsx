@@ -37,6 +37,7 @@ type Props = {
     onPost: (payload: GlossData) => void;
     topic?: Topic;
     lang: "en" | "ja";
+    isAdmin?: boolean;
 }
 
 const getPostDraft = (): GlossData | null => {
@@ -68,7 +69,8 @@ export const PostGloss = ({
     onUploadFile,
     onPost,
     topic,
-    lang
+    lang,
+    isAdmin
 }: Props) => {
     const t = useTranslations('gloss');
     const [draft] = useState<GlossData | null>(() => getPostDraft());
@@ -82,6 +84,7 @@ export const PostGloss = ({
     const [embedUrl, setEmbedUrl] = useState(() => draft?.mediaEmbed?.url ?? "")
     const [isEmbedOpen, setIsEmbedOpen] = useState(false)
     const [content, setContent] = useState(() => draft?.content ?? "");
+    const [downloadUrl, setDownloadUrl] = useState(() => draft?.downloadUrl ?? "");
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const uploadPromises = useRef<Map<string, Promise<string>>>(new Map());
     const MAX_LENGTH = 280;
@@ -128,6 +131,7 @@ export const PostGloss = ({
             content,
             media: resolvedPreviews.length > 0 ? { source: resolvedPreviews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            downloadUrl: downloadUrl || undefined,
             reports: [],
             topic,
             postedAt: new Date().toISOString(),
@@ -149,10 +153,11 @@ export const PostGloss = ({
             roomId,
             salonId,
             userId,
-            
+
             content,
             media: previews.length > 0 ? { source: previews, type: mediaType } : undefined,
             mediaEmbed: embedUrl ? { url: embedUrl } : undefined,
+            downloadUrl: downloadUrl || undefined,
             reports: [],
             topic,
             postedAt: new Date().toISOString(),
@@ -217,7 +222,16 @@ export const PostGloss = ({
                         />
                     )}
                     {embedUrl && ( <MediaEmbed url={embedUrl} />)}
-                    {topic?.topicContent && (<TopicContent topic={topic} lang={lang}/>)} 
+                    {topic?.topicContent && (<TopicContent topic={topic} lang={lang}/>)}
+                    {isAdmin && (
+                        <input
+                            type="url"
+                            placeholder="ダウンロードURL（任意）"
+                            value={downloadUrl}
+                            onChange={(e) => setDownloadUrl(e.target.value)}
+                            className="post-gloss__download-url"
+                        />
+                    )}
                 </div>
             </div>
             <SelectMediaLabel
