@@ -40,10 +40,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
     return (
         <html lang={locale}>
-            <head>
-                <GoogleAnalytics gaId="G-9TD67NV6FW" />
-            </head>
             <body>
+                <GoogleAnalytics gaId="G-9TD67NV6FW" />
                 <NextIntlClientProvider messages={messages} locale={locale}>
                     <ThemeInitializer />
                     <ResponsiveShell>
