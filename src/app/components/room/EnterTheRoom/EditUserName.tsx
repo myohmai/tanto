@@ -46,7 +46,7 @@ export const EditUserName = ({
     return(
         <div className="enter-the-room bg-color-primary text-color-primary">
             <div className="enter-the-room__banner">
-                <img src={bannerUrl || '/images/default.png'} alt="Room Banner" className="enter-the-room__banner--image"/>
+                <img src={bannerUrl || '/images/202600620.png'} alt="Room Banner" className="enter-the-room__banner--image"/>
             </div>
             <div className="enter-the-room__wrapper stack-lg">
                 <RoomCustomIcon roomIconUrl={roomIconUrl} className="enter-the-room__icon" />

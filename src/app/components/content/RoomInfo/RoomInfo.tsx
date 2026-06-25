@@ -87,7 +87,7 @@ export const RoomInfo = ({ roomData, subIcon, onSearch, onEdit, onEnter, onShare
     return (
         <div className="room-info text-color-primary">
             <div className="room-info__banner">
-                <img src={roomData.roomBannerUrl || '/images/default.png'} alt="Room Banner" className="room-info__banner--image"/>
+                <img src={roomData.roomBannerUrl || '/images/202600620.png'} alt="Room Banner" className="room-info__banner--image"/>
             </div>
             <div className="room-info__container bg-color-primary stack-md">
                 <RoomCustomIcon roomIconUrl={roomData.roomIconUrl} subIcon={subIcon} className="room-info__icon" />

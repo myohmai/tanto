@@ -46,7 +46,7 @@ export const EnterPrivateRoomKeyword = ({
     return(
         <div className="enter-private-room bg-color-primary text-color-primary">
             <div className="enter-private-room__banner">
-                <img src={bannerUrl || '/images/default.png'} alt="Room Banner" className="enter-private-room__banner--image"/>
+                <img src={bannerUrl || '/images/202600620.png'} alt="Room Banner" className="enter-private-room__banner--image"/>
             </div>
             <div className="enter-private-room__wrapper stack-lg">
                 <RoomCustomIcon roomIconUrl={roomIconUrl} className="enter-private-room__icon" />
