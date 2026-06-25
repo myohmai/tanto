@@ -86,7 +86,8 @@
     "newGloss": "New Gloss",
     "replyGloss": "Reply",
     "placeholder": "How are you doing?",
-    "download": "Download"
+    "download": "Download",
+    "downloadSafariHint": "Tap Share → \"Save to Files\" to save to your device"
   },
   "media": {
     "music": "Music",

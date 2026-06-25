@@ -86,7 +86,8 @@
     "newGloss": "새 글로스",
     "replyGloss": "답글",
     "placeholder": "어떻게 지내세요?",
-    "download": "다운로드"
+    "download": "다운로드",
+    "downloadSafariHint": "공유 버튼 → 「파일에 저장」으로 기기에 저장할 수 있습니다"
   },
   "media": {
     "music": "음악",

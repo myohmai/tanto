@@ -95,10 +95,18 @@ export const Gloss = ({
 
     const handleDownload = (url: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        const filename = decodeURIComponent(url.split('/').pop() ?? 'download');
-        const a = document.createElement('a');
-        a.href = `${url}?download=${encodeURIComponent(filename)}`;
-        a.click();
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        if (isSafari) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+            setToastMessage(t('downloadSafariHint'));
+            setIsShowToast(true);
+            setTimeout(() => setIsShowToast(false), 5000);
+        } else {
+            const filename = decodeURIComponent(url.split('/').pop() ?? 'download');
+            const a = document.createElement('a');
+            a.href = `${url}?download=${encodeURIComponent(filename)}`;
+            a.click();
+        }
     };
 
     const handleShare = async () => {

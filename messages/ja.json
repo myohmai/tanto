@@ -86,7 +86,8 @@
     "newGloss": "新しいグロス",
     "replyGloss": "返信",
     "placeholder": "いまどうしてる？",
-    "download": "ダウンロード"
+    "download": "ダウンロード",
+    "downloadSafariHint": "共有ボタン →「ファイルに保存」で端末に保存できます"
   },
   "media": {
     "music": "ミュージック",
