@@ -93,16 +93,12 @@ export const Gloss = ({
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const t = useTranslations('gloss');
 
-    const handleDownload = async (url: string, e: React.MouseEvent) => {
+    const handleDownload = (url: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        const res = await fetch(url);
-        const blob = await res.blob();
-        const objectUrl = URL.createObjectURL(blob);
+        const filename = decodeURIComponent(url.split('/').pop() ?? 'download');
         const a = document.createElement('a');
-        a.href = objectUrl;
-        a.download = url.split('/').pop() ?? 'download';
+        a.href = `${url}?download=${encodeURIComponent(filename)}`;
         a.click();
-        URL.revokeObjectURL(objectUrl);
     };
 
     const handleShare = async () => {
