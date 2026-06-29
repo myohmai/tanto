@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton/SubmitButton";
 import "./auth.scss";
 import { Logotype } from "../components/logo/logotype";
-
-const TERMS_URL = 'https://www.notion.so/369df9d71ebe80949262dfcd29df09bd';
-const PRIVACY_URL = 'https://www.notion.so/369df9d71ebe80a5b9bdd359d085d43e';
 
 type Mode = "login" | "signup";
 
@@ -104,9 +102,9 @@ export default function AuthPage() {
                             />
                             <span className="auth-page__agree-text">
                                 {t('agreePrefix') ? <>{t('agreePrefix')}{' '}</> : null}
-                                <a href={TERMS_URL} target="_blank" rel="noopener noreferrer">{t('terms')}</a>
+                                <Link href="/terms">{t('terms')}</Link>
                                 {' '}{t('agreeMid')}{' '}
-                                <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer">{t('privacy')}</a>
+                                <Link href="/privacy">{t('privacy')}</Link>
                                 {t('agreeSuffix')}
                             </span>
                         </label>
@@ -130,6 +128,12 @@ export default function AuthPage() {
                 >
                     {mode === "login" ? t('noAccount') : t('backToLogin')}
                 </button>
+
+                <div className="auth-page__footer">
+                    <Link href="/privacy">{t('privacy')}</Link>
+                    <span>·</span>
+                    <Link href="/terms">{t('terms')}</Link>
+                </div>
             </div>
         </div>
     );
