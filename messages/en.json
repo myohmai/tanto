@@ -220,6 +220,13 @@
     "sensitive": "Please be mindful of how this information is handled",
     "adult": "This content may be intended for adult audiences"
   },
+  "landing": {
+    "tagline": "A deeper place to connect with what you love",
+    "description": "Topic-based social media.\nCreate a Room and talk about the content you care about.",
+    "cta": "Get Started",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
   "auth": {
     "confirmEmailSent": "We've sent you a confirmation email. Please click the link to log in.",
     "backToLogin": "Back to Login",

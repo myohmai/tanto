@@ -1,0 +1,77 @@
+@use '@/app/styles/variables' as *;
+
+.lp {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+
+    &__main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: $spacing-xl $spacing-lg;
+    }
+
+    &__hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing-md;
+        max-width: 480px;
+        text-align: center;
+    }
+
+    &__logo {
+        width: 160px;
+        height: auto;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__tagline {
+        font: $font-600_semi-bold;
+        font-size: 1.25rem;
+        color: $key-color--300;
+    }
+
+    &__description {
+        font: $font-400_regular;
+        color: var(--neutral-color-500);
+        line-height: 1.7;
+    }
+
+    &__cta {
+        display: inline-block;
+        margin-top: $spacing-sm;
+        padding: $spacing-sm $spacing-xl;
+        background: $key-color--400;
+        color: #fff;
+        border-radius: $radius-full;
+        font: $font-600_semi-bold;
+        text-decoration: none;
+        transition: background 0.2s;
+
+        &:hover {
+            background: $key-color--500;
+        }
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-sm;
+        padding: $spacing-md;
+        font: $font-400_regular_sm;
+        color: var(--neutral-color-400);
+
+        a {
+            color: var(--neutral-color-400);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
