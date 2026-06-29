@@ -1,0 +1,44 @@
+@use '@/app/styles/variables' as *;
+@use '@/app/styles/mixins' as *;
+
+.terms {
+    width: 100%;
+    padding: 10%;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    white-space: pre-wrap;
+    text-indent: 1em;
+    font: $font-400_regular;
+    h1 {
+        font: $font-700_bold;
+        font-size: 1.5em;
+        margin-bottom: $spacing-md;
+        text-indent: 0;
+    }
+    h2 {
+        font: $font-600_semi-bold;
+        text-indent: 0;
+    }
+    div {
+        white-space: pre-wrap;
+    }
+    ol {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        margin-left: $spacing-md;
+        list-style-type: decimal;
+    }
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        margin-left: $spacing-md;
+        list-style-type: disc;
+    }
+    &__info {
+        text-indent: 0;
+    }
+    
+}

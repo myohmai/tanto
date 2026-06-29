@@ -46,7 +46,7 @@ export function ResponsiveShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const load = async () => {
-      const PUBLIC_PATHS = ["/auth", "/privacy"];
+      const PUBLIC_PATHS = ["/auth", "/privacy", "/terms"];
       const isPublicPage = PUBLIC_PATHS.some(p => pathname?.startsWith(p));
 
       const uid = await getCurrentUserIdOrNull();
@@ -172,7 +172,8 @@ export function ResponsiveShell({ children }: { children: ReactNode }) {
   const isAuthPage = pathname?.startsWith("/auth");
   const isOnboardingPage = pathname?.startsWith("/onboarding");
   const isPrivacyPage = pathname?.startsWith("/privacy");
-  const isNoNavPage = isAuthPage || isOnboardingPage || isPrivacyPage;
+  const isTermsPage = pathname?.startsWith("/terms");
+  const isNoNavPage = isAuthPage || isOnboardingPage || isPrivacyPage || isTermsPage;
   const layoutClassName = `layout layout--${layoutMode}`;
 
   return (
