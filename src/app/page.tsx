@@ -3,10 +3,20 @@
 import Link from "next/link";
 import { Logotype } from "@/app/components/logo/logotype";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getCurrentUserIdOrNull } from "@/repositories/currentUser";
 import "./page.scss";
 
 export default function LandingPage() {
     const t = useTranslations('landing');
+    const router = useRouter();
+
+    useEffect(() => {
+        getCurrentUserIdOrNull().then(uid => {
+            if (uid) router.replace("/feed");
+        });
+    }, []);
 
     return (
         <div className="lp bg-color-primary text-color-primary">
