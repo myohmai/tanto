@@ -12,6 +12,7 @@ export default function LandingPage() {
         <div className="lp bg-color-primary text-color-primary">
             <main className="lp__main">
                 <div className="lp__hero">
+                    <h1 className="sr-only">TangledTo</h1>
                     <Logotype className="lp__logo" />
                     <p className="lp__tagline">{t('tagline')}</p>
                     <p className="lp__description">{t('description')}</p>
