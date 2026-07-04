@@ -5,6 +5,7 @@ export { MoodIcon } from './navigation/MoodIcon';
 export { SearchIcon } from './navigation/SearchIcon';
 export { MessageIcon } from './navigation/MessageIcon';
 export { MenuIcon } from './navigation/MenuIcon';
+export { SalonIcon } from './navigation/SalonIcon';
 
 // action
 export { ShareIcon } from './action/ShareIcon';
@@ -20,6 +21,10 @@ export { BellIcon } from './action/BellIcon';
 export { CheckBoxIcon } from './action/CheckBoxIcon';
 export { EyeIcon } from './action/EyeIcon';
 export { RadioButtonIcon } from './action/RadioButtonIcon';
+export { GlossIcon } from './action/GlossIcon';
+export { AddRoomIcon } from './action/AddRoomIcon';
+export { AddSalonIcon } from './action/AddSalonIcon';
+export { AddTurnTableIcon } from './action/AddTurnTableIcon';
 
 
 // utility

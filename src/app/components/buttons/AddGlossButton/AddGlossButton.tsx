@@ -1,4 +1,4 @@
-import { AddIcon } from '@/app/components/icons';
+import { GlossIcon } from '@/app/components/icons';
 import './AddGlossButton.scss';
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 export const AddGlossButton = ({ onClick }: Props) => {
     return (
         <button type='button' onClick={onClick} className='add-gloss-button' aria-label='Add new Gloss' >
-            <AddIcon size="md" className='add-gloss-button__icon' />
+            <GlossIcon size="md" className='add-gloss-button__icon' />
         </button>
     );
 }

@@ -1,4 +1,4 @@
-import { AddIcon } from '@/app/components/icons';
+import { AddTurnTableIcon } from '@/app/components/icons';
 import './AddTurnTableButton.scss';
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 export const AddTurnTableButton = ({ onClick }: Props) => {
     return (
         <button type='button' onClick={onClick} className='add-turn-table-button' aria-label='Add Turn Table Media' >
-            <AddIcon size="md" className='add-turn-table-button__icon' />
+            <AddTurnTableIcon size="md" className='add-turn-table-button__icon' />
         </button>
     );
 }

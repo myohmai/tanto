@@ -1,4 +1,4 @@
-import { AddIcon } from '@/app/components/icons';
+import { AddSalonIcon } from '@/app/components/icons';
 import './CreateSalonButton.scss';
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 export const CreateSalonButton = ({ onClick }: Props) => {
     return (
         <button type='button' onClick={onClick} className='create-salon-button' aria-label='Create new Salon' >
-            <AddIcon size="md" className='create-salon-button__icon' />
+            <AddSalonIcon size="md" className='create-salon-button__icon' />
         </button>
     );
 }
