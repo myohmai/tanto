@@ -99,6 +99,18 @@
         align-items: flex-start;
         gap: $spacing-xs;
         cursor: pointer;
+
+        // destyle.css が appearance: none にするため、チェックボックスが見えなくなっていた
+        input[type="checkbox"] {
+            -webkit-appearance: checkbox;
+            appearance: auto;
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            margin-top: 3px;
+            cursor: pointer;
+            accent-color: var(--accent-color-400);
+        }
     }
 
     &__agree-text {
