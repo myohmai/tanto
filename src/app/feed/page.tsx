@@ -1,6 +1,6 @@
 "use client";
 import './page.scss';
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSideMenu } from "@/app/context/SideMenuContext";
 
@@ -18,12 +18,8 @@ import { getCurrentUserId } from "@/repositories/currentUser";
 
 import { canAccessRoom } from "@/app/logic/room/roomAccess";
 import { getRoomSubIcon } from "@/app/logic/room/roomSubIcon";
-import { getEntities } from "@/repositories/entity";
-import { getUserRoomEntitiesByUser } from "@/repositories/userRoomEntity";
-import { getUserDisInterestsByUser } from "@/repositories/userDisInterest";
-import { calcNotification, type NotificationResult } from "@/app/logic/report/calcNotification";
+import { useGlossNotifications } from "@/app/hooks/useNotifications";
 
-import type { Entity, UserRoomEntity, UserDisInterest } from "@/app/types/entity";
 import type { Report } from "@/app/types/report";
 import { GlossData, type RoomData, type UserRoomData, type Fond } from "@/app/types";
 
@@ -36,9 +32,6 @@ export default function Page() {
     const [fonds, setFonds] = useState<Fond[]>([]);
     const [blockedUserIds, setBlockedUserIds] = useState<Set<string>>(new Set());
     const [userId, setUserId] = useState<string>("");
-    const [entities, setEntities] = useState<Entity[]>([]);
-    const [userRoomEntities, setUserRoomEntities] = useState<UserRoomEntity[]>([]);
-    const [userDisInterests, setUserDisInterests] = useState<UserDisInterest[]>([]);
 
     const handleReport = (glossId: string, report: Report) => {
 
@@ -104,14 +97,6 @@ export default function Page() {
             setFonds(fonds);
             setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
 
-            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
-                getEntities(),
-                getUserRoomEntitiesByUser(uid),
-                getUserDisInterestsByUser(uid),
-            ]);
-            setEntities(entities);
-            setUserRoomEntities(userRoomEntities);
-            setUserDisInterests(userDisInterests);
         };
 
         load();
@@ -125,27 +110,8 @@ export default function Page() {
     const isPressed = (glossId: string) =>
         fonds.some(f => f.glossId === glossId && f.userId === userId);
 
-    const glossNotifications = useMemo((): Record<string, NotificationResult | null> => {
-        return Object.fromEntries(
-            glossData.map(gloss => {
-                const roomEntityIds = rooms.find(r => r.roomId === gloss.roomId)?.entityIds ?? [];
-                return [
-                    gloss.glossId,
-                    gloss.reports?.length
-                        ? calcNotification({
-                            reports: gloss.reports,
-                            roomId: gloss.roomId,
-                            authorId: gloss.userId ?? "",
-                            roomEntityIds,
-                            entities,
-                            userRoomEntities,
-                            userDisInterests,
-                        })
-                        : null,
-                ];
-            })
-        );
-    }, [glossData, rooms, entities, userRoomEntities, userDisInterests]);
+    // 通報判定は DB で集計した結果から決める(hooks/useNotifications.ts)
+    const glossNotifications = useGlossNotifications(glossData);
 
     return (
         <div className="feed">

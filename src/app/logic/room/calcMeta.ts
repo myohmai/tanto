@@ -18,8 +18,12 @@ export const calcRoomMeta = (
             r => r.userId === room.roomHost?.userId
         );
 
-        const roomMemberCount =
-            members.length + (hasHost && !hasHostInUserRoom ? 1 : 0);
+        // user_rooms は RLS で自分の行しか読めないため、ここで数えた値は実際より小さくなる。
+        // トリガーで管理している rooms.member_count を優先する。
+        const roomMemberCount = Math.max(
+            room.roomMemberCount,
+            members.length + (hasHost && !hasHostInUserRoom ? 1 : 0),
+        );
 
         return {
             ...room,

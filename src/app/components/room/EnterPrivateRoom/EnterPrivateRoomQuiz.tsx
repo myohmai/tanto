@@ -1,7 +1,7 @@
 import { RoomCustomIcon } from "@/app/components/custom-icon/RoomCustomIcon";
 import { SubmitButton } from "@/app/components/buttons/SubmitButton";
 import { QuizContainer } from "@/app/components/form/QuizContainer";
-import { QuizeList } from "@/app/components/form/SetQuizes";
+import type { PrivateRoomQuizQuestion } from "@/repositories/privateRoom";
 import { useState } from "react";
 
 import './EnterPrivateRoom.scss'
@@ -11,9 +11,9 @@ type Props = {
     bannerUrl?: string | null;
     roomIconUrl?: string | null;
     roomName: string ;
-    roomQuiz?: QuizeList[] | null;
-    roomQuizScore?: number;
-    onEnter: () => void;
+    roomQuiz?: PrivateRoomQuizQuestion[] | null;
+    // 選んだ選択肢の id を渡して判定する(判定は DB 側)。通れば true
+    onSubmit: (answers: string[]) => Promise<boolean>;
 }
 
 export const EnterPrivateRoomQuiz = ({
@@ -21,20 +21,22 @@ export const EnterPrivateRoomQuiz = ({
     roomIconUrl,
     roomName,
     roomQuiz,
-    roomQuizScore,
-    onEnter
+    onSubmit
 }: Props) => {
-    const [score, setScore] = useState(0);
+    const [answers, setAnswers] = useState<string[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorCount, setErrorCount] = useState(0);
     const [isShowToast, setIsShowToast] = useState(false);
 
     const isDisabled = errorCount >= 3;
 
-    const handleEnter = () => {
-    if (score <= (roomQuizScore ?? 0)) {
-        onEnter();
-        return;
-    }
+    const handleEnter = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    // 合計点が作成画面の「合格ライン」(room_quiz_score)以上なら合格。採点は DB 側
+    const ok = await onSubmit(answers).catch(() => false);
+    setIsSubmitting(false);
+    if (ok) return;
 
     setErrorCount((prev) => prev + 1);
     setIsShowToast(true);
@@ -56,11 +58,11 @@ export const EnterPrivateRoomQuiz = ({
                     This Room is Private.<br />
                     Please Enter a Keyword.
                 </div>
-                <QuizContainer onScore={setScore} questions={roomQuiz ?? []}/>
+                <QuizContainer onAnswers={setAnswers} questions={roomQuiz ?? []}/>
                 <SubmitButton
                     label="Enter"
                     onClick={handleEnter}
-                    disabled={isDisabled}
+                    disabled={isDisabled || isSubmitting}
                 />
                 {isShowToast && (
                     <div className="toast">

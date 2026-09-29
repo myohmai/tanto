@@ -151,3 +151,37 @@ export const getReportedGlosses = async (): Promise<GlossData[]> => {
         .map(toGlossData)
         .filter(g => (g.reports?.length ?? 0) > 0);
 };
+
+// 再評価(「この評価は適切ですか?」)に投票する。1ユーザー1Glossにつき1票で、再投票すると上書きされる。
+// 戻り値は投票後の集計(gloss_feed.revaluation)。
+export const submitRevaluation = async (
+    glossId: string,
+    isAppropriate: boolean,
+): Promise<GlossData['revaluation']> => {
+    const { data: authData } = await supabase.auth.getUser();
+    const userId = authData.user?.id;
+    if (!userId) throw new Error('Not authenticated');
+
+    const { error } = await supabase
+        .from('gloss_revaluations')
+        .upsert(
+            {
+                gloss_id: glossId,
+                user_id: userId,
+                is_appropriate: isAppropriate,
+                updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'gloss_id,user_id' },
+        );
+
+    if (error) throw error;
+
+    const { data, error: feedError } = await supabase
+        .from('gloss_feed')
+        .select('revaluation')
+        .eq('gloss_id', glossId)
+        .single();
+
+    if (feedError) throw feedError;
+    return (data as { revaluation: GlossData['revaluation'] | null }).revaluation ?? undefined;
+};

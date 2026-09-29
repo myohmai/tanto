@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState, use } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 
 import './page.scss'
@@ -20,15 +20,11 @@ import { getUserRoomData } from "@/repositories/userRoom";
 import { toggleFond,  getAllFonds } from "@/repositories/fond";
 import { toggleBlock, getBlocksByUser } from "@/repositories/block";
 import { toggleMute, getMutesByUser } from "@/repositories/mute";
-import { addGlossReport } from "@/repositories/gloss";
+import { addGlossReport, submitRevaluation } from "@/repositories/gloss";
 
 import { canAccessRoom } from "@/app/logic/room/roomAccess";
-import { getEntities } from "@/repositories/entity";
-import { getUserRoomEntitiesByUser } from "@/repositories/userRoomEntity";
-import { getUserDisInterestsByUser } from "@/repositories/userDisInterest";
-import { calcNotification, type NotificationResult } from "@/app/logic/report/calcNotification";
+import { useGlossNotifications } from "@/app/hooks/useNotifications";
 
-import type { Entity, UserRoomEntity, UserDisInterest } from "@/app/types/entity";
 import type { Report } from "@/app/types/report";
 import { GlossData, SalonData, type RoomData, type UserRoomData, type Fond } from "@/app/types";
 
@@ -45,9 +41,6 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
     const [fonds, setFonds] = useState<Fond[]>([]);
     const [blockedUserIds, setBlockedUserIds] = useState<Set<string>>(new Set());
     const [mutedSalonIds, setMutedSalonIds] = useState<Set<string>>(new Set());
-    const [entities, setEntities] = useState<Entity[]>([]);
-    const [userRoomEntities, setUserRoomEntities] = useState<UserRoomEntity[]>([]);
-    const [userDisInterests, setUserDisInterests] = useState<UserDisInterest[]>([]);
     const isPressed = (glossId: string) =>
         fonds.some(
             f => f.glossId === glossId && f.userId === currentUserId
@@ -129,14 +122,6 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
         const load = async () => {
             const uid = await getCurrentUserId();
             setCurrentUserId(uid);
-            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
-                getEntities(),
-                getUserRoomEntitiesByUser(uid),
-                getUserDisInterestsByUser(uid),
-            ]);
-            setEntities(entities);
-            setUserRoomEntities(userRoomEntities);
-            setUserDisInterests(userDisInterests);
         };
         load();
     }, []);
@@ -174,29 +159,24 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
     run();
 }, [roomId]);
 
-    const glossNotifications = useMemo((): Record<string, NotificationResult | null> => {
-        if (!roomData) return {};
-        return Object.fromEntries(
-            glossData.map(gloss => [
-                gloss.glossId,
-                gloss.reports?.length
-                    ? calcNotification({
-                        reports: gloss.reports,
-                        roomId: gloss.roomId,
-                        authorId: gloss.userId ?? "",
-                        roomEntityIds: roomData.entityIds,
-                        entities,
-                        userRoomEntities,
-                        userDisInterests,
-                    })
-                    : null,
-            ])
-        );
-    }, [glossData, roomData, entities, userRoomEntities, userDisInterests]);
+    // 通報判定は DB で集計した結果から決める(hooks/useNotifications.ts)
+    const glossNotifications = useGlossNotifications(glossData);
 
     if (!roomData || !salonData) return null;
 
     const isHost = roomData.roomHost?.userId === currentUserId;
+
+    // 再評価を DB に保存し、集計結果で該当 Gloss を更新する
+    const handleRevaluation = async (glossId: string, isAppropriate: boolean) => {
+        try {
+            const revaluation = await submitRevaluation(glossId, isAppropriate);
+            setGlossData(prev => prev.map(g =>
+                g.glossId === glossId ? { ...g, revaluation } : g
+            ));
+        } catch (e) {
+            console.error('Failed to submit revaluation:', e);
+        }
+    };
 
     return (
         <div className="salon-page">
@@ -280,20 +260,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string; sal
                     blockedUserIds={blockedUserIds}
                     notifications={glossNotifications}
                     onRevaluation={{
-                        onYes: (glossId) => {
-                            setGlossData(prev => prev.map(g =>
-                                g.glossId === glossId
-                                    ? { ...g, revaluation: { yesCount: (g.revaluation?.yesCount ?? 0) + 1, noCount: g.revaluation?.noCount ?? 0 } }
-                                    : g
-                            ));
-                        },
-                        onNo: (glossId) => {
-                            setGlossData(prev => prev.map(g =>
-                                g.glossId === glossId
-                                    ? { ...g, revaluation: { yesCount: g.revaluation?.yesCount ?? 0, noCount: (g.revaluation?.noCount ?? 0) + 1 } }
-                                    : g
-                            ));
-                        },
+                        onYes: (glossId) => handleRevaluation(glossId, true),
+                        onNo: (glossId) => handleRevaluation(glossId, false),
                     }}
                 />
                 {isEntered && (

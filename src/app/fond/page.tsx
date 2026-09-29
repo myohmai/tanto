@@ -1,6 +1,6 @@
 "use client";
 import './page.scss';
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSideMenu } from "@/app/context/SideMenuContext";
 
@@ -8,18 +8,14 @@ import { HeadBar } from "@/app/components/bar/HeadBar";
 import { GlossList } from "@/app/components/list/GlossList";
 
 import { getRooms } from "@/repositories/room";
-import { getGlossesByIds } from "@/repositories/gloss";
+import { getGlossesByIds, submitRevaluation } from "@/repositories/gloss";
 import { getFondsByUser, toggleFond, getAllFonds } from "@/repositories/fond";
 import { getUserRoomsByUser } from "@/repositories/userRoom";
 import { toggleBlock, getBlocksByUser } from "@/repositories/block";
 import { getCurrentUserId } from "@/repositories/currentUser";
 import { canAccessRoom } from "@/app/logic/room/roomAccess";
-import { getEntities } from "@/repositories/entity";
-import { getUserRoomEntitiesByUser } from "@/repositories/userRoomEntity";
-import { getUserDisInterestsByUser } from "@/repositories/userDisInterest";
-import { calcNotification, type NotificationResult } from "@/app/logic/report/calcNotification";
+import { useGlossNotifications } from "@/app/hooks/useNotifications";
 
-import type { Entity, UserRoomEntity, UserDisInterest } from "@/app/types/entity";
 import type { Report } from "@/app/types/report";
 import { type GlossData, type RoomData, type UserRoomData, type Fond } from "@/app/types";
 
@@ -32,9 +28,6 @@ export default function Page() {
     const [fonds, setFonds] = useState<Fond[]>([]);
     const [blockedUserIds, setBlockedUserIds] = useState<Set<string>>(new Set());
     const [userId, setUserId] = useState<string>("");
-    const [entities, setEntities] = useState<Entity[]>([]);
-    const [userRoomEntities, setUserRoomEntities] = useState<UserRoomEntity[]>([]);
-    const [userDisInterests, setUserDisInterests] = useState<UserDisInterest[]>([]);
 
     const loadFondedGlosses = async (uid: string) => {
         const fondRecords = await getFondsByUser(uid);
@@ -66,14 +59,6 @@ export default function Page() {
                 // blocks column may not exist yet
             }
 
-            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
-                getEntities(),
-                getUserRoomEntitiesByUser(uid),
-                getUserDisInterestsByUser(uid),
-            ]);
-            setEntities(entities);
-            setUserRoomEntities(userRoomEntities);
-            setUserDisInterests(userDisInterests);
         };
 
         load();
@@ -110,27 +95,20 @@ export default function Page() {
     const isPressed = (glossId: string) =>
         fonds.some(f => f.glossId === glossId && f.userId === userId);
 
-    const glossNotifications = useMemo((): Record<string, NotificationResult | null> => {
-        return Object.fromEntries(
-            glossData.map(gloss => {
-                const roomEntityIds = rooms.find(r => r.roomId === gloss.roomId)?.entityIds ?? [];
-                return [
-                    gloss.glossId,
-                    gloss.reports?.length
-                        ? calcNotification({
-                            reports: gloss.reports,
-                            roomId: gloss.roomId,
-                            authorId: gloss.userId ?? "",
-                            roomEntityIds,
-                            entities,
-                            userRoomEntities,
-                            userDisInterests,
-                        })
-                        : null,
-                ];
-            })
-        );
-    }, [glossData, rooms, entities, userRoomEntities, userDisInterests]);
+    // 通報判定は DB で集計した結果から決める(hooks/useNotifications.ts)
+    const glossNotifications = useGlossNotifications(glossData);
+
+    // 再評価を DB に保存し、集計結果で該当 Gloss を更新する
+    const handleRevaluation = async (glossId: string, isAppropriate: boolean) => {
+        try {
+            const revaluation = await submitRevaluation(glossId, isAppropriate);
+            setGlossData(prev => prev.map(g =>
+                g.glossId === glossId ? { ...g, revaluation } : g
+            ));
+        } catch (e) {
+            console.error('Failed to submit revaluation:', e);
+        }
+    };
 
     return (
         <div className="fond-page">
@@ -168,20 +146,8 @@ export default function Page() {
                     blockedUserIds={blockedUserIds}
                     notifications={glossNotifications}
                     onRevaluation={{
-                        onYes: (glossId) => {
-                            setGlossData(prev => prev.map(g =>
-                                g.glossId === glossId
-                                    ? { ...g, revaluation: { yesCount: (g.revaluation?.yesCount ?? 0) + 1, noCount: g.revaluation?.noCount ?? 0 } }
-                                    : g
-                            ));
-                        },
-                        onNo: (glossId) => {
-                            setGlossData(prev => prev.map(g =>
-                                g.glossId === glossId
-                                    ? { ...g, revaluation: { yesCount: g.revaluation?.yesCount ?? 0, noCount: (g.revaluation?.noCount ?? 0) + 1 } }
-                                    : g
-                            ));
-                        },
+                        onYes: (glossId) => handleRevaluation(glossId, true),
+                        onNo: (glossId) => handleRevaluation(glossId, false),
                     }}
                 />
             )}

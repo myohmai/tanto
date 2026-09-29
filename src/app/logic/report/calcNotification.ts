@@ -1,12 +1,17 @@
-import type { Report, ReportType } from "@/app/types/report";
-import type { Entity, UserRoomEntity, UserDisInterest } from "@/app/types/entity";
+import type { ReportType } from "@/app/types/report";
 import type { NotificationType } from "@/app/components/evaluation/Notification";
-import { resolveEntityId, getRelatedEntityIds } from "./resolveEntity";
+import type { ReportAggregate } from "@/repositories/reportAggregate";
 
-const SAME_ROOM_THRESHOLD = 3;
-const SPECIFIC_ENTITY_THRESHOLD = 3;
-const GLOBAL_THRESHOLD = 5;
-const DIS_INTEREST_WEIGHT = 0.3;
+// 通報判定(興味関心の偏り検知)
+//
+// 通報者ごとの重み・同Room判定・共通Entity数の集計は、他ユーザーの個人データが必要なため
+// DB 関数(supabase/migrations/20260929000003_report_aggregates.sql)で行う。
+// ここでは集計結果から「どの注意書きを出すか」だけを決める。
+
+const SAME_ROOM_THRESHOLD = 3;       // 同じ Room のメンバーからの通報(重み合計)
+const SPECIFIC_ENTITY_THRESHOLD = 3; // Room 外の通報者のうち、同じ Entity に興味を持つ人数
+const GLOBAL_THRESHOLD = 5;          // 全通報者の重み合計
+// DIS_INTEREST_WEIGHT(0.3)は DB 側の集計で適用済み
 
 // 深刻度順。先にマッチしたものを採用する
 const REPORT_TYPE_PRIORITY: ReportType[] = [
@@ -23,114 +28,25 @@ export type NotificationResult = {
     isDeletionCandidate: boolean;
 };
 
-export type ReportContext = {
-    reports: Report[];
-    roomId: string;
-    authorId: string;
-    roomEntityIds: string[];
-    entities: Entity[];
-    userRoomEntities: UserRoomEntity[];
-    userDisInterests: UserDisInterest[];
-};
-
-// DisInterest が Room の entityId と重なる reporter は重みを下げる
-const calcWeight = (
-    reporterId: string,
-    roomEntityIds: string[],
-    userDisInterests: UserDisInterest[],
-    entities: Entity[]
-): number => {
-    const disInterestIds = userDisInterests
-        .filter(d => d.userId === reporterId)
-        .map(d => resolveEntityId(d.entityId, entities));
-
-    const expandedRoomIds = roomEntityIds.flatMap(id => getRelatedEntityIds(id, entities));
-    const hasBias = expandedRoomIds.some(id => disInterestIds.includes(id));
-
-    return hasBias ? DIS_INTEREST_WEIGHT : 1.0;
-};
-
-const isInSameRoom = (
-    reporterId: string,
-    roomId: string,
-    userRoomEntities: UserRoomEntity[]
-): boolean => {
-    return userRoomEntities.some(
-        ure => ure.userId === reporterId && ure.roomId === roomId
-    );
-};
-
-// Room 外の reporter 群から最も共通する entityId を返す
-const findDominantEntity = (
-    reporterIds: string[],
-    roomId: string,
-    userRoomEntities: UserRoomEntity[],
-    entities: Entity[]
-): string | null => {
-    const entityCounts: Record<string, number> = {};
-
-    for (const reporterId of reporterIds) {
-        const reporterEntities = userRoomEntities
-            .filter(ure => ure.userId === reporterId && ure.roomId !== roomId)
-            .map(ure => resolveEntityId(ure.entityId, entities));
-
-        for (const entityId of [...new Set(reporterEntities)]) {
-            entityCounts[entityId] = (entityCounts[entityId] ?? 0) + 1;
-        }
-    }
-
-    const top = Object.entries(entityCounts).sort((a, b) => b[1] - a[1])[0];
-    return top && top[1] >= SPECIFIC_ENTITY_THRESHOLD ? top[0] : null;
-};
-
-const calcForType = (
-    reportType: ReportType,
-    reports: Report[],
-    ctx: ReportContext
-): NotificationResult | null => {
-    let sameRoomWeight = 0;
-    let totalWeight = 0;
-    const outsideRoomReporterIds: string[] = [];
-
-    for (const report of reports) {
-        const weight = calcWeight(report.reporterId, ctx.roomEntityIds, ctx.userDisInterests, ctx.entities);
-        totalWeight += weight;
-
-        if (isInSameRoom(report.reporterId, ctx.roomId, ctx.userRoomEntities)) {
-            sameRoomWeight += weight;
-        } else {
-            outsideRoomReporterIds.push(report.reporterId);
-        }
-    }
-
-    const dominantEntity = findDominantEntity(
-        outsideRoomReporterIds,
-        ctx.roomId,
-        ctx.userRoomEntities,
-        ctx.entities
-    );
-
-    const sameRoomDominant = sameRoomWeight >= SAME_ROOM_THRESHOLD;
-    const specificEntityDominant = dominantEntity !== null;
-    const global = totalWeight >= GLOBAL_THRESHOLD;
+const calcForType = (agg: ReportAggregate): NotificationResult | null => {
+    const sameRoomDominant = agg.sameRoomWeight >= SAME_ROOM_THRESHOLD;
+    const specificEntityDominant = agg.topEntityReporters >= SPECIFIC_ENTITY_THRESHOLD;
+    const global = agg.totalWeight >= GLOBAL_THRESHOLD;
 
     if (!sameRoomDominant && !specificEntityDominant && !global) return null;
 
-    switch (reportType) {
+    // 特定の層(Room 外の同じ Entity のファン)だけが通報している
+    const onlySpecific = specificEntityDominant && !sameRoomDominant;
+
+    switch (agg.reportType) {
         case 'offensive':
-            if (specificEntityDominant && !sameRoomDominant)
-                return { notificationType: 'specific', needsRevaluation: false, isDeletionCandidate: false };
-            return { notificationType: 'uncomfortable', needsRevaluation: false, isDeletionCandidate: false };
+            return { notificationType: onlySpecific ? 'specific' : 'uncomfortable', needsRevaluation: false, isDeletionCandidate: false };
 
         case 'unverified':
-            if (specificEntityDominant && !sameRoomDominant)
-                return { notificationType: 'specific', needsRevaluation: false, isDeletionCandidate: false };
-            return { notificationType: 'unreliable', needsRevaluation: false, isDeletionCandidate: false };
+            return { notificationType: onlySpecific ? 'specific' : 'unreliable', needsRevaluation: false, isDeletionCandidate: false };
 
         case 'inappropriate':
-            if (specificEntityDominant && !sameRoomDominant)
-                return { notificationType: 'divided', needsRevaluation: false, isDeletionCandidate: false };
-            return { notificationType: 'uncomfortable', needsRevaluation: false, isDeletionCandidate: false };
+            return { notificationType: onlySpecific ? 'divided' : 'uncomfortable', needsRevaluation: false, isDeletionCandidate: false };
 
         case 'identifiable':
             return { notificationType: 'sensitive', needsRevaluation: true, isDeletionCandidate: false };
@@ -144,12 +60,15 @@ const calcForType = (
     }
 };
 
-export const calcNotification = (ctx: ReportContext): NotificationResult | null => {
+// 1つの対象(Gloss または Room)の集計行から判定する
+export const calcNotificationFromAggregates = (
+    aggregates: ReportAggregate[]
+): NotificationResult | null => {
     for (const reportType of REPORT_TYPE_PRIORITY) {
-        const typeReports = ctx.reports.filter(r => r.type === reportType);
-        if (typeReports.length === 0) continue;
+        const agg = aggregates.find(a => a.reportType === reportType);
+        if (!agg || agg.reportCount === 0) continue;
 
-        const result = calcForType(reportType, typeReports, ctx);
+        const result = calcForType(agg);
         if (result) return result;
     }
     return null;

@@ -17,14 +17,11 @@ import { getUserRoomsByUser } from "@/repositories/userRoom";
 import { getCurrentUserId } from "@/repositories/currentUser";
 import { toggleBlock, getBlocksByUser } from "@/repositories/block";
 import { toggleFond,  getAllFonds } from "@/repositories/fond";
+import { submitRevaluation } from "@/repositories/gloss";
 
 import { canAccessRoom } from "@/app/logic/room/roomAccess";
-import { getEntities } from "@/repositories/entity";
-import { getUserRoomEntitiesByUser } from "@/repositories/userRoomEntity";
-import { getUserDisInterestsByUser } from "@/repositories/userDisInterest";
-import { calcNotification, type NotificationResult } from "@/app/logic/report/calcNotification";
+import { useGlossNotifications } from "@/app/hooks/useNotifications";
 
-import type { Entity, UserRoomEntity, UserDisInterest } from "@/app/types/entity";
 import type { Report } from "@/app/types/report";
 import type { GlossData, RoomData, UserRoomData, Fond } from "@/app/types";
 
@@ -45,9 +42,6 @@ export default function Page() {
     const [fonds, setFonds] = useState<Fond[]>([]);
     const [blockedUserIds, setBlockedUserIds] = useState<Set<string>>(new Set());
     const [mounted, setMounted] = useState(false);
-    const [entities, setEntities] = useState<Entity[]>([]);
-    const [userRoomEntities, setUserRoomEntities] = useState<UserRoomEntity[]>([]);
-    const [userDisInterests, setUserDisInterests] = useState<UserDisInterest[]>([]);
 
     const isPressed = (glossId: string) =>
         fonds.some(
@@ -100,14 +94,6 @@ export default function Page() {
             setFonds(fonds);
             setBlockedUserIds(new Set(blocks.map(b => b.targetUserId)));
 
-            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
-                getEntities(),
-                getUserRoomEntitiesByUser(uid),
-                getUserDisInterestsByUser(uid),
-            ]);
-            setEntities(entities);
-            setUserRoomEntities(userRoomEntities);
-            setUserDisInterests(userDisInterests);
 
             const initialRoomId =
                 userRooms.find(r => r.userId === uid)?.roomId ??
@@ -199,28 +185,21 @@ export default function Page() {
         return myGlosses.filter((g) => g.roomId === currentRoomId);
     }, [myGlosses, currentRoomId]);
 
-    const glossNotifications = useMemo((): Record<string, NotificationResult | null> => {
-        return Object.fromEntries(
-            filteredGlosses.map(gloss => {
-                const roomEntityIds = rooms.find(r => r.roomId === gloss.roomId)?.entityIds ?? [];
-                return [
-                    gloss.glossId,
-                    gloss.reports?.length
-                        ? calcNotification({
-                            reports: gloss.reports,
-                            roomId: gloss.roomId,
-                            authorId: gloss.userId ?? "",
-                            roomEntityIds,
-                            entities,
-                            userRoomEntities,
-                            userDisInterests,
-                        })
-                        : null,
-                ];
-            })
-        );
-    }, [filteredGlosses, rooms, entities, userRoomEntities, userDisInterests]);
+    // 通報判定は DB で集計した結果から決める(hooks/useNotifications.ts)
+    const glossNotifications = useGlossNotifications(filteredGlosses);
 
+
+    // 再評価を DB に保存し、集計結果で該当 Gloss を更新する
+    const handleRevaluation = async (glossId: string, isAppropriate: boolean) => {
+        try {
+            const revaluation = await submitRevaluation(glossId, isAppropriate);
+            setGlosses(prev => prev.map(g =>
+                g.glossId === glossId ? { ...g, revaluation } : g
+            ));
+        } catch (e) {
+            console.error('Failed to submit revaluation:', e);
+        }
+    };
 
     return(
         <div className="dashboard">
@@ -304,20 +283,8 @@ export default function Page() {
                     blockedUserIds={blockedUserIds}
                     notifications={glossNotifications}
                     onRevaluation={{
-                        onYes: (glossId) => {
-                            setGlosses(prev => prev.map(g =>
-                                g.glossId === glossId
-                                    ? { ...g, revaluation: { yesCount: (g.revaluation?.yesCount ?? 0) + 1, noCount: g.revaluation?.noCount ?? 0 } }
-                                    : g
-                            ));
-                        },
-                        onNo: (glossId) => {
-                            setGlosses(prev => prev.map(g =>
-                                g.glossId === glossId
-                                    ? { ...g, revaluation: { yesCount: g.revaluation?.yesCount ?? 0, noCount: (g.revaluation?.noCount ?? 0) + 1 } }
-                                    : g
-                            ));
-                        },
+                        onYes: (glossId) => handleRevaluation(glossId, true),
+                        onNo: (glossId) => handleRevaluation(glossId, false),
                     }}
                 />
             )}

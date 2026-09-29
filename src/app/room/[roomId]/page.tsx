@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, use, useMemo } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import { useRouter } from "next/navigation";
 
 import './page.scss'
@@ -22,8 +22,9 @@ import { CertificationBar } from "@/app/components/bar/CertificationBar";
 
 import { getRoomById, addRoomReport, getRooms } from "@/repositories/room";
 import { getRoomSubIcon } from "@/app/logic/room/roomSubIcon";
-import { addGlossReport } from "@/repositories/gloss";
+import { addGlossReport, submitRevaluation } from "@/repositories/gloss";
 import { getTurntablesByRoom, addTurntable, deleteTurntable } from "@/repositories/turntable";
+import { getPrivateRoomGate } from "@/repositories/privateRoom";
 import { getSalons } from "@/repositories/salon";
 import { getProcessedGlosses } from "@/app/logic/gloss/calcGloss";
 import { getUserRoomData } from "@/repositories/userRoom";
@@ -39,15 +40,11 @@ import { canAccessRoom } from "@/app/logic/room/roomAccess";
 import { isJoined } from "@/repositories/userRoom";
 import { leaveRoom } from "@/repositories/userRoom";
 import { removeUserRoomEntities } from "@/repositories/userRoomEntity";
-import { getUserRoomEntitiesByUser } from "@/repositories/userRoomEntity";
-import { getEntities } from "@/repositories/entity";
-import { getUserDisInterestsByUser } from "@/repositories/userDisInterest";
-import { calcNotification, type NotificationResult } from "@/app/logic/report/calcNotification";
-import { getPendingCount } from "@/repositories/songRequest";
+import { useGlossNotifications, useRoomNotification } from "@/app/hooks/useNotifications";
+import { getPendingCount, createSongRequestFromTurntable } from "@/repositories/songRequest";
 import { isAdmin } from "@/lib/adminAuth";
 import { useTranslations } from 'next-intl';
 
-import type { Entity, UserRoomEntity, UserDisInterest } from "@/app/types/entity";
 import type { Report } from "@/app/types/report";
 import { GlossData, SalonData, type RoomData, type TurnTableData, type UserRoomData, type Fond } from "@/app/types";
 
@@ -76,9 +73,6 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
 
 
     const [fonds, setFonds] = useState<Fond[]>([]);
-    const [entities, setEntities] = useState<Entity[]>([]);
-    const [userRoomEntities, setUserRoomEntities] = useState<UserRoomEntity[]>([]);
-    const [userDisInterests, setUserDisInterests] = useState<UserDisInterest[]>([]);
     const hostUser = roomData?.roomHost
         ? [{
             userId: roomData.roomHost.userId,
@@ -150,24 +144,37 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
         if (isEntered) {
             await leaveRoom(roomId, userId);
             removeUserRoomEntities(userId, roomId);
+            // router.refresh() ではクライアントの state は変わらないので明示的に戻す
+            setIsEntered(false);
             router.refresh();
             return;
         }
 
-        const ok = await canAccessRoom(roomId);
+        const ok = await canAccessRoom(roomId, roomData);
 
         if (!ok) {
-            router.push(`/room/${roomId}/nickname`);
+            // Private Room は合言葉 / クイズの入室画面へ
+            router.push(
+                roomData.roomVisibility === "private"
+                    ? `/room/${roomId}/auth`
+                    : `/room/${roomId}/nickname`
+            );
             return;
         }
     };
     useEffect(() => {
-        getRoomById(roomId).then((room) => {
-            setRoomData(room);
+        getRoomById(roomId).then(async (room) => {
+            if (room) {
+                setRoomData(room);
+                return;
+            }
+            // 非メンバーは RLS で Private Room を読めない → 入室画面へ
+            const gate = await getPrivateRoomGate(roomId);
+            if (gate && !gate.isMember) router.replace(`/room/${roomId}/auth`);
         }).catch((e) => {
             console.error('Failed to load room:', e);
         });
-    }, [roomId]);
+    }, [roomId, router]);
 
     useEffect(() => {
         getRooms().then(setAllRooms);
@@ -269,54 +276,11 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
         });
     }, [userId]);
 
-    useEffect(() => {
-        const load = async () => {
-            if (!userId) return;
-            const uid = userId;
-            const [entities, userRoomEntities, userDisInterests] = await Promise.all([
-                getEntities(),
-                getUserRoomEntitiesByUser(uid),
-                getUserDisInterestsByUser(uid),
-            ]);
-            setEntities(entities);
-            setUserRoomEntities(userRoomEntities);
-            setUserDisInterests(userDisInterests);
-        };
-        load();
-    }, [userId]);
 
-    const roomNotification = useMemo((): NotificationResult | null => {
-        if (!roomData?.reports?.length) return null;
-        return calcNotification({
-            reports: roomData.reports,
-            roomId: roomData.roomId,
-            authorId: roomData.roomHost?.userId ?? "",
-            roomEntityIds: roomData.entityIds,
-            entities,
-            userRoomEntities,
-            userDisInterests,
-        });
-    }, [roomData, entities, userRoomEntities, userDisInterests]);
+    const roomNotification = useRoomNotification(roomData);
 
-    const glossNotifications = useMemo((): Record<string, NotificationResult | null> => {
-        if (!roomData) return {};
-        return Object.fromEntries(
-            glossData.map(gloss => [
-                gloss.glossId,
-                gloss.reports?.length
-                    ? calcNotification({
-                        reports: gloss.reports,
-                        roomId: gloss.roomId,
-                        authorId: gloss.userId ?? "",
-                        roomEntityIds: roomData.entityIds,
-                        entities,
-                        userRoomEntities,
-                        userDisInterests,
-                    })
-                    : null,
-            ])
-        );
-    }, [glossData, roomData, entities, userRoomEntities, userDisInterests]);
+    // 通報判定は DB で集計した結果から決める(hooks/useNotifications.ts)
+    const glossNotifications = useGlossNotifications(glossData);
 
     useEffect(() => {
         if (!sentinelRef.current) return;
@@ -333,6 +297,18 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
     }, [roomData]);
 
     if (!roomData || !isMounted) return null;
+
+    // 再評価を DB に保存し、集計結果で該当 Gloss を更新する
+    const handleRevaluation = async (glossId: string, isAppropriate: boolean) => {
+        try {
+            const revaluation = await submitRevaluation(glossId, isAppropriate);
+            setGlossData(prev => prev.map(g =>
+                g.glossId === glossId ? { ...g, revaluation } : g
+            ));
+        } catch (e) {
+            console.error('Failed to submit revaluation:', e);
+        }
+    };
 
     return (
         <div className="room-top">
@@ -418,20 +394,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                                 blockedUserIds={blockedUserIds}
                                 notifications={glossNotifications}
                                 onRevaluation={{
-                                    onYes: (glossId) => {
-                                        setGlossData(prev => prev.map(g =>
-                                            g.glossId === glossId
-                                                ? { ...g, revaluation: { yesCount: (g.revaluation?.yesCount ?? 0) + 1, noCount: g.revaluation?.noCount ?? 0 } }
-                                                : g
-                                        ));
-                                    },
-                                    onNo: (glossId) => {
-                                        setGlossData(prev => prev.map(g =>
-                                            g.glossId === glossId
-                                                ? { ...g, revaluation: { yesCount: g.revaluation?.yesCount ?? 0, noCount: (g.revaluation?.noCount ?? 0) + 1 } }
-                                                : g
-                                        ));
-                                    },
+                                    onYes: (glossId) => handleRevaluation(glossId, true),
+                                    onNo: (glossId) => handleRevaluation(glossId, false),
                                 }}
                             />
                         </div>
@@ -479,9 +443,19 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
                                 isOpen={isAddTurnTableOpen}
                                 onClose={() => setIsAddTurnTableOpen(false)}
                                 onSubmit={async (data) => {
-                                    await addTurntable(data);
+                                    const canAddDirectly =
+                                        roomData.roomHost?.userId === userId ||
+                                        (roomData.isOpenRoom && isAdminUser);
+
+                                    if (canAddDirectly) {
+                                        await addTurntable(data);
+                                        getTurntablesByRoom(roomId).then(setTurntableData);
+                                    } else if (userId) {
+                                        // ホストのいない Room はメンバー投票で承認(resolve_song_requests)
+                                        await createSongRequestFromTurntable(data, userId);
+                                        getPendingCount(roomId).then(setPendingCount).catch(() => {});
+                                    }
                                     setIsAddTurnTableOpen(false);
-                                    getTurntablesByRoom(roomId).then(setTurntableData);
                                 }}
                             />
                         </div>

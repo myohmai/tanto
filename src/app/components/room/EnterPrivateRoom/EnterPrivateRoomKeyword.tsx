@@ -10,30 +10,31 @@ type Props = {
     bannerUrl?: string | null;
     roomIconUrl?: string | null;
     roomName: string;
-    roomKeyWord?: string;
     roomKeyWordHint?: string;
-    onEnter: () => void;
+    // 入力された合言葉を渡して判定する(判定は DB 側)。通れば true
+    onSubmit: (keyword: string) => Promise<boolean>;
 }
 
 export const EnterPrivateRoomKeyword = ({
     bannerUrl,
     roomIconUrl,
     roomName,
-    roomKeyWord,
     roomKeyWordHint,
-    onEnter
+    onSubmit
 }: Props) => {
     const [keyword, setKeyword] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorCount, setErrorCount] = useState(0);
     const [isShowToast, setIsShowToast] = useState(false);
 
     const isDisabled = errorCount >= 3;
 
-    const handleEnter = () => {
-    if (keyword === roomKeyWord) {
-        onEnter();
-        return;
-    }
+    const handleEnter = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    const ok = await onSubmit(keyword).catch(() => false);
+    setIsSubmitting(false);
+    if (ok) return;
 
     setErrorCount((prev) => prev + 1);
     setIsShowToast(true);
@@ -62,7 +63,7 @@ export const EnterPrivateRoomKeyword = ({
                 <SubmitButton
                     label="Enter"
                     onClick={handleEnter}
-                    disabled={isDisabled}
+                    disabled={isDisabled || isSubmitting}
                 />
                 {isShowToast && (
                     <div className="toast">

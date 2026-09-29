@@ -9,6 +9,7 @@ import {
     getPendingSongRequests,
     getSongRequestWithVotes,
     submitVote,
+    resolveSongRequests,
     getMyFailedSongRequests,
     deleteSongRequest,
 } from "@/repositories/songRequest";
@@ -39,6 +40,8 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
 
     const load = async () => {
         setIsLoading(true);
+        // 表示前に期限切れ・承認 / 却下を確定させる
+        await resolveSongRequests(roomId).catch((e) => console.error('Failed to resolve song requests:', e));
         const pending = await getPendingSongRequests(roomId);
         const withVotes = await Promise.all(
             pending.map(r => getSongRequestWithVotes(r.id))
@@ -51,6 +54,7 @@ export default function Page({ params }: { params: Promise<{ roomId: string }> }
         if (!userId) return;
         await submitVote(requestId, userId, approved);
         await load();
+        getMyFailedSongRequests(roomId, userId).then(setFailedRequests);
     };
 
     const handleDeleteFailed = async (requestId: string) => {

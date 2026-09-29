@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import type { SongRequest, SongRequestMetadata, SongRequestType, SongRequestWithVotes, Vote } from '@/app/types/songRequest';
+import type { TurnTableData } from '@/app/types/turntable';
 
 type SongRequestRow = {
     id: string;
@@ -128,5 +129,35 @@ export const deleteSongRequest = async (id: string): Promise<void> => {
         .delete()
         .eq('id', id);
 
+    if (error) throw error;
+};
+
+// TurnTable 追加フォームの入力(TurnTableData)から承認待ちリクエストを作る
+export const createSongRequestFromTurntable = async (
+    data: TurnTableData,
+    requestedBy: string,
+): Promise<SongRequest> => {
+    if (data.type === 'video' && data.video) {
+        return createSongRequest(data.roomId, requestedBy, data.video.url, 'video', {
+            title:       data.video.title,
+            channelName: data.video.channelName,
+            videoId:     data.video.videoId,
+        });
+    }
+    if (data.type === 'music' && data.music) {
+        return createSongRequest(data.roomId, requestedBy, data.music.url, 'music', {
+            title:     data.music.title,
+            artist:    data.music.artist,
+            thumbnail: data.music.cover ?? undefined,
+            service:   data.music.service,
+        });
+    }
+    throw new Error('invalid turntable data');
+};
+
+// 期限切れ(timeout)と、投票率 30% 以上での承認 / 却下を DB 側で確定させる。
+// 承認されたリクエストは turntables に追加される。
+export const resolveSongRequests = async (roomId: string): Promise<void> => {
+    const { error } = await supabase.rpc('resolve_song_requests', { p_room_id: roomId });
     if (error) throw error;
 };

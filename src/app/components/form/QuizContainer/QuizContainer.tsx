@@ -1,25 +1,23 @@
 import { QuestionContainer } from "@/app/components/form/QuestionContainer";
-import { QuizeList } from "@/app/components/form/SetQuizes";
+import type { PrivateRoomQuizQuestion } from "@/repositories/privateRoom";
 
 import { useState } from "react";
 
 import './QuizContainer.scss'
 
 type Props = {
-    onScore: (value: number) => void;
-    questions: QuizeList[] | undefined;
+    // 各設問で選んだ選択肢の id(未回答の設問は含まない)
+    onAnswers: (optionIds: string[]) => void;
+    questions: PrivateRoomQuizQuestion[] | undefined;
 }
 
-export const QuizContainer = ({ onScore, questions }: Props) => {
-    const [scores, setScores] = useState<number[]>([]);
+export const QuizContainer = ({ onAnswers, questions }: Props) => {
+    const [answers, setAnswers] = useState<Record<string, string>>({});
 
-    const handleSelect = (index: number, score: number) => {
-        const newScores = [...scores];
-        newScores[index] = score;
-        setScores(newScores);
-
-        const total = newScores.reduce((sum, s) => sum + (s ?? 0), 0);
-        onScore(total);
+    const handleSelect = (questionId: string, optionId: string) => {
+        const next = { ...answers, [questionId]: optionId };
+        setAnswers(next);
+        onAnswers(Object.values(next));
     };
 
     return (
@@ -30,7 +28,7 @@ export const QuizContainer = ({ onScore, questions }: Props) => {
                     questionNumber={index + 1}
                     question={q.question}
                     options={q.option}
-                    onSelected={(score) => handleSelect(index, score)}
+                    onSelected={(optionId) => handleSelect(q.id, optionId)}
                 />
             ))}
         </div>

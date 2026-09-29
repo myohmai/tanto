@@ -60,6 +60,38 @@ const ROOM_SELECT = `
     room_reports(reporter_id, type, created_at)
 `;
 
+type RoomStatsRow = {
+    room_id: string;
+    gloss_count: number;
+    recent_gloss_count: number;
+};
+
+// room_stats ビュー(投稿数 / 直近24時間の投稿数)を RoomData に反映する。
+// アクティビティスコア(logic/room/roomActivity.ts)の計算に使う。
+// 取得に失敗しても Room 一覧自体は表示できるよう、その場合は 0 のまま返す。
+const attachRoomStats = async (rooms: RoomData[]): Promise<RoomData[]> => {
+    if (rooms.length === 0) return rooms;
+
+    const { data, error } = await supabase
+        .from('room_stats')
+        .select('room_id, gloss_count, recent_gloss_count')
+        .in('room_id', rooms.map(r => r.roomId));
+
+    if (error || !data) {
+        console.error('Failed to load room_stats:', error);
+        return rooms;
+    }
+
+    const statsMap = new Map((data as RoomStatsRow[]).map(s => [s.room_id, s]));
+
+    return rooms.map(room => {
+        const stats = statsMap.get(room.roomId);
+        return stats
+            ? { ...room, glossCount: stats.gloss_count, recentGlossCount: stats.recent_gloss_count }
+            : room;
+    });
+};
+
 export const getRooms = async (): Promise<RoomData[]> => {
     const { data, error } = await supabase
         .from('rooms')
@@ -67,7 +99,7 @@ export const getRooms = async (): Promise<RoomData[]> => {
         .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return (data as RoomRow[]).map(toRoomData);
+    return attachRoomStats((data as RoomRow[]).map(toRoomData));
 };
 
 export const getRoomsByIds = async (roomIds: string[]): Promise<RoomData[]> => {
@@ -78,7 +110,7 @@ export const getRoomsByIds = async (roomIds: string[]): Promise<RoomData[]> => {
         .in('room_id', roomIds);
 
     if (error) throw error;
-    return (data as RoomRow[]).map(toRoomData);
+    return attachRoomStats((data as RoomRow[]).map(toRoomData));
 };
 
 export const getRoomById = async (roomId: string): Promise<RoomData | null> => {
@@ -89,7 +121,8 @@ export const getRoomById = async (roomId: string): Promise<RoomData | null> => {
         .single();
 
     if (error) return null;
-    return toRoomData(data as RoomRow);
+    const [room] = await attachRoomStats([toRoomData(data as RoomRow)]);
+    return room;
 };
 
 export const saveRoom = async (room: RoomData) => {
